@@ -3,19 +3,47 @@ class ArtPlatform {
     constructor() {
         this.currentUser = null;
         this.init();
+        
+        // Add error handling
+        window.onerror = (msg, url, line) => {
+            console.error(`Error: ${msg}\nURL: ${url}\nLine: ${line}`);
+            this.showToast('An error occurred. Please try again.', 'error');
+        };
     }
 
     init() {
-        this.bindEvents();
-        this.initializeUI();
-        this.loadUserData();
-        this.loadGallery();
-        this.setupDragAndDrop();
-        this.setupMobileNavigation();
-        this.setupPWA();
+        try {
+            this.bindEvents();
+            this.initializeUI();
+            this.loadUserData();
+            this.loadGallery();
+            this.setupDragAndDrop();
+            this.setupMobileNavigation();
+            this.setupPWA();
+        } catch (error) {
+            console.error('Initialization error:', error);
+            this.showToast('Failed to initialize application', 'error');
+        }
     }
 
     bindEvents() {
+        // Button event listeners with error handling
+        const buttons = document.querySelectorAll('button, .btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                try {
+                    const action = button.dataset.action;
+                    if (action && typeof this[action] === 'function') {
+                        e.preventDefault();
+                        this[action](e);
+                    }
+                } catch (error) {
+                    console.error('Button click error:', error);
+                    this.showToast('Failed to process button click', 'error');
+                }
+            });
+        });
+        
         // Upload events
         document.getElementById('artworkUpload')?.addEventListener('change', this.handleFileSelect.bind(this));
         document.getElementById('artworkMetadata')?.addEventListener('submit', this.handleUploadSubmit.bind(this));
@@ -741,23 +769,10 @@ class ArtPlatform {
 
     showToast(message, type = 'info') {
         const toast = document.createElement('div');
-        toast.className = `toast align-items-center text-white bg-${type} border-0 position-fixed`;
-        toast.style.cssText = 'bottom: 20px; right: 20px; z-index: 1060;';
-        toast.setAttribute('role', 'alert');
-        toast.innerHTML = `
-            <div class="d-flex">
-                <div class="toast-body">${message}</div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-            </div>
-        `;
-        
+        toast.className = `toast toast-${type} show`;
+        toast.textContent = message;
         document.body.appendChild(toast);
-        const bsToast = new bootstrap.Toast(toast);
-        bsToast.show();
-        
-        toast.addEventListener('hidden.bs.toast', () => {
-            toast.remove();
-        });
+        setTimeout(() => toast.remove(), 3000);
     }
 
     handleNavigation(e) {
@@ -836,14 +851,8 @@ class ArtPlatform {
 }
 
 // Global functions for onclick handlers
-window.showAuthModal = (mode) => artPlatform.showAuthModal(mode);
-window.scrollToSection = (section) => artPlatform.scrollToSection(section);
-window.cancelUpload = () => artPlatform.resetUploadForm();
+window.showAuthModal = (mode) => window.artPlatform?.showAuthModal(mode);
+window.scrollToSection = (section) => window.artPlatform?.scrollToSection(section);
+window.cancelUpload = () => window.artPlatform?.resetUploadForm();
 window.toggleView = () => console.log('Toggle view');
 window.refreshArtworks = () => console.log('Refresh artworks');
-
-// Initialize the application
-const artPlatform = new ArtPlatform();
-
-// Make artPlatform globally available
-window.artPlatform = artPlatform;
