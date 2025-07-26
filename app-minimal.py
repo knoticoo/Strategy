@@ -4,7 +4,7 @@ import base64
 from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 from PIL import Image
-import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 import json
 
@@ -15,7 +15,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
 # Initialize OpenAI client
-openai.api_key = os.environ.get('OPENAI_API_KEY')
+client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
 
 def allowed_file(filename):
     """Check if uploaded file is allowed"""
@@ -25,7 +25,7 @@ def allowed_file(filename):
 def analyze_artwork(image_data):
     """Analyze artwork using OpenAI's vision API"""
     try:
-        response = openai.chat.completions.create(
+        response = client.chat.completions.create(
             model="gpt-4-vision-preview",
             messages=[
                 {
@@ -120,7 +120,7 @@ def health():
     return jsonify({
         'status': 'healthy',
         'diffusion_model': 'not loaded (use Docker for enhancement)',
-        'openai_configured': bool(openai.api_key),
+        'openai_configured': bool(os.environ.get('OPENAI_API_KEY')),
         'features': {
             'analysis': 'available',
             'enhancement': 'requires Docker setup'
