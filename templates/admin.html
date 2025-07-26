@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - ArtVision AI</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            color: white;
+            padding: 2rem 0;
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: var(--primary-color);
+        }
+        
+        .nav-pills .nav-link {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Header -->
+    <div class="admin-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h1 class="mb-0"><i class="fas fa-cog me-2"></i>Admin Panel</h1>
+                    <p class="mb-0 opacity-75">Manage challenges, learning resources, and discussions</p>
+                </div>
+                <div class="col-auto">
+                    <a href="/" class="btn btn-light">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Site
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">Management</h6>
+                        <ul class="nav nav-pills flex-column" id="admin-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#challenges" data-bs-toggle="pill">
+                                    <i class="fas fa-trophy me-2"></i>Challenges
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#learning" data-bs-toggle="pill">
+                                    <i class="fas fa-graduation-cap me-2"></i>Learning Hub
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#discussions" data-bs-toggle="pill">
+                                    <i class="fas fa-comments me-2"></i>Discussions
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#analytics" data-bs-toggle="pill">
+                                    <i class="fas fa-chart-bar me-2"></i>Analytics
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <div class="tab-content">
+                    <!-- Challenges Tab -->
+                    <div class="tab-pane fade show active" id="challenges">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Art Challenges</h5>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#challengeModal">
+                                    <i class="fas fa-plus me-1"></i>New Challenge
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div id="challengesList">
+                                    <div class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Learning Tab -->
+                    <div class="tab-pane fade" id="learning">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Learning Resources</h5>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#learningModal">
+                                    <i class="fas fa-plus me-1"></i>New Resource
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div id="learningList">
+                                    <div class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Discussions Tab -->
+                    <div class="tab-pane fade" id="discussions">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Community Discussions</h5>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#discussionModal">
+                                    <i class="fas fa-plus me-1"></i>New Discussion
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div id="discussionsList">
+                                    <div class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Tab -->
+                    <div class="tab-pane fade" id="analytics">
+                        <div class="row g-4">
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                                        <h4 id="totalUsers">---</h4>
+                                        <small class="text-muted">Total Users</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <i class="fas fa-images fa-2x text-success mb-2"></i>
+                                        <h4 id="totalArtworks">---</h4>
+                                        <small class="text-muted">Artworks</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <i class="fas fa-trophy fa-2x text-warning mb-2"></i>
+                                        <h4 id="activeChallenges">---</h4>
+                                        <small class="text-muted">Challenges</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <i class="fas fa-comments fa-2x text-info mb-2"></i>
+                                        <h4 id="totalDiscussions">---</h4>
+                                        <small class="text-muted">Discussions</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Challenge Modal -->
+    <div class="modal fade" id="challengeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Challenge</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="challengeForm">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Theme</label>
+                            <input type="text" class="form-control" name="theme" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Prize</label>
+                            <input type="text" class="form-control" name="prize" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Deadline</label>
+                            <input type="datetime-local" class="form-control" name="deadline" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="createChallenge()">Create Challenge</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Learning Modal -->
+    <div class="modal fade" id="learningModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Learning Resource</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="learningForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" class="form-control" name="title" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-control" name="category" required>
+                                        <option value="">Select Category</option>
+                                        <option value="tutorial">Tutorial</option>
+                                        <option value="masterclass">Masterclass</option>
+                                        <option value="technique">Technique</option>
+                                        <option value="theory">Theory</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Difficulty</label>
+                                    <select class="form-control" name="difficulty" required>
+                                        <option value="">Select Difficulty</option>
+                                        <option value="beginner">Beginner</option>
+                                        <option value="intermediate">Intermediate</option>
+                                        <option value="advanced">Advanced</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Duration (minutes)</label>
+                                    <input type="number" class="form-control" name="duration" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Content</label>
+                            <textarea class="form-control" name="content" rows="5" placeholder="Detailed lesson content..." required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="createLearningResource()">Create Resource</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Discussion Modal -->
+    <div class="modal fade" id="discussionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Discussion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="discussionForm">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select class="form-control" name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="general">General Discussion</option>
+                                <option value="critique">Critique & Feedback</option>
+                                <option value="technique">Technique Sharing</option>
+                                <option value="inspiration">Inspiration</option>
+                                <option value="software">Software & Tools</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Content</label>
+                            <textarea class="form-control" name="content" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="createDiscussion()">Create Discussion</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Admin functionality
+        let currentTab = 'challenges';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadChallenges();
+            
+            // Tab switching
+            document.querySelectorAll('[data-bs-toggle="pill"]').forEach(tab => {
+                tab.addEventListener('shown.bs.tab', function (e) {
+                    currentTab = e.target.getAttribute('href').substring(1);
+                    switch(currentTab) {
+                        case 'challenges':
+                            loadChallenges();
+                            break;
+                        case 'learning':
+                            loadLearningResources();
+                            break;
+                        case 'discussions':
+                            loadDiscussions();
+                            break;
+                        case 'analytics':
+                            loadAnalytics();
+                            break;
+                    }
+                });
+            });
+        });
+
+        async function loadChallenges() {
+            const response = await fetch('/admin/challenges');
+            const challenges = await response.json();
+            
+            const html = challenges.map(challenge => `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">${challenge.title}</h6>
+                                <p class="card-text text-muted">${challenge.description}</p>
+                                <small class="text-muted">
+                                    Theme: ${challenge.theme} | Prize: ${challenge.prize} | 
+                                    Participants: ${challenge.participant_count || 0}
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-primary">${challenge.deadline}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('challengesList').innerHTML = html || '<p class="text-muted text-center">No challenges yet</p>';
+        }
+
+        async function loadLearningResources() {
+            const response = await fetch('/admin/learning');
+            const resources = await response.json();
+            
+            const html = resources.map(resource => `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">${resource.title}</h6>
+                                <p class="card-text text-muted">${resource.description}</p>
+                                <small class="text-muted">
+                                    Category: ${resource.category} | Difficulty: ${resource.difficulty} | 
+                                    Duration: ${resource.duration} min
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('learningList').innerHTML = html || '<p class="text-muted text-center">No resources yet</p>';
+        }
+
+        async function loadDiscussions() {
+            const response = await fetch('/admin/discussions');
+            const discussions = await response.json();
+            
+            const html = discussions.map(discussion => `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">${discussion.title}</h6>
+                                <p class="card-text text-muted">${discussion.content.substring(0, 100)}...</p>
+                                <small class="text-muted">
+                                    Category: ${discussion.category} | 
+                                    Replies: ${discussion.reply_count || 0}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('discussionsList').innerHTML = html || '<p class="text-muted text-center">No discussions yet</p>';
+        }
+
+        async function loadAnalytics() {
+            // Load analytics data (placeholder)
+            document.getElementById('totalUsers').textContent = '1,247';
+            document.getElementById('totalArtworks').textContent = '3,892';
+            document.getElementById('activeChallenges').textContent = '7';
+            document.getElementById('totalDiscussions').textContent = '156';
+        }
+
+        async function createChallenge() {
+            const form = document.getElementById('challengeForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/admin/challenges', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('challengeModal')).hide();
+                    form.reset();
+                    loadChallenges();
+                    showAlert('Challenge created successfully!', 'success');
+                } else {
+                    showAlert(result.error || 'Failed to create challenge', 'danger');
+                }
+            } catch (error) {
+                showAlert('Error creating challenge', 'danger');
+            }
+        }
+
+        async function createLearningResource() {
+            const form = document.getElementById('learningForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/admin/learning', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('learningModal')).hide();
+                    form.reset();
+                    loadLearningResources();
+                    showAlert('Learning resource created successfully!', 'success');
+                } else {
+                    showAlert(result.error || 'Failed to create resource', 'danger');
+                }
+            } catch (error) {
+                showAlert('Error creating resource', 'danger');
+            }
+        }
+
+        async function createDiscussion() {
+            const form = document.getElementById('discussionForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/admin/discussions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('discussionModal')).hide();
+                    form.reset();
+                    loadDiscussions();
+                    showAlert('Discussion created successfully!', 'success');
+                } else {
+                    showAlert(result.error || 'Failed to create discussion', 'danger');
+                }
+            } catch (error) {
+                showAlert('Error creating discussion', 'danger');
+            }
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

@@ -834,7 +834,6 @@ def logout():
     return redirect(url_for('index'))
 
 @app.route('/upload', methods=['POST'])
-@login_required
 def upload_artwork():
     """Upload new artwork"""
     if 'artwork' not in request.files:
@@ -866,22 +865,37 @@ def upload_artwork():
         file_size = os.path.getsize(file_path)
         image_hash = get_image_hash(file_path)
         
-        # Save to database
+        # Perform AI analysis
+        print("Starting AI analysis...")
+        analysis_result = analyze_artwork_with_huggingface(file_path)
+        
+        # Save to database (use demo user if not logged in)
+        user_id = session.get('user_id', 1)  # Default to demo user
         conn = sqlite3.connect('art_platform.db')
         cursor = conn.execute('''
             INSERT INTO artworks (user_id, title, description, image_path, image_hash, 
                                 thumbnail_path, file_size, dimensions, is_public)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (session['user_id'], title, description, file_path, image_hash,
+        ''', (user_id, title, description, file_path, image_hash,
               thumbnail_path, file_size, dimensions, is_public))
         
         artwork_id = cursor.lastrowid
+        
+        # Save analysis to database
+        conn.execute('''
+            INSERT INTO analyses (artwork_id, analysis_text, created_at)
+            VALUES (?, ?, datetime('now'))
+        ''', (artwork_id, analysis_result))
+        
         conn.commit()
         conn.close()
         
+        print(f"Upload and analysis complete for artwork {artwork_id}")
+        
         return jsonify({
-            'message': 'Artwork uploaded successfully',
+            'message': 'Artwork uploaded and analyzed successfully!',
             'artwork_id': artwork_id,
+            'analysis': analysis_result,
             'thumbnail_url': f'/uploads/{os.path.basename(thumbnail_path)}' if thumbnail_path else None
         })
     
@@ -1330,17 +1344,137 @@ def discussions():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/join_challenge/<int:challenge_id>', methods=['POST'])
-@login_required
 def join_challenge(challenge_id):
     """Join an art challenge"""
+    user_id = session.get('user_id', 1)  # Default to demo user
+    
     try:
-        # In a real app, you'd add the user to the challenge
-        return jsonify({
-            'success': True,
-            'message': f'Successfully joined challenge {challenge_id}!'
-        })
+        conn = get_db_connection()
+        # Check if already joined
+        existing = conn.execute(
+            'SELECT id FROM challenge_participants WHERE challenge_id = ? AND user_id = ?',
+            (challenge_id, user_id)
+        ).fetchone()
+        
+        if existing:
+            return jsonify({'message': 'Already joined this challenge!'})
+        
+        # Join the challenge
+        conn.execute(
+            'INSERT INTO challenge_participants (challenge_id, user_id, joined_at) VALUES (?, ?, datetime("now"))',
+            (challenge_id, user_id)
+        )
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'success': True, 'message': f'Successfully joined challenge {challenge_id}!'})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# Admin Panel Routes
+@app.route('/admin')
+def admin_panel():
+    """Admin panel for managing content"""
+    return render_template('admin.html')
+
+@app.route('/admin/challenges', methods=['GET', 'POST'])
+def admin_challenges():
+    """Manage challenges"""
+    if request.method == 'POST':
+        data = request.get_json()
+        title = data.get('title')
+        description = data.get('description')
+        theme = data.get('theme')
+        prize = data.get('prize')
+        deadline = data.get('deadline')
+        
+        conn = get_db_connection()
+        conn.execute('''
+            INSERT INTO challenges (title, description, theme, prize, deadline, created_at)
+            VALUES (?, ?, ?, ?, ?, datetime('now'))
+        ''', (title, description, theme, prize, deadline))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'message': 'Challenge created successfully!'})
+    
+    # GET - return existing challenges
+    conn = get_db_connection()
+    challenges = conn.execute('''
+        SELECT c.*, COUNT(cp.user_id) as participant_count
+        FROM challenges c
+        LEFT JOIN challenge_participants cp ON c.id = cp.challenge_id
+        GROUP BY c.id
+        ORDER BY c.created_at DESC
+    ''').fetchall()
+    conn.close()
+    
+    return jsonify([dict(row) for row in challenges])
+
+@app.route('/admin/learning', methods=['GET', 'POST'])
+def admin_learning():
+    """Manage learning resources"""
+    if request.method == 'POST':
+        data = request.get_json()
+        title = data.get('title')
+        description = data.get('description')
+        content = data.get('content')
+        category = data.get('category')
+        difficulty = data.get('difficulty')
+        duration = data.get('duration')
+        
+        conn = get_db_connection()
+        conn.execute('''
+            INSERT INTO learning_resources (title, description, content, category, difficulty, duration, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
+        ''', (title, description, content, category, difficulty, duration))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'message': 'Learning resource created successfully!'})
+    
+    # GET - return existing resources
+    conn = get_db_connection()
+    resources = conn.execute('''
+        SELECT * FROM learning_resources ORDER BY created_at DESC
+    ''').fetchall()
+    conn.close()
+    
+    return jsonify([dict(row) for row in resources])
+
+@app.route('/admin/discussions', methods=['GET', 'POST'])
+def admin_discussions():
+    """Manage discussions"""
+    if request.method == 'POST':
+        data = request.get_json()
+        title = data.get('title')
+        content = data.get('content')
+        category = data.get('category')
+        
+        conn = get_db_connection()
+        conn.execute('''
+            INSERT INTO discussions (title, content, category, author_id, created_at)
+            VALUES (?, ?, ?, ?, datetime('now'))
+        ''', (title, content, category, 1))  # Admin user
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'message': 'Discussion created successfully!'})
+    
+    # GET - return existing discussions
+    conn = get_db_connection()
+    discussions = conn.execute('''
+        SELECT d.*, u.name as author_name, COUNT(dr.id) as reply_count
+        FROM discussions d
+        LEFT JOIN users u ON d.author_id = u.id
+        LEFT JOIN discussion_replies dr ON d.id = dr.discussion_id
+        GROUP BY d.id
+        ORDER BY d.created_at DESC
+        LIMIT 20
+    ''').fetchall()
+    conn.close()
+    
+    return jsonify([dict(row) for row in discussions])
 
 @app.route('/health')
 def health():
