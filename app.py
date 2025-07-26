@@ -32,9 +32,10 @@ app.config['REPORTS_FOLDER'] = 'reports'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['REPORTS_FOLDER'], exist_ok=True)
 
-# Hugging Face configuration
-HF_API_KEY = os.environ.get('HUGGINGFACE_API_KEY')
+# AI Configuration - Enhanced Local Analysis
+HF_API_KEY = os.environ.get('HUGGINGFACE_API_KEY') or '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'
 HF_API_URL = "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large"
+USE_LOCAL_AI = True  # Use enhanced local AI analysis
 
 # Database initialization
 def init_db():
@@ -144,9 +145,12 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
             description TEXT NOT NULL,
+            theme TEXT,
             difficulty TEXT DEFAULT 'medium',
             start_date DATE,
             end_date DATE,
+            deadline DATE,
+            prize TEXT,
             prize_info TEXT,
             rules TEXT,
             is_active BOOLEAN DEFAULT 1,
