@@ -138,6 +138,93 @@ def init_db():
         )
     ''')
     
+    # Challenges table
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS challenges (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL,
+            difficulty TEXT DEFAULT 'medium',
+            start_date DATE,
+            end_date DATE,
+            prize_info TEXT,
+            rules TEXT,
+            is_active BOOLEAN DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            created_by INTEGER,
+            FOREIGN KEY (created_by) REFERENCES users (id)
+        )
+    ''')
+    
+    # Challenge participants table
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS challenge_participants (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            challenge_id INTEGER,
+            user_id INTEGER,
+            submission_id INTEGER,
+            joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (challenge_id) REFERENCES challenges (id),
+            FOREIGN KEY (user_id) REFERENCES users (id),
+            FOREIGN KEY (submission_id) REFERENCES artworks (id),
+            UNIQUE(challenge_id, user_id)
+        )
+    ''')
+    
+    # Learning resources table
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS learning_resources (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL,
+            content TEXT,
+            resource_type TEXT DEFAULT 'tutorial',
+            difficulty_level TEXT DEFAULT 'beginner',
+            duration_minutes INTEGER,
+            thumbnail_url TEXT,
+            video_url TEXT,
+            external_link TEXT,
+            tags TEXT,
+            is_featured BOOLEAN DEFAULT 0,
+            view_count INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            created_by INTEGER,
+            FOREIGN KEY (created_by) REFERENCES users (id)
+        )
+    ''')
+    
+    # Discussions table
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS discussions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL,
+            category TEXT DEFAULT 'general',
+            is_pinned BOOLEAN DEFAULT 0,
+            is_locked BOOLEAN DEFAULT 0,
+            view_count INTEGER DEFAULT 0,
+            reply_count INTEGER DEFAULT 0,
+            last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            author_id INTEGER,
+            FOREIGN KEY (author_id) REFERENCES users (id)
+        )
+    ''')
+    
+    # Discussion replies table
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS discussion_replies (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            discussion_id INTEGER,
+            author_id INTEGER,
+            content TEXT NOT NULL,
+            is_solution BOOLEAN DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (discussion_id) REFERENCES discussions (id),
+            FOREIGN KEY (author_id) REFERENCES users (id)
+        )
+    ''')
+    
     conn.commit()
     conn.close()
 
