@@ -2,14 +2,15 @@
 class ArtPlatform {
     constructor() {
         this.currentUser = null;
+        this.selectedFiles = null;
         this.init();
     }
 
     init() {
+        console.log('🎨 AI Art Platform initializing...');
         this.bindEvents();
         this.initializeUI();
         this.loadUserData();
-        this.loadGallery();
         this.setupDragAndDrop();
         this.setupMobileNavigation();
         this.setupPWA();
@@ -17,8 +18,15 @@ class ArtPlatform {
 
     bindEvents() {
         // Upload events
-        document.getElementById('artworkUpload')?.addEventListener('change', this.handleFileSelect.bind(this));
-        document.getElementById('artworkMetadata')?.addEventListener('submit', this.handleUploadSubmit.bind(this));
+        const uploadInput = document.getElementById('artworkUpload');
+        if (uploadInput) {
+            uploadInput.addEventListener('change', this.handleFileSelect.bind(this));
+        }
+
+        const uploadForm = document.getElementById('artworkMetadata');
+        if (uploadForm) {
+            uploadForm.addEventListener('submit', this.handleUploadSubmit.bind(this));
+        }
         
         // Navigation events
         document.querySelectorAll('.nav-link, .bottom-nav-link').forEach(link => {
@@ -28,47 +36,51 @@ class ArtPlatform {
         // Window events
         window.addEventListener('scroll', this.handleScroll.bind(this));
         window.addEventListener('resize', this.handleResize.bind(this));
-        
-        // Gallery events
-        document.getElementById('gallerySearch')?.addEventListener('input', this.debounce(this.searchGallery.bind(this), 300));
-        document.getElementById('galleryStyle')?.addEventListener('change', this.filterGallery.bind(this));
-        document.getElementById('gallerySortBy')?.addEventListener('change', this.sortGallery.bind(this));
     }
 
     initializeUI() {
-        // Initialize tooltips
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
+        // Initialize tooltips if available
+        if (typeof bootstrap !== 'undefined') {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
 
-        // Initialize modals
-        this.authModal = new bootstrap.Modal(document.getElementById('authModal'));
-        this.artworkModal = new bootstrap.Modal(document.getElementById('artworkModal'));
-        this.analysisModal = new bootstrap.Modal(document.getElementById('analysisModal'));
-        this.enhancementModal = new bootstrap.Modal(document.getElementById('enhancementModal'));
+            // Initialize modals
+            const authModalEl = document.getElementById('authModal');
+            const artworkModalEl = document.getElementById('artworkModal');
+            const analysisModalEl = document.getElementById('analysisModal');
+            const enhancementModalEl = document.getElementById('enhancementModal');
+
+            if (authModalEl) this.authModal = new bootstrap.Modal(authModalEl);
+            if (artworkModalEl) this.artworkModal = new bootstrap.Modal(artworkModalEl);
+            if (analysisModalEl) this.analysisModal = new bootstrap.Modal(analysisModalEl);
+            if (enhancementModalEl) this.enhancementModal = new bootstrap.Modal(enhancementModalEl);
+        }
 
         // Setup intersection observer for animations
         this.setupScrollAnimations();
     }
 
     setupScrollAnimations() {
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+        if ('IntersectionObserver' in window) {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-in');
-                }
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.feature-card, .card').forEach(el => {
+                observer.observe(el);
             });
-        }, observerOptions);
-
-        document.querySelectorAll('.feature-card, .card').forEach(el => {
-            observer.observe(el);
-        });
+        }
     }
 
     setupDragAndDrop() {
@@ -103,7 +115,7 @@ class ArtPlatform {
                 
                 // Smooth scroll to section
                 const target = link.getAttribute('href');
-                if (target.startsWith('#')) {
+                if (target && target.startsWith('#')) {
                     this.scrollToSection(target.substring(1));
                 }
             });
@@ -127,11 +139,13 @@ class ArtPlatform {
 
     // File handling methods
     handleFileSelect(e) {
+        console.log('File selected:', e.target.files);
         const files = e.target.files;
         this.processFiles(files);
     }
 
     handleDrop(e) {
+        console.log('Files dropped');
         const dt = e.dataTransfer;
         const files = dt.files;
         this.processFiles(files);
@@ -140,10 +154,11 @@ class ArtPlatform {
     processFiles(files) {
         if (files.length === 0) return;
 
+        console.log('Processing files:', files.length);
         const validFiles = Array.from(files).filter(file => this.validateFile(file));
         
         if (validFiles.length === 0) {
-            this.showToast('Please select valid image files', 'error');
+            this.showToast('Please select valid image files', 'danger');
             return;
         }
 
@@ -157,12 +172,12 @@ class ArtPlatform {
         const maxSize = 16 * 1024 * 1024; // 16MB
 
         if (!validTypes.includes(file.type)) {
-            this.showToast(`Invalid file type: ${file.name}`, 'error');
+            this.showToast(`Invalid file type: ${file.name}`, 'danger');
             return false;
         }
 
         if (file.size > maxSize) {
-            this.showToast(`File too large: ${file.name}`, 'error');
+            this.showToast(`File too large: ${file.name}`, 'danger');
             return false;
         }
 
@@ -170,12 +185,14 @@ class ArtPlatform {
     }
 
     showUploadForm() {
-        document.getElementById('uploadForm').style.display = 'block';
-        this.scrollToSection('uploadForm');
+        const uploadForm = document.getElementById('uploadForm');
+        if (uploadForm) {
+            uploadForm.style.display = 'block';
+            this.scrollToSection('uploadForm');
+        }
     }
 
     previewFiles(files) {
-        // Add file preview to upload form
         const preview = document.createElement('div');
         preview.className = 'file-preview mt-3';
         preview.innerHTML = `
@@ -196,18 +213,21 @@ class ArtPlatform {
         `;
         
         const form = document.getElementById('uploadForm');
-        const existingPreview = form.querySelector('.file-preview');
-        if (existingPreview) {
-            existingPreview.remove();
+        if (form) {
+            const existingPreview = form.querySelector('.file-preview');
+            if (existingPreview) {
+                existingPreview.remove();
+            }
+            form.appendChild(preview);
         }
-        form.appendChild(preview);
     }
 
     async handleUploadSubmit(e) {
         e.preventDefault();
+        console.log('Upload form submitted');
         
         if (!this.selectedFiles || this.selectedFiles.length === 0) {
-            this.showToast('No files selected', 'error');
+            this.showToast('No files selected', 'danger');
             return;
         }
 
@@ -228,17 +248,18 @@ class ArtPlatform {
             this.refreshArtworks();
             
         } catch (error) {
+            console.error('Upload error:', error);
             this.hideUploadProgress();
-            this.showToast('Upload failed: ' + error.message, 'error');
+            this.showToast('Upload failed: ' + error.message, 'danger');
         }
     }
 
     async uploadFile(file) {
         const formData = new FormData();
         formData.append('artwork', file);
-        formData.append('title', document.getElementById('artworkTitle').value || file.name);
-        formData.append('description', document.getElementById('artworkDescription').value);
-        formData.append('is_public', document.getElementById('makePublic').checked);
+        formData.append('title', document.getElementById('artworkTitle')?.value || file.name);
+        formData.append('description', document.getElementById('artworkDescription')?.value || '');
+        formData.append('is_public', document.getElementById('makePublic')?.checked || false);
 
         const response = await fetch('/upload', {
             method: 'POST',
@@ -246,49 +267,74 @@ class ArtPlatform {
         });
 
         if (!response.ok) {
-            throw new Error('Upload failed');
+            const error = await response.json();
+            throw new Error(error.error || 'Upload failed');
         }
 
         return response.json();
     }
 
     showUploadProgress() {
-        document.getElementById('uploadProgress').style.display = 'block';
-        // Animate progress bar
-        const progressBar = document.querySelector('#uploadProgress .progress-bar');
-        let width = 0;
-        const interval = setInterval(() => {
-            width += Math.random() * 30;
-            if (width >= 90) {
-                clearInterval(interval);
-                width = 90;
+        const progressDiv = document.getElementById('uploadProgress');
+        if (progressDiv) {
+            progressDiv.style.display = 'block';
+            
+            // Animate progress bar
+            const progressBar = progressDiv.querySelector('.progress-bar');
+            if (progressBar) {
+                let width = 0;
+                const interval = setInterval(() => {
+                    width += Math.random() * 30;
+                    if (width >= 90) {
+                        clearInterval(interval);
+                        width = 90;
+                    }
+                    progressBar.style.width = width + '%';
+                }, 200);
             }
-            progressBar.style.width = width + '%';
-        }, 200);
+        }
     }
 
     hideUploadProgress() {
-        document.getElementById('uploadProgress').style.display = 'none';
-        document.querySelector('#uploadProgress .progress-bar').style.width = '0%';
+        const progressDiv = document.getElementById('uploadProgress');
+        if (progressDiv) {
+            progressDiv.style.display = 'none';
+            const progressBar = progressDiv.querySelector('.progress-bar');
+            if (progressBar) {
+                progressBar.style.width = '0%';
+            }
+        }
     }
 
     resetUploadForm() {
-        document.getElementById('uploadForm').style.display = 'none';
-        document.getElementById('artworkMetadata').reset();
-        document.getElementById('artworkUpload').value = '';
+        const uploadForm = document.getElementById('uploadForm');
+        const metadataForm = document.getElementById('artworkMetadata');
+        const uploadInput = document.getElementById('artworkUpload');
+        
+        if (uploadForm) uploadForm.style.display = 'none';
+        if (metadataForm) metadataForm.reset();
+        if (uploadInput) uploadInput.value = '';
+        
         this.selectedFiles = null;
     }
 
     // Authentication methods
     showAuthModal(mode = 'login') {
+        console.log('Showing auth modal:', mode);
         const title = mode === 'login' ? 'Welcome Back' : 'Join Our Community';
-        document.getElementById('authModalTitle').textContent = title;
+        
+        const titleEl = document.getElementById('authModalTitle');
+        if (titleEl) titleEl.textContent = title;
         
         const authContent = document.getElementById('authContent');
-        authContent.innerHTML = this.getAuthForm(mode);
+        if (authContent) {
+            authContent.innerHTML = this.getAuthForm(mode);
+            this.bindAuthEvents(mode);
+        }
         
-        this.authModal.show();
-        this.bindAuthEvents(mode);
+        if (this.authModal) {
+            this.authModal.show();
+        }
     }
 
     getAuthForm(mode) {
@@ -297,11 +343,11 @@ class ArtPlatform {
                 <form id="loginForm">
                     <div class="mb-3">
                         <label for="loginUsername" class="form-label">Username or Email</label>
-                        <input type="text" class="form-control" id="loginUsername" required>
+                        <input type="text" class="form-control" id="loginUsername" name="username" required>
                     </div>
                     <div class="mb-3">
                         <label for="loginPassword" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="loginPassword" required>
+                        <input type="password" class="form-control" id="loginPassword" name="password" required>
                     </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary">Sign In</button>
@@ -318,28 +364,28 @@ class ArtPlatform {
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="registerUsername" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="registerUsername" required>
+                                <input type="text" class="form-control" id="registerUsername" name="username" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="registerDisplayName" class="form-label">Display Name</label>
-                                <input type="text" class="form-control" id="registerDisplayName">
+                                <input type="text" class="form-control" id="registerDisplayName" name="display_name">
                             </div>
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="registerEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="registerEmail" required>
+                        <input type="email" class="form-control" id="registerEmail" name="email" required>
                     </div>
                     <div class="mb-3">
                         <label for="registerPassword" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="registerPassword" required minlength="6">
+                        <input type="password" class="form-control" id="registerPassword" name="password" required minlength="6">
                     </div>
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="agreeTerms" required>
                         <label class="form-check-label" for="agreeTerms">
-                            I agree to the <a href="#" target="_blank">Terms of Service</a>
+                            I agree to the Terms of Service
                         </label>
                     </div>
                     <div class="d-grid">
@@ -355,13 +401,16 @@ class ArtPlatform {
 
     bindAuthEvents(mode) {
         const form = document.getElementById(mode + 'Form');
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await this.handleAuth(mode, new FormData(form));
-        });
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.handleAuth(mode, new FormData(form));
+            });
+        }
     }
 
     async handleAuth(mode, formData) {
+        console.log('Handling auth:', mode);
         try {
             const data = Object.fromEntries(formData);
             
@@ -376,39 +425,43 @@ class ArtPlatform {
             const result = await response.json();
 
             if (response.ok) {
-                this.authModal.hide();
+                if (this.authModal) this.authModal.hide();
                 this.showToast(result.message, 'success');
                 this.loadUserData();
-                window.location.reload(); // Refresh to update UI
+                // Reload to update UI with user session
+                setTimeout(() => window.location.reload(), 1000);
             } else {
-                this.showToast(result.error, 'error');
+                this.showToast(result.error, 'danger');
             }
         } catch (error) {
-            this.showToast('Authentication failed', 'error');
+            console.error('Auth error:', error);
+            this.showToast('Authentication failed', 'danger');
         }
     }
 
     async loadUserData() {
-        // This would typically fetch user data from the server
-        // For now, check if user elements are present in DOM
+        // Check if user elements are present in DOM (server-side rendered)
         const userDropdown = document.getElementById('userDropdown');
         if (userDropdown) {
             this.currentUser = { authenticated: true };
-            document.getElementById('my-artworks').style.display = 'block';
+            const myArtworksSection = document.getElementById('my-artworks');
+            if (myArtworksSection) {
+                myArtworksSection.style.display = 'block';
+            }
         }
     }
 
-    // Gallery methods
+    // Gallery and artwork methods
     async loadGallery() {
         try {
             const response = await fetch('/gallery');
             if (response.ok) {
-                const html = await response.text();
-                // Parse and display gallery items
-                this.displayGalleryItems([]);
+                const data = await response.json();
+                this.displayGalleryItems(data.artworks || []);
             }
         } catch (error) {
             console.error('Failed to load gallery:', error);
+            this.displayGalleryItems([]);
         }
     }
 
@@ -434,12 +487,12 @@ class ArtPlatform {
             <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                 <div class="card artwork-card border-0 shadow-sm h-100">
                     <div class="artwork-image">
-                        <img src="${item.thumbnail || item.image}" class="card-img-top" alt="${item.title}" 
+                        <img src="${item.thumbnail_path || item.image_path}" class="card-img-top" alt="${item.title}" 
                              onclick="artPlatform.showArtworkDetails(${item.id})">
                         <div class="artwork-overlay">
                             <div class="artwork-actions">
                                 <button class="btn btn-sm btn-light" onclick="artPlatform.likeArtwork(${item.id})">
-                                    <i class="fas fa-heart"></i> ${item.likes}
+                                    <i class="fas fa-heart"></i> ${item.likes_count || 0}
                                 </button>
                                 <button class="btn btn-sm btn-light" onclick="artPlatform.analyzeArtwork(${item.id})">
                                     <i class="fas fa-brain"></i>
@@ -449,7 +502,7 @@ class ArtPlatform {
                     </div>
                     <div class="card-body">
                         <h6 class="card-title text-truncate">${item.title}</h6>
-                        <p class="card-text text-muted small">by ${item.artist}</p>
+                        <p class="card-text text-muted small">by ${item.display_name || item.username}</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">${this.formatDate(item.created_at)}</small>
                             <div class="btn-group" role="group">
@@ -469,6 +522,7 @@ class ArtPlatform {
 
     // Artwork interaction methods
     async likeArtwork(artworkId) {
+        console.log('Liking artwork:', artworkId);
         if (!this.currentUser) {
             this.showAuthModal('login');
             return;
@@ -482,21 +536,38 @@ class ArtPlatform {
             const result = await response.json();
             
             if (response.ok) {
+                this.showToast(result.liked ? 'Liked!' : 'Unliked!', 'success');
                 // Update UI to reflect new like status
                 this.updateLikeButton(artworkId, result.liked, result.like_count);
+            } else {
+                this.showToast(result.error, 'danger');
             }
         } catch (error) {
-            this.showToast('Failed to like artwork', 'error');
+            console.error('Like error:', error);
+            this.showToast('Failed to like artwork', 'danger');
         }
     }
 
+    updateLikeButton(artworkId, liked, likeCount) {
+        // Find and update like buttons for this artwork
+        const likeButtons = document.querySelectorAll(`[onclick*="likeArtwork(${artworkId})"]`);
+        likeButtons.forEach(button => {
+            const icon = button.querySelector('i');
+            if (icon) {
+                icon.className = liked ? 'fas fa-heart text-danger' : 'fas fa-heart';
+            }
+            button.innerHTML = `<i class="${liked ? 'fas fa-heart text-danger' : 'fas fa-heart'}"></i> ${likeCount}`;
+        });
+    }
+
     async analyzeArtwork(artworkId) {
+        console.log('Analyzing artwork:', artworkId);
         if (!this.currentUser) {
             this.showAuthModal('login');
             return;
         }
 
-        this.showLoadingOverlay('Analyzing artwork...');
+        this.showLoadingOverlay('Analyzing artwork with AI...');
 
         try {
             const response = await fetch(`/analyze/${artworkId}`, {
@@ -509,19 +580,25 @@ class ArtPlatform {
             if (response.ok) {
                 this.showAnalysisResults(result);
             } else {
-                this.showToast(result.error, 'error');
+                this.showToast(result.error, 'danger');
             }
         } catch (error) {
+            console.error('Analysis error:', error);
             this.hideLoadingOverlay();
-            this.showToast('Analysis failed', 'error');
+            this.showToast('Analysis failed', 'danger');
         }
     }
 
     showAnalysisResults(analysis) {
+        console.log('Showing analysis results:', analysis);
         const content = document.getElementById('analysisContent');
+        if (!content) return;
+
+        const textAnalysis = analysis.analysis.text_analysis || 'Analysis completed successfully.';
+        
         content.innerHTML = `
             <div class="analysis-results">
-                <div class="row">
+                <div class="row mb-4">
                     <div class="col-md-6">
                         <h6>Composition Score</h6>
                         <div class="progress mb-3">
@@ -537,6 +614,13 @@ class ArtPlatform {
                                 ${Math.round(analysis.analysis.color.score)}%
                             </div>
                         </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6>AI Analysis</h6>
+                    <div class="analysis-text p-3 bg-light rounded">
+                        ${this.formatAnalysisText(textAnalysis)}
                     </div>
                 </div>
                 
@@ -568,10 +652,13 @@ class ArtPlatform {
             </div>
         `;
         
-        this.analysisModal.show();
+        if (this.analysisModal) {
+            this.analysisModal.show();
+        }
     }
 
     async exportAnalysis(analysisId) {
+        console.log('Exporting analysis:', analysisId);
         try {
             const response = await fetch(`/export/pdf/${analysisId}`);
             
@@ -587,15 +674,21 @@ class ArtPlatform {
                 document.body.removeChild(a);
                 
                 this.showToast('Analysis exported successfully!', 'success');
+            } else {
+                this.showToast('Export failed', 'danger');
             }
         } catch (error) {
-            this.showToast('Export failed', 'error');
+            console.error('Export error:', error);
+            this.showToast('Export failed', 'danger');
         }
     }
 
     // Enhancement methods
     async enhanceArtwork(artworkId) {
+        console.log('Enhancing artwork:', artworkId);
         const content = document.getElementById('enhancementContent');
+        if (!content) return;
+
         content.innerHTML = `
             <div class="enhancement-tools">
                 <h6>Choose Enhancement Type</h6>
@@ -634,27 +727,26 @@ class ArtPlatform {
                     <h6>Preview</h6>
                     <div class="row">
                         <div class="col-6 text-center">
-                            <h6>Original</h6>
-                            <img id="originalPreview" class="img-fluid rounded">
-                        </div>
-                        <div class="col-6 text-center">
                             <h6>Enhanced</h6>
                             <img id="enhancedPreview" class="img-fluid rounded">
                         </div>
                     </div>
                     <div class="text-center mt-3">
-                        <button class="btn btn-success" onclick="artPlatform.saveEnhancement()">
-                            <i class="fas fa-save me-1"></i>Save Enhancement
+                        <button class="btn btn-success" onclick="artPlatform.downloadEnhanced()">
+                            <i class="fas fa-download me-1"></i>Download Enhanced
                         </button>
                     </div>
                 </div>
             </div>
         `;
         
-        this.enhancementModal.show();
+        if (this.enhancementModal) {
+            this.enhancementModal.show();
+        }
     }
 
     async applyEnhancement(artworkId, type) {
+        console.log('Applying enhancement:', type, 'to artwork:', artworkId);
         this.showLoadingOverlay('Applying enhancement...');
 
         try {
@@ -672,36 +764,72 @@ class ArtPlatform {
             if (response.ok) {
                 this.showEnhancementPreview(result);
             } else {
-                this.showToast(result.error, 'error');
+                this.showToast(result.error, 'danger');
             }
         } catch (error) {
+            console.error('Enhancement error:', error);
             this.hideLoadingOverlay();
-            this.showToast('Enhancement failed', 'error');
+            this.showToast('Enhancement failed', 'danger');
+        }
+    }
+
+    async applyFilter(artworkId, filterType) {
+        console.log('Applying filter:', filterType, 'to artwork:', artworkId);
+        this.showLoadingOverlay('Applying filter...');
+
+        try {
+            const formData = new FormData();
+            formData.append('filter_type', filterType);
+
+            const response = await fetch(`/enhance/${artworkId}`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            this.hideLoadingOverlay();
+
+            if (response.ok) {
+                this.showEnhancementPreview(result);
+            } else {
+                this.showToast(result.error, 'danger');
+            }
+        } catch (error) {
+            console.error('Filter error:', error);
+            this.hideLoadingOverlay();
+            this.showToast('Filter failed', 'danger');
         }
     }
 
     showEnhancementPreview(result) {
-        document.getElementById('enhancementPreview').style.display = 'block';
-        document.getElementById('enhancedPreview').src = `data:image/jpeg;base64,${result.enhanced_image}`;
-        this.currentEnhancement = result;
+        console.log('Showing enhancement preview');
+        const previewDiv = document.getElementById('enhancementPreview');
+        const previewImg = document.getElementById('enhancedPreview');
+        
+        if (previewDiv && previewImg) {
+            previewDiv.style.display = 'block';
+            previewImg.src = `data:image/jpeg;base64,${result.enhanced_image}`;
+            this.currentEnhancement = result;
+        }
+    }
+
+    downloadEnhanced() {
+        if (this.currentEnhancement && this.currentEnhancement.enhanced_image) {
+            const link = document.createElement('a');
+            link.href = `data:image/jpeg;base64,${this.currentEnhancement.enhanced_image}`;
+            link.download = `enhanced_artwork_${Date.now()}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            this.showToast('Enhanced artwork downloaded!', 'success');
+        }
     }
 
     // Utility methods
     preventDefaults(e) {
         e.preventDefault();
         e.stopPropagation();
-    }
-
-    debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
     }
 
     formatFileSize(bytes) {
@@ -715,6 +843,18 @@ class ArtPlatform {
     formatDate(dateString) {
         const date = new Date(dateString);
         return date.toLocaleDateString();
+    }
+
+    formatAnalysisText(text) {
+        // Convert markdown-style text to HTML
+        return text
+            .replace(/^# (.*$)/gm, '<h4 class="text-primary mt-3 mb-2">$1</h4>')
+            .replace(/^## (.*$)/gm, '<h5 class="text-secondary mt-3 mb-2">$1</h5>')
+            .replace(/^### (.*$)/gm, '<h6 class="text-dark mt-2 mb-2">$1</h6>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/\n\n/g, '<br><br>')
+            .replace(/\n/g, '<br>');
     }
 
     scrollToSection(sectionId) {
@@ -731,15 +871,24 @@ class ArtPlatform {
 
     showLoadingOverlay(message = 'Loading...') {
         const overlay = document.getElementById('loadingOverlay');
-        overlay.querySelector('p').textContent = message;
-        overlay.style.display = 'flex';
+        if (overlay) {
+            const messageEl = overlay.querySelector('p');
+            if (messageEl) messageEl.textContent = message;
+            overlay.style.display = 'flex';
+        }
     }
 
     hideLoadingOverlay() {
-        document.getElementById('loadingOverlay').style.display = 'none';
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
     }
 
     showToast(message, type = 'info') {
+        console.log('Toast:', message, type);
+        
+        // Create toast element
         const toast = document.createElement('div');
         toast.className = `toast align-items-center text-white bg-${type} border-0 position-fixed`;
         toast.style.cssText = 'bottom: 20px; right: 20px; z-index: 1060;';
@@ -747,17 +896,18 @@ class ArtPlatform {
         toast.innerHTML = `
             <div class="d-flex">
                 <div class="toast-body">${message}</div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.parentElement.parentElement.remove()"></button>
             </div>
         `;
         
         document.body.appendChild(toast);
-        const bsToast = new bootstrap.Toast(toast);
-        bsToast.show();
         
-        toast.addEventListener('hidden.bs.toast', () => {
-            toast.remove();
-        });
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.remove();
+            }
+        }, 5000);
     }
 
     handleNavigation(e) {
@@ -793,20 +943,15 @@ class ArtPlatform {
     }
 
     handleResize() {
-        // Handle responsive changes
-        if (window.innerWidth < 768) {
-            // Mobile adjustments
-        } else {
-            // Desktop adjustments
-        }
+        // Handle responsive changes if needed
     }
 
     showInstallPromotion() {
         const banner = document.createElement('div');
-        banner.className = 'install-banner';
+        banner.className = 'install-banner bg-primary text-white p-2';
         banner.innerHTML = `
             <div class="container">
-                <div class="d-flex justify-content-between align-items-center py-2">
+                <div class="d-flex justify-content-between align-items-center">
                     <span><i class="fas fa-mobile-alt me-2"></i>Install AI Art Platform for the best experience</span>
                     <div>
                         <button class="btn btn-sm btn-light me-2" onclick="artPlatform.installApp()">Install</button>
@@ -833,6 +978,30 @@ class ArtPlatform {
             this.hideInstallPromotion();
         }
     }
+
+    // Placeholder methods for missing functionality
+    showArtworkDetails(artworkId) {
+        console.log('Showing artwork details for:', artworkId);
+        this.showToast('Artwork details feature coming soon!', 'info');
+    }
+
+    shareArtwork(artworkId) {
+        console.log('Sharing artwork:', artworkId);
+        if (navigator.share) {
+            navigator.share({
+                title: 'Check out this artwork!',
+                url: window.location.href
+            });
+        } else {
+            this.showToast('Sharing feature coming soon!', 'info');
+        }
+    }
+
+    refreshArtworks() {
+        console.log('Refreshing artworks');
+        this.loadGallery();
+        this.showToast('Gallery refreshed!', 'success');
+    }
 }
 
 // Global functions for onclick handlers
@@ -840,10 +1009,13 @@ window.showAuthModal = (mode) => artPlatform.showAuthModal(mode);
 window.scrollToSection = (section) => artPlatform.scrollToSection(section);
 window.cancelUpload = () => artPlatform.resetUploadForm();
 window.toggleView = () => console.log('Toggle view');
-window.refreshArtworks = () => console.log('Refresh artworks');
+window.refreshArtworks = () => artPlatform.refreshArtworks();
 
-// Initialize the application
-const artPlatform = new ArtPlatform();
+// Initialize the application when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎨 Initializing AI Art Platform...');
+    window.artPlatform = new ArtPlatform();
+});
 
 // Make artPlatform globally available
-window.artPlatform = artPlatform;
+window.artPlatform = window.artPlatform || null;
