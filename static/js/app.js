@@ -479,11 +479,25 @@ class ArtPlatform {
 
     // Gallery and artwork methods
     async loadGallery() {
+        console.log('Loading gallery...');
         try {
             const response = await fetch('/gallery');
             if (response.ok) {
                 const data = await response.json();
-                this.displayGalleryItems(data.artworks || []);
+                console.log('Gallery response:', data);
+                
+                if (data.success && data.artworks) {
+                    this.displayGalleryItems(data.artworks);
+                    console.log(`Loaded ${data.artworks.length} artworks`);
+                } else if (data.artworks) {
+                    this.displayGalleryItems(data.artworks);
+                } else {
+                    console.log('No artworks found');
+                    this.displayGalleryItems([]);
+                }
+            } else {
+                console.error('Gallery request failed:', response.status);
+                this.displayGalleryItems([]);
             }
         } catch (error) {
             console.error('Failed to load gallery:', error);

@@ -1087,13 +1087,36 @@ def gallery():
                    COALESCE(u.username, 'anonymous') as username
             FROM artworks a
             LEFT JOIN users u ON a.user_id = u.id
-            WHERE a.is_public = 1
             ORDER BY a.created_at DESC
-            LIMIT 20
+            LIMIT 50
         ''').fetchall()
         conn.close()
         
-        return jsonify({'artworks': [dict(zip([col[0] for col in conn.description], artwork)) for artwork in artworks]})
+        # Convert to list of dictionaries with proper URLs
+        artworks_list = []
+        for artwork in artworks:
+            # Create proper image URLs
+            image_filename = artwork[3].split('/')[-1] if artwork[3] else None
+            thumbnail_filename = artwork[4].split('/')[-1] if artwork[4] else None
+            
+            artworks_list.append({
+                'id': artwork[0],
+                'title': artwork[1] or 'Untitled',
+                'description': artwork[2] or 'No description available',
+                'image_path': f'/uploads/{image_filename}' if image_filename else None,
+                'thumbnail_path': f'/uploads/{thumbnail_filename}' if thumbnail_filename else f'/uploads/{image_filename}',
+                'created_at': artwork[5],
+                'likes_count': artwork[6] or 0,
+                'user_id': artwork[7],
+                'display_name': artwork[8],
+                'username': artwork[9]
+            })
+        
+        return jsonify({
+            'success': True,
+            'artworks': artworks_list,
+            'total': len(artworks_list)
+        })
     
     except Exception as e:
         return jsonify({'error': f'Gallery load failed: {str(e)}'}), 500
