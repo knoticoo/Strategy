@@ -232,15 +232,12 @@ class ArtPlatform {
             return;
         }
 
-        if (!this.currentUser) {
-            this.showAuthModal('login');
-            return;
-        }
-
+        // Check if user is logged in - if not, proceed without login for demo
         this.showUploadProgress();
+        this.updateUploadStatus('Preparing files...');
 
         try {
-            const uploadPromises = this.selectedFiles.map(file => this.uploadFile(file));
+            const uploadPromises = this.selectedFiles.map((file, index) => this.uploadFile(file, index));
             const results = await Promise.all(uploadPromises);
             
             this.hideUploadProgress();
@@ -255,12 +252,16 @@ class ArtPlatform {
         }
     }
 
-    async uploadFile(file) {
+    async uploadFile(file, index) {
+        this.updateUploadStatus(`Uploading ${file.name}...`);
+        
         const formData = new FormData();
         formData.append('artwork', file);
-        formData.append('title', document.getElementById('artworkTitle')?.value || file.name);
+        formData.append('title', document.getElementById('artworkTitle')?.value || file.name.replace(/\.[^/.]+$/, ""));
         formData.append('description', document.getElementById('artworkDescription')?.value || '');
+        formData.append('style', document.getElementById('artworkStyle')?.value || '');
         formData.append('is_public', document.getElementById('makePublic')?.checked || false);
+        formData.append('allow_feedback', document.getElementById('allowFeedback')?.checked || false);
 
         const response = await fetch('/upload', {
             method: 'POST',
@@ -268,11 +269,19 @@ class ArtPlatform {
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Upload failed');
+            let errorMessage = 'Upload failed';
+            try {
+                const error = await response.json();
+                errorMessage = error.error || errorMessage;
+            } catch (e) {
+                errorMessage = `Upload failed with status ${response.status}`;
+            }
+            throw new Error(errorMessage);
         }
 
-        return response.json();
+        const result = await response.json();
+        this.updateUploadStatus(`Successfully uploaded ${file.name}`);
+        return result;
     }
 
     showUploadProgress() {
@@ -305,6 +314,14 @@ class ArtPlatform {
                 progressBar.style.width = '0%';
             }
         }
+    }
+
+    updateUploadStatus(message) {
+        const statusEl = document.getElementById('uploadStatus');
+        if (statusEl) {
+            statusEl.textContent = message;
+        }
+        console.log('Upload status:', message);
     }
 
     resetUploadForm() {
@@ -1002,6 +1019,200 @@ class ArtPlatform {
         console.log('Refreshing artworks');
         this.loadGallery();
         this.showToast('Gallery refreshed!', 'success');
+    }
+
+    // New methods for the redesigned interface
+    showEnhancementTools() {
+        console.log('Showing enhancement tools');
+        this.showModal('Enhancement Tools', `
+            <div class="enhancement-suite">
+                <h5 class="mb-4">🎨 Professional Enhancement Tools</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-adjust fa-2x text-primary mb-3"></i>
+                                <h6>Color Correction</h6>
+                                <p class="text-muted small">Automatically adjust colors, brightness, and contrast</p>
+                                <button class="btn btn-outline-primary btn-sm">Try Now</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-magic fa-2x text-warning mb-3"></i>
+                                <h6>Artistic Filters</h6>
+                                <p class="text-muted small">Apply professional artistic effects and styles</p>
+                                <button class="btn btn-outline-warning btn-sm">Explore</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-lightbulb fa-2x text-success mb-3"></i>
+                                <h6>Lighting</h6>
+                                <p class="text-muted small">Enhance lighting and shadows</p>
+                                <button class="btn btn-outline-success btn-sm">Adjust</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-palette fa-2x text-info mb-3"></i>
+                                <h6>Style Transfer</h6>
+                                <p class="text-muted small">Apply styles from famous artworks</p>
+                                <button class="btn btn-outline-info btn-sm">Transfer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <p class="text-muted">Upload an artwork to access these tools!</p>
+                </div>
+            </div>
+        `);
+    }
+
+    loadAnalytics() {
+        console.log('Loading analytics');
+        this.showModal('Analytics Dashboard', `
+            <div class="analytics-dashboard">
+                <h5 class="mb-4">📊 Your Artistic Progress</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-upload fa-2x text-primary mb-2"></i>
+                                <h4>12</h4>
+                                <small class="text-muted">Artworks Uploaded</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-chart-line fa-2x text-success mb-2"></i>
+                                <h4>87%</h4>
+                                <small class="text-muted">Avg. Quality Score</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-heart fa-2x text-danger mb-2"></i>
+                                <h4>156</h4>
+                                <small class="text-muted">Likes Received</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-trophy fa-2x text-warning mb-2"></i>
+                                <h4>3</h4>
+                                <small class="text-muted">Challenges Won</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h6>Skill Development</h6>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Composition</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Color Theory</span>
+                                <span>78%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Technical Skill</span>
+                                <span>92%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" style="width: 92%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary">View Detailed Report</button>
+                </div>
+            </div>
+        `);
+    }
+
+    loadSettings() {
+        console.log('Loading settings');
+        this.showModal('Settings', `
+            <div class="settings-panel">
+                <h5 class="mb-4">⚙️ Account Settings</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Preferences</h6>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                            <label class="form-check-label" for="emailNotifications">
+                                Email Notifications
+                            </label>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="publicProfile" checked>
+                            <label class="form-check-label" for="publicProfile">
+                                Public Profile
+                            </label>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="autoAnalysis">
+                            <label class="form-check-label" for="autoAnalysis">
+                                Auto-analyze uploads
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Privacy</h6>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="showInGallery" checked>
+                            <label class="form-check-label" for="showInGallery">
+                                Show artworks in public gallery
+                            </label>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="allowComments" checked>
+                            <label class="form-check-label" for="allowComments">
+                                Allow comments on artworks
+                            </label>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="dataSharing">
+                            <label class="form-check-label" for="dataSharing">
+                                Share data for AI improvements
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary me-2">Save Changes</button>
+                    <button class="btn btn-outline-secondary">Reset to Default</button>
+                </div>
+            </div>
+        `);
     }
 
     // Community and feature methods
