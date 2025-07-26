@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  ai-art-analyzer:
+    build:
+      context: .
+      dockerfile: Dockerfile-simple
+    ports:
+      - "5000:5000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-here}
+      - FLASK_ENV=production
+    volumes:
+      - ./uploads:/app/uploads
+    restart: unless-stopped
