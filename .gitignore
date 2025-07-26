@@ -1,9 +1,3 @@
-# Environment files
-.env
-.env.local
-.env.development
-.env.production
-
 # Python
 __pycache__/
 *.py[cod]
@@ -19,62 +13,26 @@ venv.bak/
 # Flask
 instance/
 .webassets-cache
+*.db
 
-# Uploads and temporary files
+# Uploads
 uploads/
-temp/
-*.tmp
+reports/
 
-# Logs
-*.log
-logs/
+# Environment variables
+.env
+.env.local
+.env.production
 
-# IDE files
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
 
-# OS files
+# OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
-# Docker
-.dockerignore
-
-# SSL certificates (if any)
-ssl/
-*.pem
-*.key
-*.crt
-
-# Model cache
-models/
-huggingface_cache/
-
-# Jupyter Notebooks
-.ipynb_checkpoints/
-
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+# Logs
+*.log
