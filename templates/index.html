@@ -618,6 +618,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
     
+    <!-- Initialize Application -->
+    <script>
+        // Ensure proper initialization after DOM and scripts are loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait for all scripts to load before initializing
+            if (window.artPlatform) {
+                console.log('ArtPlatform already initialized');
+            } else {
+                // Fallback initialization if needed
+                setTimeout(function() {
+                    if (window.artPlatform) {
+                        console.log('ArtPlatform initialized with delay');
+                    } else {
+                        console.warn('ArtPlatform failed to initialize');
+                    }
+                }, 100);
+            }
+        });
+    </script>
+    
     <!-- PWA Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {

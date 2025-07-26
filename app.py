@@ -754,6 +754,11 @@ def index():
     user = get_current_user()
     return render_template('index.html', user=user)
 
+@app.route('/enhanced')
+def enhanced():
+    """Enhanced analyzer page"""
+    return render_template('index-enhanced.html')
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     """User registration"""

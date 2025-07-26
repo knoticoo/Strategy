@@ -316,5 +316,27 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/enhanced.js') }}"></script>
+    
+    <!-- Initialize Enhanced Application -->
+    <script>
+        // Ensure proper initialization with error handling
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                initializeEnhancedApp();
+                console.log('Enhanced app initialized successfully');
+            } catch (error) {
+                console.error('Enhanced app initialization failed:', error);
+                // Retry initialization after a short delay
+                setTimeout(function() {
+                    try {
+                        initializeEnhancedApp();
+                        console.log('Enhanced app initialized on retry');
+                    } catch (retryError) {
+                        console.error('Enhanced app retry initialization failed:', retryError);
+                    }
+                }, 500);
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,87 +1,145 @@
 // Enhanced JavaScript for AI Art Analyzer
 
 document.addEventListener('DOMContentLoaded', function() {
-    initializeEnhancedApp();
+    try {
+        initializeEnhancedApp();
+    } catch (error) {
+        console.error('Enhanced app initialization failed:', error);
+        // Attempt basic initialization
+        initializeBasicEnhancedApp();
+    }
 });
 
 function initializeEnhancedApp() {
     bindEnhancedFormEvents();
     loadAnalysisHistory();
     checkApiStatus();
+    console.log('Enhanced app initialized successfully');
+}
+
+function initializeBasicEnhancedApp() {
+    try {
+        bindBasicEnhancedFormEvents();
+        console.log('Basic enhanced app initialized');
+    } catch (error) {
+        console.error('Basic enhanced app initialization failed:', error);
+    }
+}
+
+function bindBasicEnhancedFormEvents() {
+    // Essential enhanced form bindings only
+    safeBindForm('enhancedAnalyzeForm', handleEnhancedAnalyzeSubmit);
+    safeBindForm('compareForm', handleCompareSubmit);
+}
+
+function safeBindForm(formId, handler) {
+    try {
+        const form = document.getElementById(formId);
+        if (form) {
+            form.addEventListener('submit', handler);
+        }
+    } catch (error) {
+        console.warn(`Failed to bind enhanced form ${formId}:`, error);
+    }
 }
 
 function bindEnhancedFormEvents() {
-    // Enhanced analysis form
-    const enhancedAnalyzeForm = document.getElementById('enhancedAnalyzeForm');
-    if (enhancedAnalyzeForm) {
-        enhancedAnalyzeForm.addEventListener('submit', handleEnhancedAnalyzeSubmit);
-    }
-    
-    // Comparison form
-    const compareForm = document.getElementById('compareForm');
-    if (compareForm) {
-        compareForm.addEventListener('submit', handleCompareSubmit);
-    }
-    
-    // History refresh button
-    const refreshHistory = document.getElementById('refreshHistory');
-    if (refreshHistory) {
-        refreshHistory.addEventListener('click', loadAnalysisHistory);
-    }
-    
-    // Save analysis button (will be bound dynamically)
-    document.addEventListener('click', function(e) {
-        if (e.target.id === 'saveAnalysis') {
-            saveCurrentAnalysis();
+    try {
+        // Enhanced analysis form
+        safeBindForm('enhancedAnalyzeForm', handleEnhancedAnalyzeSubmit);
+        
+        // Comparison form  
+        safeBindForm('compareForm', handleCompareSubmit);
+        
+        // History refresh button
+        const refreshHistory = document.getElementById('refreshHistory');
+        if (refreshHistory) {
+            refreshHistory.addEventListener('click', function() {
+                try {
+                    loadAnalysisHistory();
+                } catch (error) {
+                    console.error('History refresh failed:', error);
+                }
+            });
         }
-    });
+        
+        // Save analysis button (will be bound dynamically)
+        document.addEventListener('click', function(e) {
+            try {
+                if (e.target.id === 'saveAnalysis') {
+                    saveCurrentAnalysis();
+                }
+            } catch (error) {
+                console.error('Save analysis click failed:', error);
+            }
+        });
+        
+    } catch (error) {
+        console.error('Enhanced form event binding failed:', error);
+        bindBasicEnhancedFormEvents();
+    }
 }
 
 function handleEnhancedAnalyzeSubmit(e) {
     e.preventDefault();
     
-    const formData = new FormData(e.target);
-    const file = formData.get('artwork');
-    
-    if (!file || file.size === 0) {
-        showError('Please select an image file to analyze.');
-        return;
-    }
-    
-    if (!isValidImageFile(file)) {
-        showError('Please upload a valid image file (JPG, PNG, GIF, BMP, WebP).');
-        return;
-    }
-    
-    if (file.size > 16 * 1024 * 1024) {
-        showError('File size must be less than 16MB.');
-        return;
-    }
-    
-    // Show loading state
-    showLoading('enhancedAnalyze');
-    hideResults('enhancedAnalysis');
-    
-    // Make API call
-    fetch('/analyze', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        hideLoading('enhancedAnalyze');
+    try {
+        const formData = new FormData(e.target);
+        const file = formData.get('artwork');
         
-        if (data.error) {
-            showError(data.error);
-        } else {
-            showEnhancedAnalysisResults(data);
+        if (!file || file.size === 0) {
+            showError('Please select an image file to analyze.');
+            return;
         }
-    })
-    .catch(error => {
+        
+        if (!isValidImageFile(file)) {
+            showError('Please upload a valid image file (JPG, PNG, GIF, BMP, WebP).');
+            return;
+        }
+        
+        if (file.size > 16 * 1024 * 1024) {
+            showError('File size must be less than 16MB.');
+            return;
+        }
+        
+        // Show loading state
+        showLoading('enhancedAnalyze');
+        hideResults('enhancedAnalysis');
+        
+        // Make API call with enhanced error handling
+        fetch('/analyze', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            hideLoading('enhancedAnalyze');
+            
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showEnhancedAnalysisResults(data);
+            }
+        })
+        .catch(error => {
+            hideLoading('enhancedAnalyze');
+            const errorMessage = error.message.includes('HTTP error') 
+                ? 'Server error occurred. Please try again later.'
+                : 'An error occurred while analyzing the image. Please try again.';
+            showError(errorMessage);
+            console.error('Enhanced analysis error:', error);
+        });
+        
+    } catch (error) {
         hideLoading('enhancedAnalyze');
-        showError('An error occurred while analyzing the image. Please try again.');
-        console.error('Enhanced analysis error:', error);
-    });
+        showError('An unexpected error occurred. Please try again.');
+        console.error('Enhanced analyze submit error:', error);
+    }
 }
 
 function handleCompareSubmit(e) {

@@ -1,8 +1,14 @@
 // Main JavaScript for AI Art Analyzer
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the application
-    initializeApp();
+    // Initialize the application with error handling
+    try {
+        initializeApp();
+    } catch (error) {
+        console.error('App initialization failed:', error);
+        // Attempt basic initialization
+        initializeBasicApp();
+    }
 });
 
 function initializeApp() {
@@ -14,136 +20,207 @@ function initializeApp() {
     
     // Initialize tooltips
     initializeTooltips();
+    
+    console.log('Main app initialized successfully');
+}
+
+function initializeBasicApp() {
+    try {
+        // Essential form bindings only
+        bindBasicFormEvents();
+        console.log('Basic app initialized');
+    } catch (error) {
+        console.error('Basic app initialization failed:', error);
+    }
+}
+
+function bindBasicFormEvents() {
+    // Analysis form with safe binding
+    safeBindForm('analyzeForm', handleAnalyzeSubmit);
+    
+    // Enhancement form with safe binding
+    safeBindForm('enhanceForm', handleEnhanceSubmit);
+    
+    // File input change events for preview
+    safeBindFileInput('analyzeFile', 'analyze');
+    safeBindFileInput('enhanceFile', 'enhance');
+}
+
+function safeBindForm(formId, handler) {
+    try {
+        const form = document.getElementById(formId);
+        if (form) {
+            form.addEventListener('submit', handler);
+        }
+    } catch (error) {
+        console.warn(`Failed to bind form ${formId}:`, error);
+    }
+}
+
+function safeBindFileInput(inputId, type) {
+    try {
+        const input = document.getElementById(inputId);
+        if (input) {
+            input.addEventListener('change', function(e) {
+                previewImage(e.target, type);
+            });
+        }
+    } catch (error) {
+        console.warn(`Failed to bind file input ${inputId}:`, error);
+    }
 }
 
 function bindFormEvents() {
-    // Analysis form
-    const analyzeForm = document.getElementById('analyzeForm');
-    if (analyzeForm) {
-        analyzeForm.addEventListener('submit', handleAnalyzeSubmit);
-    }
-    
-    // Enhancement form
-    const enhanceForm = document.getElementById('enhanceForm');
-    if (enhanceForm) {
-        enhanceForm.addEventListener('submit', handleEnhanceSubmit);
-    }
-    
-    // File input change events for preview
-    const analyzeFile = document.getElementById('analyzeFile');
-    if (analyzeFile) {
-        analyzeFile.addEventListener('change', function(e) {
-            previewImage(e.target, 'analyze');
+    try {
+        // Analysis form
+        safeBindForm('analyzeForm', handleAnalyzeSubmit);
+        
+        // Enhancement form
+        safeBindForm('enhanceForm', handleEnhanceSubmit);
+        
+        // File input change events for preview
+        safeBindFileInput('analyzeFile', 'analyze');
+        safeBindFileInput('enhanceFile', 'enhance');
+        
+        // Download button with event delegation
+        document.addEventListener('click', function(e) {
+            try {
+                if (e.target.id === 'downloadEnhanced' || e.target.closest('#downloadEnhanced')) {
+                    downloadEnhancedImage();
+                }
+            } catch (error) {
+                console.error('Download button click failed:', error);
+            }
         });
+        
+    } catch (error) {
+        console.error('Form event binding failed:', error);
+        bindBasicFormEvents();
     }
-    
-    const enhanceFile = document.getElementById('enhanceFile');
-    if (enhanceFile) {
-        enhanceFile.addEventListener('change', function(e) {
-            previewImage(e.target, 'enhance');
-        });
-    }
-    
-    // Download button
-    document.addEventListener('click', function(e) {
-        if (e.target.id === 'downloadEnhanced' || e.target.closest('#downloadEnhanced')) {
-            downloadEnhancedImage();
-        }
-    });
 }
 
 function handleAnalyzeSubmit(e) {
     e.preventDefault();
     
-    const formData = new FormData(e.target);
-    const file = formData.get('artwork');
-    
-    if (!file || file.size === 0) {
-        showError('Please select an image file to analyze.');
-        return;
-    }
-    
-    if (!isValidImageFile(file)) {
-        showError('Please upload a valid image file (JPG, PNG, GIF, BMP, WebP).');
-        return;
-    }
-    
-    if (file.size > 16 * 1024 * 1024) {
-        showError('File size must be less than 16MB.');
-        return;
-    }
-    
-    // Show loading state
-    showLoading('analyze');
-    hideResults('analyze');
-    
-    // Make API call
-    fetch('/analyze', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        hideLoading('analyze');
+    try {
+        const formData = new FormData(e.target);
+        const file = formData.get('artwork');
         
-        if (data.error) {
-            showError(data.error);
-        } else {
-            showAnalysisResults(data);
+        if (!file || file.size === 0) {
+            showError('Please select an image file to analyze.');
+            return;
         }
-    })
-    .catch(error => {
+        
+        if (!isValidImageFile(file)) {
+            showError('Please upload a valid image file (JPG, PNG, GIF, BMP, WebP).');
+            return;
+        }
+        
+        if (file.size > 16 * 1024 * 1024) {
+            showError('File size must be less than 16MB.');
+            return;
+        }
+        
+        // Show loading state
+        showLoading('analyze');
+        hideResults('analyze');
+        
+        // Make API call with error handling
+        fetch('/analyze', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            hideLoading('analyze');
+            
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showAnalysisResults(data);
+            }
+        })
+        .catch(error => {
+            hideLoading('analyze');
+            const errorMessage = error.message.includes('HTTP error') 
+                ? 'Server error occurred. Please try again later.'
+                : 'An error occurred while analyzing the image. Please try again.';
+            showError(errorMessage);
+            console.error('Analysis error:', error);
+        });
+        
+    } catch (error) {
         hideLoading('analyze');
-        showError('An error occurred while analyzing the image. Please try again.');
-        console.error('Analysis error:', error);
-    });
+        showError('An unexpected error occurred. Please try again.');
+        console.error('Analyze submit error:', error);
+    }
 }
 
 function handleEnhanceSubmit(e) {
     e.preventDefault();
     
-    const formData = new FormData(e.target);
-    const file = formData.get('artwork');
-    
-    if (!file || file.size === 0) {
-        showError('Please select an image file to enhance.');
-        return;
-    }
-    
-    if (!isValidImageFile(file)) {
-        showError('Please upload a valid image file (JPG, PNG, GIF, BMP, WebP).');
-        return;
-    }
-    
-    if (file.size > 16 * 1024 * 1024) {
-        showError('File size must be less than 16MB.');
-        return;
-    }
-    
-    // Show loading state
-    showLoading('enhance');
-    hideResults('enhance');
-    
-    // Make API call
-    fetch('/enhance', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        hideLoading('enhance');
+    try {
+        const formData = new FormData(e.target);
+        const file = formData.get('artwork');
         
-        if (data.error) {
-            showError(data.error);
-        } else {
-            showEnhanceResults(data);
+        if (!file || file.size === 0) {
+            showError('Please select an image file to enhance.');
+            return;
         }
-    })
-    .catch(error => {
+        
+        if (!isValidImageFile(file)) {
+            showError('Please upload a valid image file (JPG, PNG, GIF, BMP, WebP).');
+            return;
+        }
+        
+        if (file.size > 16 * 1024 * 1024) {
+            showError('File size must be less than 16MB.');
+            return;
+        }
+        
+        // Show loading state
+        showLoading('enhance');
+        hideResults('enhance');
+        
+        // Make API call with error handling
+        fetch('/enhance', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            hideLoading('enhance');
+            
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showEnhanceResults(data);
+            }
+        })
+        .catch(error => {
+            hideLoading('enhance');
+            const errorMessage = error.message.includes('HTTP error') 
+                ? 'Server error occurred. Please try again later.'
+                : 'An error occurred while enhancing the image. Please try again.';
+            showError(errorMessage);
+            console.error('Enhancement error:', error);
+        });
+        
+    } catch (error) {
         hideLoading('enhance');
-        showError('An error occurred while enhancing the image. Please try again.');
-        console.error('Enhancement error:', error);
-    });
+        showError('An unexpected error occurred. Please try again.');
+        console.error('Enhance submit error:', error);
+    }
 }
 
 function showAnalysisResults(data) {

@@ -2,54 +2,114 @@
 class ArtPlatform {
     constructor() {
         this.currentUser = null;
+        this.initialized = false;
         this.init();
     }
 
     init() {
-        this.bindEvents();
-        this.initializeUI();
-        this.loadUserData();
-        this.loadGallery();
-        this.setupDragAndDrop();
-        this.setupMobileNavigation();
-        this.setupPWA();
+        try {
+            this.bindEvents();
+            this.initializeUI();
+            this.loadUserData();
+            this.loadGallery();
+            this.setupDragAndDrop();
+            this.setupMobileNavigation();
+            this.setupPWA();
+            this.initialized = true;
+            console.log('ArtPlatform initialized successfully');
+        } catch (error) {
+            console.error('ArtPlatform initialization failed:', error);
+            // Attempt partial initialization
+            this.initializeBasicFeatures();
+        }
     }
 
-    bindEvents() {
-        // Upload events
-        document.getElementById('artworkUpload')?.addEventListener('change', this.handleFileSelect.bind(this));
-        document.getElementById('artworkMetadata')?.addEventListener('submit', this.handleUploadSubmit.bind(this));
-        
-        // Navigation events
-        document.querySelectorAll('.nav-link, .bottom-nav-link').forEach(link => {
-            link.addEventListener('click', this.handleNavigation.bind(this));
-        });
+    initializeBasicFeatures() {
+        try {
+            this.bindBasicEvents();
+            this.initialized = true;
+            console.log('ArtPlatform basic features initialized');
+        } catch (error) {
+            console.error('Basic features initialization failed:', error);
+        }
+    }
+
+    bindBasicEvents() {
+        // Essential event bindings with error handling
+        this.safeAddEventListener('artworkUpload', 'change', this.handleFileSelect.bind(this));
+        this.safeAddEventListener('artworkMetadata', 'submit', this.handleUploadSubmit.bind(this));
         
         // Window events
         window.addEventListener('scroll', this.handleScroll.bind(this));
         window.addEventListener('resize', this.handleResize.bind(this));
-        
-        // Gallery events
-        document.getElementById('gallerySearch')?.addEventListener('input', this.debounce(this.searchGallery.bind(this), 300));
-        document.getElementById('galleryStyle')?.addEventListener('change', this.filterGallery.bind(this));
-        document.getElementById('gallerySortBy')?.addEventListener('change', this.sortGallery.bind(this));
+    }
+
+    safeAddEventListener(elementId, event, handler) {
+        try {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.addEventListener(event, handler);
+            }
+        } catch (error) {
+            console.warn(`Failed to bind ${event} event to ${elementId}:`, error);
+        }
+    }
+
+    bindEvents() {
+        try {
+            // Upload events with safe binding
+            this.safeAddEventListener('artworkUpload', 'change', this.handleFileSelect.bind(this));
+            this.safeAddEventListener('artworkMetadata', 'submit', this.handleUploadSubmit.bind(this));
+            
+            // Navigation events
+            const navLinks = document.querySelectorAll('.nav-link, .bottom-nav-link');
+            navLinks.forEach(link => {
+                try {
+                    link.addEventListener('click', this.handleNavigation.bind(this));
+                } catch (error) {
+                    console.warn('Failed to bind navigation event:', error);
+                }
+            });
+            
+            // Window events
+            window.addEventListener('scroll', this.handleScroll.bind(this));
+            window.addEventListener('resize', this.handleResize.bind(this));
+            
+            // Gallery events with safe binding
+            this.safeAddEventListener('gallerySearch', 'input', this.debounce(this.searchGallery.bind(this), 300));
+            this.safeAddEventListener('galleryStyle', 'change', this.filterGallery.bind(this));
+            this.safeAddEventListener('gallerySortBy', 'change', this.sortGallery.bind(this));
+            
+        } catch (error) {
+            console.error('Event binding failed:', error);
+            this.bindBasicEvents();
+        }
     }
 
     initializeUI() {
-        // Initialize tooltips
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
+        try {
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
 
-        // Initialize modals
-        this.authModal = new bootstrap.Modal(document.getElementById('authModal'));
-        this.artworkModal = new bootstrap.Modal(document.getElementById('artworkModal'));
-        this.analysisModal = new bootstrap.Modal(document.getElementById('analysisModal'));
-        this.enhancementModal = new bootstrap.Modal(document.getElementById('enhancementModal'));
+            // Initialize modals with existence checks
+            const authModalEl = document.getElementById('authModal');
+            const artworkModalEl = document.getElementById('artworkModal');
+            const analysisModalEl = document.getElementById('analysisModal');
+            const enhancementModalEl = document.getElementById('enhancementModal');
 
-        // Setup intersection observer for animations
-        this.setupScrollAnimations();
+            if (authModalEl) this.authModal = new bootstrap.Modal(authModalEl);
+            if (artworkModalEl) this.artworkModal = new bootstrap.Modal(artworkModalEl);
+            if (analysisModalEl) this.analysisModal = new bootstrap.Modal(analysisModalEl);
+            if (enhancementModalEl) this.enhancementModal = new bootstrap.Modal(enhancementModalEl);
+
+            // Setup intersection observer for animations
+            this.setupScrollAnimations();
+        } catch (error) {
+            console.error('UI initialization failed:', error);
+        }
     }
 
     setupScrollAnimations() {
@@ -835,15 +895,97 @@ class ArtPlatform {
     }
 }
 
-// Global functions for onclick handlers
-window.showAuthModal = (mode) => artPlatform.showAuthModal(mode);
-window.scrollToSection = (section) => artPlatform.scrollToSection(section);
-window.cancelUpload = () => artPlatform.resetUploadForm();
-window.toggleView = () => console.log('Toggle view');
-window.refreshArtworks = () => console.log('Refresh artworks');
+// Global functions for onclick handlers with error handling
+window.showAuthModal = function(mode) {
+    try {
+        if (window.artPlatform && window.artPlatform.initialized) {
+            window.artPlatform.showAuthModal(mode);
+        } else {
+            console.warn('ArtPlatform not initialized, attempting fallback');
+            // Fallback: try to show modal directly
+            const modal = document.getElementById('authModal');
+            if (modal) {
+                const bootstrapModal = new bootstrap.Modal(modal);
+                bootstrapModal.show();
+            }
+        }
+    } catch (error) {
+        console.error('showAuthModal failed:', error);
+    }
+};
 
-// Initialize the application
-const artPlatform = new ArtPlatform();
+window.scrollToSection = function(section) {
+    try {
+        if (window.artPlatform && window.artPlatform.initialized) {
+            window.artPlatform.scrollToSection(section);
+        } else {
+            // Fallback: direct scroll
+            const element = document.getElementById(section);
+            if (element) {
+                const offset = 80;
+                const elementPosition = element.offsetTop - offset;
+                window.scrollTo({
+                    top: elementPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+    } catch (error) {
+        console.error('scrollToSection failed:', error);
+    }
+};
 
-// Make artPlatform globally available
-window.artPlatform = artPlatform;
+window.cancelUpload = function() {
+    try {
+        if (window.artPlatform && window.artPlatform.initialized) {
+            window.artPlatform.resetUploadForm();
+        } else {
+            // Fallback: hide upload form
+            const uploadForm = document.getElementById('uploadForm');
+            if (uploadForm) {
+                uploadForm.style.display = 'none';
+            }
+        }
+    } catch (error) {
+        console.error('cancelUpload failed:', error);
+    }
+};
+
+window.toggleView = function() {
+    try {
+        console.log('Toggle view requested');
+        // Add actual toggle view functionality if needed
+    } catch (error) {
+        console.error('toggleView failed:', error);
+    }
+};
+
+window.refreshArtworks = function() {
+    try {
+        if (window.artPlatform && window.artPlatform.initialized) {
+            window.artPlatform.loadGallery();
+        } else {
+            console.log('Refresh artworks requested');
+            // Fallback: reload page
+            window.location.reload();
+        }
+    } catch (error) {
+        console.error('refreshArtworks failed:', error);
+    }
+};
+
+// Initialize the application with error handling
+let artPlatform;
+try {
+    artPlatform = new ArtPlatform();
+    window.artPlatform = artPlatform;
+} catch (error) {
+    console.error('ArtPlatform instantiation failed:', error);
+    // Create minimal fallback object
+    window.artPlatform = {
+        initialized: false,
+        showAuthModal: function(mode) { console.warn('ArtPlatform not available'); },
+        scrollToSection: function(section) { console.warn('ArtPlatform not available'); },
+        resetUploadForm: function() { console.warn('ArtPlatform not available'); }
+    };
+}
