@@ -1,16 +1,17 @@
 version: '3.8'
 
 services:
-  ai-art-analyzer:
+  ai-art-platform:
     build: .
     ports:
       - "5000:5000"
     environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - SECRET_KEY=${SECRET_KEY}
+      - SECRET_KEY=${SECRET_KEY:-comprehensive-art-platform-secret}
       - FLASK_ENV=production
     volumes:
       - ./uploads:/app/uploads
+      - ./reports:/app/reports
+      - ./art_platform.db:/app/art_platform.db
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
@@ -28,5 +29,5 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./ssl:/etc/nginx/ssl
     depends_on:
-      - ai-art-analyzer
+      - ai-art-platform
     restart: unless-stopped
