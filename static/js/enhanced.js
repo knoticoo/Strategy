@@ -1,40 +1,106 @@
 // Enhanced JavaScript for AI Art Analyzer
 
 document.addEventListener('DOMContentLoaded', function() {
-    initializeEnhancedApp();
+    try {
+        initializeEnhancedApp();
+    } catch (error) {
+        console.error('Failed to initialize enhanced app:', error);
+        showToast('Enhanced features initialization failed', 'error');
+    }
+});
+
+// Add global error handler for enhanced features
+window.addEventListener('error', function(e) {
+    console.error('Global error in enhanced.js:', e.error);
+    showToast('An unexpected error occurred in enhanced features', 'error');
 });
 
 function initializeEnhancedApp() {
     bindEnhancedFormEvents();
     loadAnalysisHistory();
     checkApiStatus();
+    setupEnhancedEventDelegation();
+    initializeEnhancedTooltips();
+}
+
+function initializeEnhancedTooltips() {
+    try {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    } catch (error) {
+        console.error('Error initializing tooltips:', error);
+    }
+}
+
+function setupEnhancedEventDelegation() {
+    // Use event delegation for dynamic content
+    document.addEventListener('click', function(e) {
+        try {
+            // Handle save analysis button
+            if (e.target.id === 'saveAnalysis') {
+                e.preventDefault();
+                saveCurrentAnalysis();
+            }
+            
+            // Handle view history items
+            if (e.target.closest('[onclick*="viewHistoryItem"]')) {
+                e.preventDefault();
+                const filename = e.target.closest('[onclick*="viewHistoryItem"]').getAttribute('onclick').match(/'([^']+)'/)[1];
+                viewHistoryItem(filename);
+            }
+            
+            // Handle smooth scrolling for nav links
+            if (e.target.classList.contains('nav-link') && e.target.getAttribute('href').startsWith('#')) {
+                e.preventDefault();
+                const targetId = e.target.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error in enhanced event delegation:', error);
+            showToast('Enhanced feature action failed', 'error');
+        }
+    });
 }
 
 function bindEnhancedFormEvents() {
-    // Enhanced analysis form
-    const enhancedAnalyzeForm = document.getElementById('enhancedAnalyzeForm');
-    if (enhancedAnalyzeForm) {
-        enhancedAnalyzeForm.addEventListener('submit', handleEnhancedAnalyzeSubmit);
-    }
-    
-    // Comparison form
-    const compareForm = document.getElementById('compareForm');
-    if (compareForm) {
-        compareForm.addEventListener('submit', handleCompareSubmit);
-    }
-    
-    // History refresh button
-    const refreshHistory = document.getElementById('refreshHistory');
-    if (refreshHistory) {
-        refreshHistory.addEventListener('click', loadAnalysisHistory);
-    }
-    
-    // Save analysis button (will be bound dynamically)
-    document.addEventListener('click', function(e) {
-        if (e.target.id === 'saveAnalysis') {
-            saveCurrentAnalysis();
+    try {
+        // Enhanced analysis form
+        const enhancedAnalyzeForm = document.getElementById('enhancedAnalyzeForm');
+        if (enhancedAnalyzeForm) {
+            enhancedAnalyzeForm.addEventListener('submit', handleEnhancedAnalyzeSubmit);
         }
-    });
+        
+        // Comparison form
+        const compareForm = document.getElementById('compareForm');
+        if (compareForm) {
+            compareForm.addEventListener('submit', handleCompareSubmit);
+        }
+        
+        // History refresh button
+        const refreshHistory = document.getElementById('refreshHistory');
+        if (refreshHistory) {
+            refreshHistory.addEventListener('click', function(e) {
+                try {
+                    loadAnalysisHistory();
+                } catch (error) {
+                    console.error('Error refreshing history:', error);
+                    showToast('Failed to refresh history', 'error');
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error binding enhanced form events:', error);
+        showToast('Failed to bind enhanced form events', 'error');
+    }
 }
 
 function handleEnhancedAnalyzeSubmit(e) {
@@ -447,31 +513,11 @@ function updateFeatureStatus(features) {
     });
 }
 
-// Smooth scrolling for navigation links
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('nav-link') && e.target.getAttribute('href').startsWith('#')) {
-        e.preventDefault();
-        const targetId = e.target.getAttribute('href').substring(1);
-        const targetElement = document.getElementById(targetId);
-        
-        if (targetElement) {
-            targetElement.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    }
-});
-
-// Initialize tooltips
-document.addEventListener('DOMContentLoaded', function() {
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-});
-
 // Load history on page load
 window.addEventListener('load', function() {
-    loadAnalysisHistory();
+    try {
+        loadAnalysisHistory();
+    } catch (error) {
+        console.error('Error loading history on page load:', error);
+    }
 });

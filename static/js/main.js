@@ -1,8 +1,19 @@
 // Main JavaScript for AI Art Analyzer
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the application
-    initializeApp();
+    // Initialize the application with error handling
+    try {
+        initializeApp();
+    } catch (error) {
+        console.error('Failed to initialize main app:', error);
+        showToast('Application initialization failed', 'error');
+    }
+});
+
+// Add global error handler
+window.addEventListener('error', function(e) {
+    console.error('Global error in main.js:', e.error);
+    showToast('An unexpected error occurred', 'error');
 });
 
 function initializeApp() {
@@ -14,42 +25,83 @@ function initializeApp() {
     
     // Initialize tooltips
     initializeTooltips();
+    
+    // Setup event delegation
+    setupEventDelegation();
+}
+
+function setupEventDelegation() {
+    // Use event delegation for dynamic content
+    document.addEventListener('click', function(e) {
+        try {
+            // Handle download button clicks
+            if (e.target.id === 'downloadEnhanced' || e.target.closest('#downloadEnhanced')) {
+                e.preventDefault();
+                downloadEnhancedImage();
+            }
+            
+            // Handle smooth scrolling for nav links
+            if (e.target.classList.contains('nav-link') && e.target.getAttribute('href').startsWith('#')) {
+                e.preventDefault();
+                const targetId = e.target.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error in event delegation:', error);
+            showToast('Button action failed', 'error');
+        }
+    });
 }
 
 function bindFormEvents() {
-    // Analysis form
-    const analyzeForm = document.getElementById('analyzeForm');
-    if (analyzeForm) {
-        analyzeForm.addEventListener('submit', handleAnalyzeSubmit);
-    }
-    
-    // Enhancement form
-    const enhanceForm = document.getElementById('enhanceForm');
-    if (enhanceForm) {
-        enhanceForm.addEventListener('submit', handleEnhanceSubmit);
-    }
-    
-    // File input change events for preview
-    const analyzeFile = document.getElementById('analyzeFile');
-    if (analyzeFile) {
-        analyzeFile.addEventListener('change', function(e) {
-            previewImage(e.target, 'analyze');
-        });
-    }
-    
-    const enhanceFile = document.getElementById('enhanceFile');
-    if (enhanceFile) {
-        enhanceFile.addEventListener('change', function(e) {
-            previewImage(e.target, 'enhance');
-        });
-    }
-    
-    // Download button
-    document.addEventListener('click', function(e) {
-        if (e.target.id === 'downloadEnhanced' || e.target.closest('#downloadEnhanced')) {
-            downloadEnhancedImage();
+    try {
+        // Analysis form
+        const analyzeForm = document.getElementById('analyzeForm');
+        if (analyzeForm) {
+            analyzeForm.addEventListener('submit', handleAnalyzeSubmit);
         }
-    });
+        
+        // Enhancement form
+        const enhanceForm = document.getElementById('enhanceForm');
+        if (enhanceForm) {
+            enhanceForm.addEventListener('submit', handleEnhanceSubmit);
+        }
+        
+        // File input change events for preview
+        const analyzeFile = document.getElementById('analyzeFile');
+        if (analyzeFile) {
+            analyzeFile.addEventListener('change', function(e) {
+                try {
+                    previewImage(e.target, 'analyze');
+                } catch (error) {
+                    console.error('Error in preview:', error);
+                    showToast('Preview failed', 'error');
+                }
+            });
+        }
+        
+        const enhanceFile = document.getElementById('enhanceFile');
+        if (enhanceFile) {
+            enhanceFile.addEventListener('change', function(e) {
+                try {
+                    previewImage(e.target, 'enhance');
+                } catch (error) {
+                    console.error('Error in preview:', error);
+                    showToast('Preview failed', 'error');
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error binding form events:', error);
+        showToast('Failed to bind form events', 'error');
+    }
 }
 
 function handleAnalyzeSubmit(e) {
@@ -366,22 +418,6 @@ function initializeTooltips() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 }
-
-// Smooth scrolling for navigation links
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('nav-link') && e.target.getAttribute('href').startsWith('#')) {
-        e.preventDefault();
-        const targetId = e.target.getAttribute('href').substring(1);
-        const targetElement = document.getElementById(targetId);
-        
-        if (targetElement) {
-            targetElement.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    }
-});
 
 // Add loading animation to page
 function addPageLoadingAnimation() {

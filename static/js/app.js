@@ -3,16 +3,27 @@ class ArtPlatform {
     constructor() {
         this.currentUser = null;
         this.init();
+        
+        // Add error handling
+        window.onerror = (msg, url, line) => {
+            console.error(`Error: ${msg}\nURL: ${url}\nLine: ${line}`);
+            this.showToast('An error occurred. Please try again.', 'error');
+        };
     }
 
     init() {
-        this.bindEvents();
-        this.initializeUI();
-        this.loadUserData();
-        this.loadGallery();
-        this.setupDragAndDrop();
-        this.setupMobileNavigation();
-        this.setupPWA();
+        try {
+            this.bindEvents();
+            this.initializeUI();
+            this.loadUserData();
+            this.loadGallery();
+            this.setupDragAndDrop();
+            this.setupMobileNavigation();
+            this.setupPWA();
+        } catch (error) {
+            console.error('Initialization error:', error);
+            this.showToast('Failed to initialize application', 'error');
+        }
     }
 
     bindEvents() {

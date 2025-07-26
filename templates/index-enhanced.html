@@ -315,6 +315,12 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/enhanced.js') }}"></script>
+    <script>
+        // Initialize ArtPlatform globally
+        window.artPlatform = new ArtPlatform();
+    </script>
 </body>
 </html>
