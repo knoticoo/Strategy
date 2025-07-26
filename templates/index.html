@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Art Analyzer & Enhancer</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-palette me-2"></i>
+                AI Art Analyzer
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#analyze">Analyze</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#enhance">Enhance</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-12">
+                <!-- Hero Section -->
+                <section class="hero-section text-center py-5 bg-gradient">
+                    <div class="container">
+                        <h1 class="display-4 text-white mb-4">
+                            <i class="fas fa-magic me-3"></i>
+                            AI Art Analyzer & Enhancer
+                        </h1>
+                        <p class="lead text-white mb-5">
+                            Upload your artwork to get detailed AI analysis and feedback, or enhance it with AI-powered improvements
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Main Features -->
+                <div class="container py-5">
+                    <div class="row">
+                        <!-- Art Analysis Section -->
+                        <div class="col-lg-6 mb-5" id="analyze">
+                            <div class="card h-100 shadow-lg border-0">
+                                <div class="card-header bg-primary text-white">
+                                    <h3 class="card-title mb-0">
+                                        <i class="fas fa-search me-2"></i>
+                                        Art Analysis & Feedback
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted mb-4">
+                                        Get detailed AI-powered analysis of your artwork including composition, colors, technique, and improvement suggestions.
+                                    </p>
+                                    
+                                    <form id="analyzeForm" enctype="multipart/form-data">
+                                        <div class="mb-3">
+                                            <label for="analyzeFile" class="form-label">Upload Your Artwork</label>
+                                            <input class="form-control" type="file" id="analyzeFile" name="artwork" accept="image/*" required>
+                                            <div class="form-text">Supported formats: JPG, PNG, GIF, BMP, WebP (max 16MB)</div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                                            <i class="fas fa-brain me-2"></i>
+                                            Analyze Artwork
+                                        </button>
+                                    </form>
+
+                                    <!-- Loading indicator -->
+                                    <div id="analyzeLoading" class="text-center mt-4" style="display: none;">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Analyzing...</span>
+                                        </div>
+                                        <p class="mt-2">AI is analyzing your artwork...</p>
+                                    </div>
+
+                                    <!-- Analysis Results -->
+                                    <div id="analysisResults" class="mt-4" style="display: none;">
+                                        <h5>Analysis Results</h5>
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <img id="analyzedImage" class="img-fluid rounded shadow" alt="Analyzed artwork">
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div id="analysisText" class="analysis-text"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Art Enhancement Section -->
+                        <div class="col-lg-6 mb-5" id="enhance">
+                            <div class="card h-100 shadow-lg border-0">
+                                <div class="card-header bg-success text-white">
+                                    <h3 class="card-title mb-0">
+                                        <i class="fas fa-wand-magic-sparkles me-2"></i>
+                                        AI Art Enhancement
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted mb-4">
+                                        Let AI enhance your artwork with improved colors, composition, lighting, and details.
+                                    </p>
+                                    
+                                    <form id="enhanceForm" enctype="multipart/form-data">
+                                        <div class="mb-3">
+                                            <label for="enhanceFile" class="form-label">Upload Your Artwork</label>
+                                            <input class="form-control" type="file" id="enhanceFile" name="artwork" accept="image/*" required>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="enhancementType" class="form-label">Enhancement Type</label>
+                                            <select class="form-select" id="enhancementType" name="enhancement_type">
+                                                <option value="general">General Enhancement</option>
+                                                <option value="colors">Color Enhancement</option>
+                                                <option value="composition">Composition Improvement</option>
+                                                <option value="details">Detail Enhancement</option>
+                                                <option value="lighting">Lighting Improvement</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-success btn-lg w-100">
+                                            <i class="fas fa-sparkles me-2"></i>
+                                            Enhance Artwork
+                                        </button>
+                                    </form>
+
+                                    <!-- Loading indicator -->
+                                    <div id="enhanceLoading" class="text-center mt-4" style="display: none;">
+                                        <div class="spinner-border text-success" role="status">
+                                            <span class="visually-hidden">Enhancing...</span>
+                                        </div>
+                                        <p class="mt-2">AI is enhancing your artwork...</p>
+                                    </div>
+
+                                    <!-- Enhancement Results -->
+                                    <div id="enhanceResults" class="mt-4" style="display: none;">
+                                        <h5>Enhancement Results</h5>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <h6 class="text-center">Original</h6>
+                                                <img id="originalImage" class="img-fluid rounded shadow" alt="Original artwork">
+                                            </div>
+                                            <div class="col-6">
+                                                <h6 class="text-center">Enhanced</h6>
+                                                <img id="enhancedImage" class="img-fluid rounded shadow" alt="Enhanced artwork">
+                                                <div class="text-center mt-2">
+                                                    <button id="downloadEnhanced" class="btn btn-sm btn-outline-success">
+                                                        <i class="fas fa-download me-1"></i>
+                                                        Download
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features Section -->
+                <section class="features-section py-5 bg-light">
+                    <div class="container">
+                        <h2 class="text-center mb-5">Features</h2>
+                        <div class="row">
+                            <div class="col-md-3 mb-4">
+                                <div class="text-center">
+                                    <i class="fas fa-eye fa-3x text-primary mb-3"></i>
+                                    <h5>AI Analysis</h5>
+                                    <p class="text-muted">Detailed artwork analysis using advanced AI vision models</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <div class="text-center">
+                                    <i class="fas fa-comments fa-3x text-info mb-3"></i>
+                                    <h5>Expert Feedback</h5>
+                                    <p class="text-muted">Constructive feedback on composition, colors, and technique</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <div class="text-center">
+                                    <i class="fas fa-magic fa-3x text-success mb-3"></i>
+                                    <h5>AI Enhancement</h5>
+                                    <p class="text-muted">Improve your artwork with AI-powered enhancements</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <div class="text-center">
+                                    <i class="fas fa-graduation-cap fa-3x text-warning mb-3"></i>
+                                    <h5>Learning Tips</h5>
+                                    <p class="text-muted">Get personalized learning recommendations</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Footer -->
+                <footer class="bg-dark text-white py-4">
+                    <div class="container text-center">
+                        <p class="mb-0">&copy; 2024 AI Art Analyzer. Powered by AI for artists.</p>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Error</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="errorMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
