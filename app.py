@@ -1081,7 +1081,10 @@ def gallery():
     try:
         conn = sqlite3.connect('art_platform.db')
         artworks = conn.execute('''
-            SELECT a.*, u.name as display_name, u.username
+            SELECT a.id, a.title, a.description, a.image_path, a.thumbnail_path, 
+                   a.created_at, a.likes_count, a.user_id,
+                   COALESCE(u.name, 'Anonymous') as display_name, 
+                   COALESCE(u.username, 'anonymous') as username
             FROM artworks a
             LEFT JOIN users u ON a.user_id = u.id
             WHERE a.is_public = 1
