@@ -14,6 +14,7 @@ class ArtPlatform {
         this.setupDragAndDrop();
         this.setupMobileNavigation();
         this.setupPWA();
+        this.loadGallery(); // Load gallery on page load
     }
 
     bindEvents() {
@@ -1002,13 +1003,371 @@ class ArtPlatform {
         this.loadGallery();
         this.showToast('Gallery refreshed!', 'success');
     }
+
+    // Community and feature methods
+    async loadCommunity() {
+        console.log('Loading community data');
+        try {
+            const response = await fetch('/community');
+            if (response.ok) {
+                const data = await response.json();
+                this.displayCommunityData(data);
+            }
+        } catch (error) {
+            console.error('Failed to load community:', error);
+            this.showToast('Failed to load community data', 'danger');
+        }
+    }
+
+    displayCommunityData(data) {
+        console.log('Displaying community data:', data);
+        this.showToast(`Community loaded: ${data.total_members} members, ${data.active_today} active today!`, 'info');
+    }
+
+    async loadChallenges() {
+        console.log('Loading challenges');
+        try {
+            const response = await fetch('/challenges');
+            if (response.ok) {
+                const data = await response.json();
+                this.displayChallenges(data.challenges);
+            }
+        } catch (error) {
+            console.error('Failed to load challenges:', error);
+            this.showToast('Failed to load challenges', 'danger');
+        }
+    }
+
+    displayChallenges(challenges) {
+        console.log('Displaying challenges:', challenges);
+        
+        // Create challenges modal content
+        const challengesHtml = `
+            <div class="challenges-list">
+                <h5 class="mb-4">🏆 Active Art Challenges</h5>
+                ${challenges.map(challenge => `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="card-title">${challenge.title}</h6>
+                                    <p class="card-text text-muted">${challenge.description}</p>
+                                    <div class="row mt-2">
+                                        <div class="col-sm-6">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar me-1"></i>
+                                                Deadline: ${challenge.deadline}
+                                            </small>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <small class="text-muted">
+                                                <i class="fas fa-users me-1"></i>
+                                                ${challenge.participants} participants
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-${challenge.status === 'ending_soon' ? 'warning' : 'primary'} mb-2">
+                                        ${challenge.difficulty}
+                                    </span>
+                                    <br>
+                                    <button class="btn btn-outline-primary btn-sm" onclick="artPlatform.joinChallenge(${challenge.id})">
+                                        Join Challenge
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <strong>Prize:</strong> ${challenge.prize}
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+        this.showModal('Art Challenges', challengesHtml);
+    }
+
+    async joinChallenge(challengeId) {
+        console.log('Joining challenge:', challengeId);
+        if (!this.currentUser) {
+            this.showAuthModal('login');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/join_challenge/${challengeId}`, {
+                method: 'POST'
+            });
+
+            const result = await response.json();
+            
+            if (response.ok) {
+                this.showToast(result.message, 'success');
+            } else {
+                this.showToast(result.error, 'danger');
+            }
+        } catch (error) {
+            console.error('Join challenge error:', error);
+            this.showToast('Failed to join challenge', 'danger');
+        }
+    }
+
+    async loadLearning() {
+        console.log('Loading learning resources');
+        try {
+            const response = await fetch('/learning');
+            if (response.ok) {
+                const data = await response.json();
+                this.displayLearningResources(data);
+            }
+        } catch (error) {
+            console.error('Failed to load learning resources:', error);
+            this.showToast('Failed to load learning resources', 'danger');
+        }
+    }
+
+    displayLearningResources(data) {
+        console.log('Displaying learning resources:', data);
+        
+        const resourcesHtml = `
+            <div class="learning-resources">
+                <h5 class="mb-4">📚 Learning Resources</h5>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <h6>${data.your_progress.completed}</h6>
+                            <small class="text-muted">Completed</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <h6>${data.your_progress.in_progress}</h6>
+                            <small class="text-muted">In Progress</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <h6>${data.your_progress.bookmarked}</h6>
+                            <small class="text-muted">Bookmarked</small>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="resources-list">
+                    ${data.resources.map(resource => `
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h6 class="card-title">${resource.title}</h6>
+                                        <p class="card-text text-muted">${resource.description}</p>
+                                        <div class="d-flex gap-3">
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock me-1"></i>${resource.duration}
+                                            </small>
+                                            <small class="text-muted">
+                                                <i class="fas fa-signal me-1"></i>${resource.difficulty}
+                                            </small>
+                                            <small class="text-muted">
+                                                <i class="fas fa-user me-1"></i>${resource.author}
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <span class="badge bg-info mb-2">${resource.type}</span>
+                                        <br>
+                                        <button class="btn btn-outline-success btn-sm" onclick="artPlatform.startLearning(${resource.id})">
+                                            Start Learning
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        
+        this.showModal('Learning Resources', resourcesHtml);
+    }
+
+    startLearning(resourceId) {
+        console.log('Starting learning resource:', resourceId);
+        this.showToast('Learning feature coming soon! This will open the tutorial.', 'info');
+    }
+
+    async loadProfile() {
+        console.log('Loading user profile');
+        if (!this.currentUser) {
+            this.showAuthModal('login');
+            return;
+        }
+
+        try {
+            const response = await fetch('/profile');
+            if (response.ok) {
+                const data = await response.json();
+                this.displayProfile(data.stats);
+            }
+        } catch (error) {
+            console.error('Failed to load profile:', error);
+            this.showToast('Failed to load profile', 'danger');
+        }
+    }
+
+    displayProfile(stats) {
+        console.log('Displaying profile:', stats);
+        
+        const profileHtml = `
+            <div class="user-profile">
+                <h5 class="mb-4">👤 Your Profile</h5>
+                <div class="row text-center mb-4">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <i class="fas fa-images fa-2x text-primary mb-2"></i>
+                                <h4>${stats.artwork_count}</h4>
+                                <small class="text-muted">Artworks Uploaded</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <i class="fas fa-heart fa-2x text-danger mb-2"></i>
+                                <h4>${stats.likes_received}</h4>
+                                <small class="text-muted">Likes Received</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <i class="fas fa-brain fa-2x text-success mb-2"></i>
+                                <h4>${stats.analysis_count}</h4>
+                                <small class="text-muted">Analyses Completed</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button class="btn btn-primary me-2" onclick="artPlatform.editProfile()">
+                        <i class="fas fa-edit me-1"></i>Edit Profile
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="artPlatform.downloadData()">
+                        <i class="fas fa-download me-1"></i>Download My Data
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        this.showModal('My Profile', profileHtml);
+    }
+
+    editProfile() {
+        this.showToast('Profile editing feature coming soon!', 'info');
+    }
+
+    downloadData() {
+        this.showToast('Data download feature coming soon!', 'info');
+    }
+
+    // Community discussions
+    joinDiscussions() {
+        console.log('Opening community discussions');
+        this.loadCommunity();
+        this.showToast('Joining community discussions...', 'info');
+    }
+
+    viewChallenges() {
+        console.log('Viewing challenges');
+        this.loadChallenges();
+    }
+
+    startLearningJourney() {
+        console.log('Starting learning journey');
+        this.loadLearning();
+    }
+
+    // General modal display method
+    showModal(title, content) {
+        // Create modal if it doesn't exist
+        let modal = document.getElementById('generalModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.id = 'generalModal';
+            modal.innerHTML = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="generalModalTitle"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body" id="generalModalBody">
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Update content
+        document.getElementById('generalModalTitle').textContent = title;
+        document.getElementById('generalModalBody').innerHTML = content;
+
+        // Show modal
+        if (typeof bootstrap !== 'undefined') {
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+        } else {
+            modal.style.display = 'block';
+            modal.classList.add('show');
+        }
+    }
+
+    // Gallery loading
+    async loadGallery() {
+        try {
+            const response = await fetch('/gallery');
+            if (response.ok) {
+                const data = await response.json();
+                this.displayGalleryItems(data.artworks || []);
+            }
+        } catch (error) {
+            console.error('Failed to load gallery:', error);
+            this.displayGalleryItems([]);
+        }
+    }
+
+    // Toggle view functionality 
+    toggleView() {
+        const grid = document.getElementById('galleryGrid');
+        const button = document.getElementById('viewToggle');
+        
+        if (grid && button) {
+            if (grid.classList.contains('row')) {
+                // Switch to list view
+                grid.className = 'list-view';
+                button.innerHTML = '<i class="fas fa-th me-1"></i>Grid';
+                this.showToast('Switched to list view', 'info');
+            } else {
+                // Switch to grid view
+                grid.className = 'row';
+                button.innerHTML = '<i class="fas fa-list me-1"></i>List';
+                this.showToast('Switched to grid view', 'info');
+            }
+        }
+    }
 }
 
 // Global functions for onclick handlers
 window.showAuthModal = (mode) => artPlatform.showAuthModal(mode);
 window.scrollToSection = (section) => artPlatform.scrollToSection(section);
 window.cancelUpload = () => artPlatform.resetUploadForm();
-window.toggleView = () => console.log('Toggle view');
+window.toggleView = () => artPlatform.toggleView();
 window.refreshArtworks = () => artPlatform.refreshArtworks();
 
 // Initialize the application when DOM is loaded
