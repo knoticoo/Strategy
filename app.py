@@ -867,7 +867,11 @@ def upload_artwork():
         
         # Perform AI analysis
         print("Starting AI analysis...")
-        analysis_result = analyze_artwork_with_huggingface(file_path)
+        try:
+            analysis_result = analyze_artwork_with_huggingface(file_path)
+        except Exception as e:
+            print(f"Analysis error: {e}")
+            analysis_result = analyze_artwork_local(file_path)
         
         # Save to database (use demo user if not logged in)
         user_id = session.get('user_id', 1)  # Default to demo user
@@ -1077,9 +1081,9 @@ def gallery():
     try:
         conn = sqlite3.connect('art_platform.db')
         artworks = conn.execute('''
-            SELECT a.*, u.display_name, u.username
+            SELECT a.*, u.name as display_name, u.username
             FROM artworks a
-            JOIN users u ON a.user_id = u.id
+            LEFT JOIN users u ON a.user_id = u.id
             WHERE a.is_public = 1
             ORDER BY a.created_at DESC
             LIMIT 20
@@ -1349,7 +1353,7 @@ def join_challenge(challenge_id):
     user_id = session.get('user_id', 1)  # Default to demo user
     
     try:
-        conn = get_db_connection()
+        conn = sqlite3.connect('art_platform.db')
         # Check if already joined
         existing = conn.execute(
             'SELECT id FROM challenge_participants WHERE challenge_id = ? AND user_id = ?',
@@ -1388,7 +1392,7 @@ def admin_challenges():
         prize = data.get('prize')
         deadline = data.get('deadline')
         
-        conn = get_db_connection()
+        conn = sqlite3.connect('art_platform.db')
         conn.execute('''
             INSERT INTO challenges (title, description, theme, prize, deadline, created_at)
             VALUES (?, ?, ?, ?, ?, datetime('now'))
@@ -1399,7 +1403,7 @@ def admin_challenges():
         return jsonify({'message': 'Challenge created successfully!'})
     
     # GET - return existing challenges
-    conn = get_db_connection()
+    conn = sqlite3.connect('art_platform.db')
     challenges = conn.execute('''
         SELECT c.*, COUNT(cp.user_id) as participant_count
         FROM challenges c
@@ -1423,7 +1427,7 @@ def admin_learning():
         difficulty = data.get('difficulty')
         duration = data.get('duration')
         
-        conn = get_db_connection()
+        conn = sqlite3.connect('art_platform.db')
         conn.execute('''
             INSERT INTO learning_resources (title, description, content, category, difficulty, duration, created_at)
             VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
@@ -1434,7 +1438,7 @@ def admin_learning():
         return jsonify({'message': 'Learning resource created successfully!'})
     
     # GET - return existing resources
-    conn = get_db_connection()
+    conn = sqlite3.connect('art_platform.db')
     resources = conn.execute('''
         SELECT * FROM learning_resources ORDER BY created_at DESC
     ''').fetchall()
@@ -1451,7 +1455,7 @@ def admin_discussions():
         content = data.get('content')
         category = data.get('category')
         
-        conn = get_db_connection()
+        conn = sqlite3.connect('art_platform.db')
         conn.execute('''
             INSERT INTO discussions (title, content, category, author_id, created_at)
             VALUES (?, ?, ?, ?, datetime('now'))
@@ -1462,11 +1466,10 @@ def admin_discussions():
         return jsonify({'message': 'Discussion created successfully!'})
     
     # GET - return existing discussions
-    conn = get_db_connection()
+    conn = sqlite3.connect('art_platform.db')
     discussions = conn.execute('''
-        SELECT d.*, u.name as author_name, COUNT(dr.id) as reply_count
+        SELECT d.*, COUNT(dr.id) as reply_count
         FROM discussions d
-        LEFT JOIN users u ON d.author_id = u.id
         LEFT JOIN discussion_replies dr ON d.id = dr.discussion_id
         GROUP BY d.id
         ORDER BY d.created_at DESC
