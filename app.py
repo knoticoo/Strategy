@@ -33,7 +33,7 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['REPORTS_FOLDER'], exist_ok=True)
 
 # AI Configuration - Enhanced Local Analysis
-HF_API_KEY = os.environ.get('HUGGINGFACE_API_KEY') or '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'
+HF_API_KEY = os.environ.get('HUGGINGFACE_API_KEY') or 'your_api_key_here'  # Replace with: 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
 HF_API_URL = "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large"
 USE_LOCAL_AI = True  # Use enhanced local AI analysis
 
