@@ -241,7 +241,15 @@ class ArtPlatform {
             const results = await Promise.all(uploadPromises);
             
             this.hideUploadProgress();
-            this.showToast(`Successfully uploaded ${results.length} artwork(s)!`, 'success');
+            this.showToast(`Successfully uploaded and analyzed ${results.length} artwork(s)!`, 'success');
+            
+            // Show analysis results for the first artwork
+            if (results.length > 0 && results[0].analysis) {
+                setTimeout(() => {
+                    this.showAnalysisModal(results[0].analysis, results[0].artwork_id);
+                }, 1000);
+            }
+            
             this.resetUploadForm();
             this.refreshArtworks();
             
@@ -1213,6 +1221,61 @@ class ArtPlatform {
                 </div>
             </div>
         `);
+    }
+
+    showAnalysisModal(analysis, artworkId) {
+        const modalContent = `
+            <div class="analysis-results">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0">🎨 AI Analysis Complete</h5>
+                    <span class="badge bg-success">FREE Analysis</span>
+                </div>
+                
+                <div class="analysis-content" style="max-height: 400px; overflow-y: auto;">
+                    ${this.formatAnalysisText(analysis)}
+                </div>
+                
+                <div class="mt-4 d-flex gap-2 flex-wrap">
+                    <button class="btn btn-primary" onclick="artPlatform.downloadAnalysisReport(${artworkId})">
+                        <i class="fas fa-download me-1"></i>Download PDF Report
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="artPlatform.showEnhancementTools()">
+                        <i class="fas fa-magic me-1"></i>Enhance Artwork
+                    </button>
+                    <button class="btn btn-outline-success" onclick="artPlatform.shareArtwork(${artworkId})">
+                        <i class="fas fa-share me-1"></i>Share Analysis
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        this.showModal('AI Analysis Results', modalContent);
+    }
+
+    async downloadAnalysisReport(artworkId) {
+        try {
+            const response = await fetch(`/export_report/${artworkId}`, {
+                method: 'POST'
+            });
+            
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `artwork_analysis_${artworkId}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                this.showToast('Analysis report downloaded!', 'success');
+            } else {
+                this.showToast('Failed to download report', 'danger');
+            }
+        } catch (error) {
+            console.error('Download error:', error);
+            this.showToast('Error downloading report', 'danger');
+        }
     }
 
     // Community and feature methods
