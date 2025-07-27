@@ -1,6 +1,6 @@
 // Smart Insights Service - AI-Powered Financial & Property Recommendations
 // Note: axios import removed as it's not currently used
-import { Transaction } from '../components/BudgetApp';
+import { Transaction } from '../types';
 import { SSProperty } from './ssLvScrapingService';
 import latvianBankService, { MortgageCalculation } from './latvianBankService';
 

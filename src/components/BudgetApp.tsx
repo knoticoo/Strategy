@@ -3,22 +3,10 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 import { Plus, TrendingUp, TrendingDown, CreditCard, Wallet, ArrowUpRight, ArrowDownRight, DollarSign, Receipt, Target, Eye, EyeOff, Lightbulb, Home, Star, AlertTriangle } from 'lucide-react';
 import smartInsightsService, { SmartInsight, FinancialGoal } from '../services/smartInsightsService';
 import latvianBankService from '../services/latvianBankService';
+import { Transaction, Budget } from '../types';
 
-export interface Transaction {
-  id: string;
-  type: 'income' | 'expense';
-  amount: number;
-  category: string;
-  description: string;
-  date: string;
-}
-
-interface Budget {
-  category: string;
-  allocated: number;
-  spent: number;
-  color: string;
-}
+// Re-export Transaction for backward compatibility
+export type { Transaction };
 
 const BudgetApp: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([
