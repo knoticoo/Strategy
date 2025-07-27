@@ -1,11 +1,11 @@
 // Enhanced House Search Component for Latvian Market - Modern Design
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search, MapPin, Home, Square, ExternalLink, Filter, Bell, TrendingUp, Euro, Building, Star, Eye, Heart, Calendar, ArrowRight, BarChart3, Target, ChevronDown, X, Bed, Bath } from 'lucide-react';
+import { Search, MapPin, Home, Square, Filter, Bell, Star, Eye, Heart, Calendar, ArrowRight, BarChart3, X, Bed, Bath } from 'lucide-react';
 import PropertyMap from './PropertyMap';
 import MortgageCalculator from './MortgageCalculator';
 import ssLvService, { SSProperty, SearchFilters, MarketAnalytics } from '../services/ssLvScrapingService';
 import latvianBankService, { LatvianRegion } from '../services/latvianBankService';
-import smartInsightsService, { PropertyRecommendation, MarketForecast } from '../services/smartInsightsService';
+import smartInsightsService, { PropertyRecommendation } from '../services/smartInsightsService';
 
 const HouseSearch: React.FC = () => {
   const [properties, setProperties] = useState<SSProperty[]>([]);
@@ -23,8 +23,6 @@ const HouseSearch: React.FC = () => {
 
   const [marketAnalytics, setMarketAnalytics] = useState<MarketAnalytics | null>(null);
   const [recommendations, setRecommendations] = useState<PropertyRecommendation[]>([]);
-  const [forecasts, setForecast] = useState<MarketForecast[]>([]);
-  const [priceAlerts, setPriceAlerts] = useState<any[]>([]);
   const [regions] = useState<LatvianRegion[]>(latvianBankService.getRegions());
   
   // User preferences for smart recommendations
@@ -63,15 +61,7 @@ const HouseSearch: React.FC = () => {
     }
   }, []);
 
-  const loadForecasts = useCallback(async () => {
-    try {
-      const regionNames = regions.map(r => r.name);
-      const forecasts = await smartInsightsService.generateMarketForecasts(regionNames);
-      setForecast(forecasts);
-    } catch (error) {
-      console.error('Error loading forecasts:', error);
-    }
-  }, [regions]);
+
 
   const generateRecommendations = useCallback(async () => {
     if (properties.length === 0) return;
@@ -96,8 +86,7 @@ const HouseSearch: React.FC = () => {
   useEffect(() => {
     searchProperties();
     loadMarketData();
-    loadForecasts();
-  }, [searchProperties, loadMarketData, loadForecasts]);
+  }, [searchProperties, loadMarketData]);
 
   // Search properties when filters change (debounced)
   useEffect(() => {
@@ -112,17 +101,7 @@ const HouseSearch: React.FC = () => {
     generateRecommendations();
   }, [generateRecommendations]);
 
-  const createPriceAlert = async (targetPrice: number) => {
-    const alert = {
-      id: Date.now().toString(),
-      userId: 'demo-user',
-      filters: { ...filters, maxPrice: targetPrice },
-      targetPrice,
-      createdAt: new Date().toISOString(),
-      active: true
-    };
-    setPriceAlerts(prev => [...prev, alert]);
-  };
+
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('lv-LV', {
@@ -166,12 +145,12 @@ const HouseSearch: React.FC = () => {
                   </div>
                   <div className="text-xs text-gray-500">Vidējā cena</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">
-                    {marketAnalytics ? `+${marketAnalytics.priceGrowth.toFixed(1)}%` : '-'}
-                  </div>
-                  <div className="text-xs text-gray-500">Pieaugums</div>
-                </div>
+                                 <div className="text-center">
+                   <div className="text-2xl font-bold text-purple-600">
+                     {marketAnalytics ? `+${marketAnalytics.priceChange.toFixed(1)}%` : '-'}
+                   </div>
+                   <div className="text-xs text-gray-500">Pieaugums</div>
+                 </div>
               </div>
             </div>
 
@@ -351,15 +330,12 @@ const HouseSearch: React.FC = () => {
                 <h2 className="text-xl font-bold text-gray-900">
                   {loading ? 'Meklē īpašumus...' : `${filteredProperties.length} īpašumi atrasti`}
                 </h2>
-                <div className="flex items-center space-x-4">
-                  <button
-                    onClick={() => createPriceAlert(filters.maxPrice || 100000)}
-                    className="flex items-center space-x-2 px-4 py-2 bg-orange-100 text-orange-700 rounded-xl hover:bg-orange-200 transition-colors"
-                  >
-                    <Bell className="h-4 w-4" />
-                    <span className="text-sm font-medium">Cenas brīdinājums</span>
-                  </button>
-                </div>
+                                 <div className="flex items-center space-x-4">
+                   <button className="flex items-center space-x-2 px-4 py-2 bg-orange-100 text-orange-700 rounded-xl hover:bg-orange-200 transition-colors">
+                     <Bell className="h-4 w-4" />
+                     <span className="text-sm font-medium">Cenas brīdinājums</span>
+                   </button>
+                 </div>
               </div>
 
               {loading ? (
@@ -385,12 +361,12 @@ const HouseSearch: React.FC = () => {
                       onClick={() => setSelectedProperty(property)}
                     >
                       {/* Property Image */}
-                      <div className="relative h-48 overflow-hidden">
-                        <img
-                          src={property.images?.[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&h=300&fit=crop'}
-                          alt={property.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
+                                             <div className="relative h-48 overflow-hidden">
+                         <img
+                           src={property.imageUrls?.[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&h=300&fit=crop'}
+                           alt={property.title}
+                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                         />
                         <div className="absolute top-4 left-4">
                           <span className="px-3 py-1 bg-blue-600 text-white rounded-full text-sm font-medium">
                             {property.type === 'apartment' ? 'Dzīvoklis' : 'Māja'}
@@ -492,12 +468,12 @@ const HouseSearch: React.FC = () => {
       {selectedProperty && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="relative">
-              <img
-                src={selectedProperty.images?.[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=400&fit=crop'}
-                alt={selectedProperty.title}
-                className="w-full h-64 object-cover"
-              />
+                         <div className="relative">
+               <img
+                 src={selectedProperty.imageUrls?.[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=400&fit=crop'}
+                 alt={selectedProperty.title}
+                 className="w-full h-64 object-cover"
+               />
               <button
                 onClick={() => setSelectedProperty(null)}
                 className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white transition-colors"
