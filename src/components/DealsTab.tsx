@@ -250,24 +250,24 @@ const DealsTab: React.FC = () => {
         </div>
       )}
 
-      {/* Real-time Updates Notice */}
-      <div className="glass rounded-2xl p-6 border-l-4 border-green-500">
+      {/* Smart Deal Discovery */}
+      <div className="glass rounded-2xl p-6 border-l-4 border-blue-500">
         <div className="flex items-start space-x-3">
-          <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-            <Zap className="h-4 w-4 text-green-600" />
+          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+            <Zap className="h-4 w-4 text-blue-600" />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-              Real-time Price Monitoring
+              Smart Deal Discovery
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-2">
-              Our system continuously monitors prices across major Latvian retailers to bring you the latest deals.
+              Our AI analyzes store promotions, weekly flyers, and community reports to find the best deals across Latvia.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <div>• Maxima - Updated every 30 minutes</div>
-              <div>• Rimi - Updated every hour</div>
-              <div>• Barbora - Updated every 15 minutes</div>
-              <div>• More stores coming soon</div>
+              <div>• Weekly store flyers analysis</div>
+              <div>• Community deal verification</div>
+              <div>• AI-powered price comparison</div>
+              <div>• Use Store Locator for directions</div>
             </div>
           </div>
         </div>

@@ -16,7 +16,7 @@ import {
 interface Store {
   id: string;
   name: string;
-  chain: 'Maxima' | 'Rimi' | 'Barbora' | 'Citro';
+  chain: 'Maxima' | 'Rimi' | 'Barbora' | 'Citro' | 'Mego' | 'Circle K' | 'Apotheka' | 'Benu' | 'Top!' | 'Elvi';
   address: string;
   city: string;
   postalCode: string;
@@ -241,31 +241,262 @@ const StoreLocatorTab: React.FC = () => {
         size: 'small'
       },
 
-      // Citro convenience stores
-      {
-        id: 'citro_riga_001',
-        name: 'Citro Express Brīvības',
-        chain: 'Citro',
-        address: 'Brīvības iela 85',
-        city: 'Rīga',
-        postalCode: 'LV-1001',
-        coordinates: { lat: 56.9677, lng: 24.1178 },
-        phone: '+371 67 333 444',
-        openingHours: {
-          monday: { open: '06:00', close: '24:00' },
-          tuesday: { open: '06:00', close: '24:00' },
-          wednesday: { open: '06:00', close: '24:00' },
-          thursday: { open: '06:00', close: '24:00' },
-          friday: { open: '06:00', close: '24:00' },
-          saturday: { open: '06:00', close: '24:00' },
-          sunday: { open: '07:00', close: '23:00' }
-        },
-        features: ['24h service', 'Coffee', 'Newspapers'],
-        rating: 3.8,
-        hasParking: false,
-        hasAtm: true,
-        size: 'small'
-      }
+             // Citro convenience stores
+       {
+         id: 'citro_riga_001',
+         name: 'Citro Express Brīvības',
+         chain: 'Citro',
+         address: 'Brīvības iela 85',
+         city: 'Rīga',
+         postalCode: 'LV-1001',
+         coordinates: { lat: 56.9677, lng: 24.1178 },
+         phone: '+371 67 333 444',
+         openingHours: {
+           monday: { open: '06:00', close: '24:00' },
+           tuesday: { open: '06:00', close: '24:00' },
+           wednesday: { open: '06:00', close: '24:00' },
+           thursday: { open: '06:00', close: '24:00' },
+           friday: { open: '06:00', close: '24:00' },
+           saturday: { open: '06:00', close: '24:00' },
+           sunday: { open: '07:00', close: '23:00' }
+         },
+         features: ['24h service', 'Coffee', 'Newspapers'],
+         rating: 3.8,
+         hasParking: false,
+         hasAtm: true,
+         size: 'small'
+       },
+
+       // Mego petrol stations
+       {
+         id: 'mego_riga_001',
+         name: 'Mego Krasta',
+         chain: 'Mego',
+         address: 'Krasta iela 76',
+         city: 'Rīga',
+         postalCode: 'LV-1019',
+         coordinates: { lat: 56.9456, lng: 24.1234 },
+         phone: '+371 67 100 200',
+         openingHours: {
+           monday: { open: '24:00', close: '24:00' },
+           tuesday: { open: '24:00', close: '24:00' },
+           wednesday: { open: '24:00', close: '24:00' },
+           thursday: { open: '24:00', close: '24:00' },
+           friday: { open: '24:00', close: '24:00' },
+           saturday: { open: '24:00', close: '24:00' },
+           sunday: { open: '24:00', close: '24:00' }
+         },
+         features: ['24/7 Fuel', 'Car wash', 'Shop', 'Coffee'],
+         rating: 4.1,
+         hasParking: true,
+         hasAtm: true,
+         size: 'medium'
+       },
+       {
+         id: 'mego_riga_002',
+         name: 'Mego Daugavgrīvas',
+         chain: 'Mego',
+         address: 'Daugavgrīvas iela 83',
+         city: 'Rīga',
+         postalCode: 'LV-1007',
+         coordinates: { lat: 56.9789, lng: 24.0456 },
+         phone: '+371 67 100 201',
+         openingHours: {
+           monday: { open: '24:00', close: '24:00' },
+           tuesday: { open: '24:00', close: '24:00' },
+           wednesday: { open: '24:00', close: '24:00' },
+           thursday: { open: '24:00', close: '24:00' },
+           friday: { open: '24:00', close: '24:00' },
+           saturday: { open: '24:00', close: '24:00' },
+           sunday: { open: '24:00', close: '24:00' }
+         },
+         features: ['24/7 Fuel', 'AdBlue', 'Shop', 'Restroom'],
+         rating: 4.0,
+         hasParking: true,
+         hasAtm: true,
+         size: 'medium'
+       },
+
+       // Circle K petrol stations
+       {
+         id: 'circlek_riga_001',
+         name: 'Circle K Maskavas',
+         chain: 'Circle K',
+         address: 'Maskavas iela 240',
+         city: 'Rīga',
+         postalCode: 'LV-1063',
+         coordinates: { lat: 56.9234, lng: 24.1567 },
+         phone: '+371 67 200 300',
+         openingHours: {
+           monday: { open: '24:00', close: '24:00' },
+           tuesday: { open: '24:00', close: '24:00' },
+           wednesday: { open: '24:00', close: '24:00' },
+           thursday: { open: '24:00', close: '24:00' },
+           friday: { open: '24:00', close: '24:00' },
+           saturday: { open: '24:00', close: '24:00' },
+           sunday: { open: '24:00', close: '24:00' }
+         },
+         features: ['24/7 Fuel', 'Hot food', 'Coffee', 'Car accessories'],
+         rating: 4.2,
+         hasParking: true,
+         hasAtm: true,
+         size: 'medium'
+       },
+
+       // Pharmacies - Apotheka
+       {
+         id: 'apotheka_riga_001',
+         name: 'Apotheka Centrs',
+         chain: 'Apotheka',
+         address: 'Elizabetes iela 45/47',
+         city: 'Rīga',
+         postalCode: 'LV-1010',
+         coordinates: { lat: 56.9543, lng: 24.1123 },
+         phone: '+371 67 500 600',
+         openingHours: {
+           monday: { open: '08:00', close: '21:00' },
+           tuesday: { open: '08:00', close: '21:00' },
+           wednesday: { open: '08:00', close: '21:00' },
+           thursday: { open: '08:00', close: '21:00' },
+           friday: { open: '08:00', close: '21:00' },
+           saturday: { open: '09:00', close: '20:00' },
+           sunday: { open: '10:00', close: '18:00' }
+         },
+         features: ['Prescription drugs', 'Consultation', 'Health products'],
+         rating: 4.4,
+         hasParking: false,
+         hasAtm: false,
+         size: 'small'
+       },
+
+       // Benu pharmacies
+       {
+         id: 'benu_riga_001',
+         name: 'Benu Galleria Riga',
+         chain: 'Benu',
+         address: 'Dzirnavu iela 67',
+         city: 'Rīga',
+         postalCode: 'LV-1011',
+         coordinates: { lat: 56.9567, lng: 24.1189 },
+         phone: '+371 67 600 700',
+         openingHours: {
+           monday: { open: '08:00', close: '22:00' },
+           tuesday: { open: '08:00', close: '22:00' },
+           wednesday: { open: '08:00', close: '22:00' },
+           thursday: { open: '08:00', close: '22:00' },
+           friday: { open: '08:00', close: '22:00' },
+           saturday: { open: '09:00', close: '21:00' },
+           sunday: { open: '10:00', close: '20:00' }
+         },
+         features: ['Modern pharmacy', 'Beauty products', 'Online orders'],
+         rating: 4.3,
+         hasParking: true,
+         hasAtm: false,
+         size: 'medium'
+       },
+
+       // Top! supermarkets
+       {
+         id: 'top_riga_001',
+         name: 'Top! Āgenskalna',
+         chain: 'Top!',
+         address: 'Nometņu iela 64',
+         city: 'Rīga',
+         postalCode: 'LV-1002',
+         coordinates: { lat: 56.9345, lng: 24.0789 },
+         phone: '+371 67 700 800',
+         openingHours: {
+           monday: { open: '08:00', close: '22:00' },
+           tuesday: { open: '08:00', close: '22:00' },
+           wednesday: { open: '08:00', close: '22:00' },
+           thursday: { open: '08:00', close: '22:00' },
+           friday: { open: '08:00', close: '22:00' },
+           saturday: { open: '08:00', close: '22:00' },
+           sunday: { open: '09:00', close: '21:00' }
+         },
+         features: ['Local products', 'Fresh bread', 'Competitive prices'],
+         rating: 4.0,
+         hasParking: true,
+         hasAtm: false,
+         size: 'large'
+       },
+
+       // Elvi stores
+       {
+         id: 'elvi_riga_001',
+         name: 'Elvi Torņakalns',
+         chain: 'Elvi',
+         address: 'Daugavgrīvas iela 114',
+         city: 'Rīga',
+         postalCode: 'LV-1007',
+         coordinates: { lat: 56.9234, lng: 24.0567 },
+         phone: '+371 67 800 900',
+         openingHours: {
+           monday: { open: '08:00', close: '22:00' },
+           tuesday: { open: '08:00', close: '22:00' },
+           wednesday: { open: '08:00', close: '22:00' },
+           thursday: { open: '08:00', close: '22:00' },
+           friday: { open: '08:00', close: '22:00' },
+           saturday: { open: '08:00', close: '22:00' },
+           sunday: { open: '09:00', close: '21:00' }
+         },
+         features: ['Discount prices', 'Weekly specials', 'Local chain'],
+         rating: 3.9,
+         hasParking: true,
+         hasAtm: true,
+         size: 'medium'
+       },
+
+       // More locations in other cities
+       {
+         id: 'mego_liepaja_001',
+         name: 'Mego Liepāja Centra',
+         chain: 'Mego',
+         address: 'Graudu iela 44',
+         city: 'Liepāja',
+         postalCode: 'LV-3401',
+         coordinates: { lat: 56.5123, lng: 21.0234 },
+         phone: '+371 63 100 200',
+         openingHours: {
+           monday: { open: '24:00', close: '24:00' },
+           tuesday: { open: '24:00', close: '24:00' },
+           wednesday: { open: '24:00', close: '24:00' },
+           thursday: { open: '24:00', close: '24:00' },
+           friday: { open: '24:00', close: '24:00' },
+           saturday: { open: '24:00', close: '24:00' },
+           sunday: { open: '24:00', close: '24:00' }
+         },
+         features: ['24/7 Fuel', 'Seaside location', 'Travel services'],
+         rating: 4.1,
+         hasParking: true,
+         hasAtm: true,
+         size: 'medium'
+       },
+
+       {
+         id: 'top_daugavpils_001',
+         name: 'Top! Daugavpils',
+         chain: 'Top!',
+         address: 'Stacijas iela 129k',
+         city: 'Daugavpils',
+         postalCode: 'LV-5401',
+         coordinates: { lat: 55.8645, lng: 26.4965 },
+         phone: '+371 65 700 800',
+         openingHours: {
+           monday: { open: '08:00', close: '21:00' },
+           tuesday: { open: '08:00', close: '21:00' },
+           wednesday: { open: '08:00', close: '21:00' },
+           thursday: { open: '08:00', close: '21:00' },
+           friday: { open: '08:00', close: '21:00' },
+           saturday: { open: '08:00', close: '21:00' },
+           sunday: { open: '09:00', close: '20:00' }
+         },
+         features: ['Regional hub', 'Bulk shopping', 'Local suppliers'],
+         rating: 4.2,
+         hasParking: true,
+         hasAtm: true,
+         size: 'large'
+       }
     ];
 
     // Calculate distances if user location is available
@@ -357,6 +588,12 @@ const StoreLocatorTab: React.FC = () => {
       case 'Rimi': return '🛒';
       case 'Barbora': return '🚚';
       case 'Citro': return '⚡';
+      case 'Mego': return '⛽';
+      case 'Circle K': return '🔴';
+      case 'Apotheka': return '💊';
+      case 'Benu': return '🏥';
+      case 'Top!': return '🛍️';
+      case 'Elvi': return '🏬';
       default: return '🏬';
     }
   };
@@ -367,6 +604,12 @@ const StoreLocatorTab: React.FC = () => {
       case 'Rimi': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
       case 'Barbora': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
       case 'Citro': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+      case 'Mego': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+      case 'Circle K': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      case 'Apotheka': return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
+      case 'Benu': return 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200';
+      case 'Top!': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
+      case 'Elvi': return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200';
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
     }
   };
@@ -405,7 +648,7 @@ const StoreLocatorTab: React.FC = () => {
   };
 
   const cities = ['all', ...Array.from(new Set(stores.map(s => s.city)))];
-  const chains = ['all', 'Maxima', 'Rimi', 'Barbora', 'Citro'];
+  const chains = ['all', 'Maxima', 'Rimi', 'Barbora', 'Citro', 'Mego', 'Circle K', 'Apotheka', 'Benu', 'Top!', 'Elvi'];
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">

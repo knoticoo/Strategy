@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Send, Bot, User, ShoppingCart, Utensils, DollarSign, Store, Sparkles, TrendingUp } from 'lucide-react';
-import aiService from '../services/aiService';
+import freeAiService from '../services/freeAiService';
 
 interface Message {
   id: string;
@@ -93,29 +93,22 @@ const ChatTab: React.FC = () => {
 
     try {
       // Get context from localStorage for personalized responses
-      const budget = JSON.parse(localStorage.getItem('budget') || '{}');
+      const budget = JSON.parse(localStorage.getItem('budget') || '{"daily": 20, "weekly": 140, "monthly": 600}');
       const expenses = JSON.parse(localStorage.getItem('expenses') || '[]');
+      const userBalance = JSON.parse(localStorage.getItem('userBalance') || '{"current": 500}');
       
-      const context = {
-        budget,
+      // Call Free AI service with budget context
+      const aiResponse = await freeAiService.generateResponse(inputText, {
+        balance: userBalance.current,
         expenses,
-        language: i18n.language,
-        userPreferences: {
-          currency: 'EUR',
-          country: 'Latvia',
-          preferredStores: ['Maxima', 'Rimi', 'Barbora']
-        }
-      };
-
-      // Get AI response
-      const aiResponse = await aiService.generateResponse(inputText, context);
-      
-      // Simulate typing delay for better UX
-      await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 500));
+        dailyBudget: budget.daily,
+        weeklyBudget: budget.weekly,
+        monthlyBudget: budget.monthly
+      });
 
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: aiResponse.text,
+        text: aiResponse.response,
         sender: 'bot',
         timestamp: new Date(),
         confidence: aiResponse.confidence,
