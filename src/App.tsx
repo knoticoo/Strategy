@@ -5,7 +5,6 @@ import {
   ShoppingBag, 
   Ticket, 
   Bot, 
-  Settings,
   Globe,
   Sun,
   Moon

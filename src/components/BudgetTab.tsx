@@ -3,14 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { 
   Plus, 
   TrendingUp, 
-  TrendingDown, 
   DollarSign, 
   Calendar,
   PieChart,
   BarChart3,
   AlertCircle,
   CheckCircle,
-  Edit3,
   Trash2
 } from 'lucide-react';
 

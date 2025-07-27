@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ShoppingBag, Star, Clock, ExternalLink } from 'lucide-react';
+import { ShoppingBag, Clock, ExternalLink } from 'lucide-react';
 
 const DealsTab: React.FC = () => {
   const { t } = useTranslation();
