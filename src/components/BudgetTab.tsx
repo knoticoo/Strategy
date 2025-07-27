@@ -42,8 +42,10 @@ const BudgetTab: React.FC = () => {
   const [userBalance, setUserBalance] = useState<UserBalance>({ current: 500, currency: 'EUR', lastUpdated: new Date().toISOString() });
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [showEditBalance, setShowEditBalance] = useState(false);
+  const [showEditBudget, setShowEditBudget] = useState(false);
   const [newExpense, setNewExpense] = useState({ description: '', amount: '', category: 'food' });
   const [editBalance, setEditBalance] = useState('');
+  const [editBudget, setEditBudget] = useState({ daily: '', weekly: '', monthly: '' });
 
   // Load data from localStorage
   useEffect(() => {
@@ -127,6 +129,31 @@ const BudgetTab: React.FC = () => {
     setShowEditBalance(true);
   };
 
+  const saveBudget = () => {
+    const daily = parseFloat(editBudget.daily);
+    const weekly = parseFloat(editBudget.weekly);
+    const monthly = parseFloat(editBudget.monthly);
+    
+    if (!isNaN(daily) && !isNaN(weekly) && !isNaN(monthly) && daily > 0 && weekly > 0 && monthly > 0) {
+      setBudget({
+        daily,
+        weekly,
+        monthly
+      });
+      setShowEditBudget(false);
+      setEditBudget({ daily: '', weekly: '', monthly: '' });
+    }
+  };
+
+  const openEditBudget = () => {
+    setEditBudget({
+      daily: budget.daily.toString(),
+      weekly: budget.weekly.toString(),
+      monthly: budget.monthly.toString()
+    });
+    setShowEditBudget(true);
+  };
+
   // Calculate spending statistics
   const today = new Date().toDateString();
   const thisWeek = new Date();
@@ -202,7 +229,7 @@ const BudgetTab: React.FC = () => {
           </p>
         </div>
         
-        {/* Current Balance */}
+        {/* Current Balance & Controls */}
         <div className="flex items-center space-x-4">
           <div className="flex items-center bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg border border-green-200 dark:border-green-800">
             <Wallet className="h-5 w-5 mr-2" />
@@ -222,7 +249,16 @@ const BudgetTab: React.FC = () => {
             title="Edit Balance"
           >
             <Edit3 className="h-4 w-4 mr-2" />
-            Edit
+            Edit Balance
+          </button>
+
+          <button
+            onClick={openEditBudget}
+            className="flex items-center bg-purple-600 text-white px-3 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+            title="Edit Budget Limits"
+          >
+            <Edit3 className="h-4 w-4 mr-2" />
+            Edit Budget
           </button>
         </div>
       </div>
@@ -233,7 +269,7 @@ const BudgetTab: React.FC = () => {
           <div className="flex items-center">
             <Wallet className="h-5 w-5 text-blue-600 mr-2" />
             <span className="text-blue-700 dark:text-blue-400 font-medium">
-              Manual Balance Management
+              Smart Budget Tracking
             </span>
           </div>
           <span className="text-sm text-blue-600 dark:text-blue-400">
@@ -241,7 +277,7 @@ const BudgetTab: React.FC = () => {
           </span>
         </div>
         <p className="text-sm text-blue-600 dark:text-blue-400 mt-2">
-          Your expenses are automatically deducted from your balance. Edit your balance anytime.
+          Set your budget limits and track expenses automatically. All data is saved locally in your browser.
         </p>
       </div>
 
@@ -489,6 +525,83 @@ const BudgetTab: React.FC = () => {
               >
                 <Save className="h-4 w-4 mr-2" />
                 Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Budget Modal */}
+      {showEditBudget && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Edit Budget Limits
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Daily Budget (EUR)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={editBudget.daily}
+                  onChange={(e) => setEditBudget(prev => ({ ...prev, daily: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="20.00"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Weekly Budget (EUR)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={editBudget.weekly}
+                  onChange={(e) => setEditBudget(prev => ({ ...prev, weekly: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="140.00"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Monthly Budget (EUR)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={editBudget.monthly}
+                  onChange={(e) => setEditBudget(prev => ({ ...prev, monthly: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="600.00"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Set your spending limits for better budget tracking
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex space-x-3 mt-6">
+              <button
+                onClick={() => {
+                  setShowEditBudget(false);
+                  setEditBudget({ daily: '', weekly: '', monthly: '' });
+                }}
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveBudget}
+                className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center"
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save Budget
               </button>
             </div>
           </div>

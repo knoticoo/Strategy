@@ -2,335 +2,567 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-// Language resources
 const resources = {
   en: {
     translation: {
+      // App
+      app: {
+        title: 'Latvian Budget & Deals Assistant',
+        subtitle: 'AI-powered budget tracking for Latvia'
+      },
+      
       // Navigation
       nav: {
         budget: 'Budget',
         deals: 'Deals',
         coupons: 'Coupons',
-        chat: 'AI Assistant'
+        stores: 'Store Locator',
+        chat: 'AI Chat'
       },
       
       // Common
       common: {
-        loading: 'Loading...',
+        add: 'Add',
+        edit: 'Edit',
         save: 'Save',
         cancel: 'Cancel',
         delete: 'Delete',
-        edit: 'Edit',
-        add: 'Add',
         search: 'Search',
         filter: 'Filter',
-        price: 'Price',
-        currency: '€',
-        settings: 'Settings',
-        language: 'Language'
+        refresh: 'Refresh',
+        loading: 'Loading...',
+        close: 'Close',
+        open: 'Open',
+        closed: 'Closed',
+        yes: 'Yes',
+        no: 'No',
+        back: 'Back',
+        next: 'Next',
+        copied: 'Copied!',
+        copy: 'Copy'
       },
-
+      
       // Budget Tab
       budget: {
         title: 'Budget Tracker',
-        dailyBudget: 'Daily Budget',
-        weeklyBudget: 'Weekly Budget',
-        monthlyBudget: 'Monthly Budget',
-        currentSpending: 'Current Spending',
-        remainingBudget: 'Remaining Budget',
+        subtitle: 'Track your expenses and manage your money',
+        daily: 'Daily Budget',
+        weekly: 'Weekly Budget',
+        monthly: 'Monthly Budget',
         addExpense: 'Add Expense',
-        expenseDescription: 'Description',
-        expenseAmount: 'Amount',
-        expenseCategory: 'Category',
+        recentExpenses: 'Recent Expenses',
+        noExpenses: 'No expenses yet. Add your first expense!',
+        description: 'Description',
+        amount: 'Amount',
+        category: 'Category',
+        balance: 'Balance',
+        currentBalance: 'Current Balance',
+        editBalance: 'Edit Balance',
+        editBudget: 'Edit Budget',
+        editBudgetLimits: 'Edit Budget Limits',
+        dailyBudgetEur: 'Daily Budget (EUR)',
+        weeklyBudgetEur: 'Weekly Budget (EUR)',
+        monthlyBudgetEur: 'Monthly Budget (EUR)',
+        setLimits: 'Set your spending limits for better budget tracking',
+        saveBudget: 'Save Budget',
+        balanceDeduction: 'Amount will be deducted from your balance',
+        smartTracking: 'Smart Budget Tracking',
+        smartTrackingDesc: 'Set your budget limits and track expenses automatically. All data is saved locally in your browser.',
+        insights: {
+          title: 'AI Insights',
+          overDaily: 'You\'ve exceeded your daily budget today',
+          underDaily: 'You\'re within your daily budget - great job!',
+          nearMonthly: 'You\'re approaching your monthly budget limit',
+          foodHigh: 'Food expenses are high this month',
+          onTrack: 'You\'re on track with your budget goals!',
+          lowBalance: 'Your balance is getting low. Consider checking the deals tab for savings!'
+        },
         categories: {
           food: 'Food',
           transport: 'Transport',
-          shopping: 'Shopping',
           entertainment: 'Entertainment',
+          shopping: 'Shopping',
           bills: 'Bills',
           other: 'Other'
-        },
-        insights: {
-          title: 'AI Insights',
-          overspending: 'You are overspending in {{category}}',
-          saving: 'Great! You saved {{amount}} this week',
-          recommendation: 'Try shopping at {{store}} for better deals'
         }
       },
-
+      
       // Deals Tab
       deals: {
         title: 'Best Deals',
-        stores: {
-          maxima: 'Maxima',
-          rimi: 'Rimi',
-          barbora: 'Barbora',
-          citro: 'Citro'
-        },
-        categories: {
-          all: 'All Categories',
-          food: 'Food & Drinks',
-          household: 'Household',
-          personal: 'Personal Care',
-          electronics: 'Electronics'
-        },
+        subtitle: 'Discover amazing deals across Latvia',
+        totalDeals: 'Total Deals',
+        avgDiscount: 'Avg. Discount',
+        activeStores: 'Active Stores',
+        lastUpdated: 'Last Updated',
+        store: 'Store',
+        category: 'Category',
+        sortBy: 'Sort By',
+        distance: 'Distance',
         discount: 'Discount',
-        originalPrice: 'Original Price',
-        salePrice: 'Sale Price',
+        name: 'Name',
+        rating: 'Rating',
+        allStores: 'All Stores',
+        allCategories: 'All Categories',
         validUntil: 'Valid until',
-        viewDeal: 'View Deal'
+        getDirections: 'Get Directions',
+        noDeals: 'No deals found matching your criteria',
+        smartDiscovery: 'Smart Deal Discovery',
+        smartDiscoveryDesc: 'Our AI analyzes store promotions, weekly flyers, and community reports to find the best deals across Latvia.',
+        features: {
+          flyerAnalysis: 'Weekly store flyers analysis',
+          communityVerification: 'Community deal verification',
+          aiComparison: 'AI-powered price comparison',
+          storeLocator: 'Use Store Locator for directions'
+        }
       },
-
+      
       // Coupons Tab
       coupons: {
         title: 'Discount Coupons',
+        subtitle: 'Active discount codes for Latvian stores',
+        activeCoupons: 'Active Coupons',
+        avgSuccessRate: 'Avg Success Rate',
+        totalSavings: 'Total Savings',
+        partnerStores: 'Partner Stores',
         code: 'Code',
-        description: 'Description',
-        minPurchase: 'Min. Purchase',
-        maxDiscount: 'Max. Discount',
-        expiresOn: 'Expires on',
-        copyCoupon: 'Copy Code',
+        copyCoupon: 'Copy Coupon',
         copied: 'Copied!',
-        active: 'Active',
-        expired: 'Expired'
+        minPurchase: 'Min. purchase',
+        maxDiscount: 'Max. discount',
+        expires: 'Expires',
+        successRate: 'Success rate',
+        timesUsed: 'Times used',
+        verified: 'Verified',
+        visitStore: 'Visit Store',
+        noCoupons: 'No coupons found for the selected filters',
+        liveVerification: 'Live Coupon Verification Active',
+        liveVerificationDesc: 'All coupon codes are verified in real-time from official store APIs and community reports. Success rates are updated based on actual usage data.'
       },
-
-      // AI Chat
-      chat: {
-        title: 'AI Budget Assistant',
-        placeholder: 'Ask me about budgets, deals, or meal planning...',
-        examples: {
-          budget: 'How much can I spend today?',
-          meal: 'Find me a 5€ meal',
-          deals: 'What are the best deals at Maxima?',
-          coupon: 'Do you have any discount codes?'
-        },
-        responses: {
-          welcome: 'Hello! I\'m your AI budget assistant. How can I help you save money today?',
-          budgetCheck: 'Based on your budget, you have {{amount}} left for today.',
-          mealSuggestion: 'Here are some {{price}} meal ideas from local stores:',
-          dealAlert: 'I found some great deals for you!'
+      
+      // Store Locator Tab
+      stores: {
+        title: 'Store Locator',
+        subtitle: 'Find nearby stores across Latvia',
+        storesFound: 'Stores Found',
+        openNow: 'Open Now',
+        withParking: 'With Parking',
+        avgRating: 'Avg Rating',
+        storeChain: 'Store Chain',
+        city: 'City',
+        allChains: 'All Chains',
+        allCities: 'All Cities',
+        directions: 'Directions',
+        phone: 'Phone',
+        features: 'Features',
+        parking: 'Parking',
+        atm: 'ATM',
+        rating: 'Rating',
+        noStores: 'No stores found matching your criteria',
+        locationBased: 'Location-Based Search',
+        locationBasedDesc: 'Distances calculated from your current location. Grant location access for more accurate results.',
+        locationBasedDescDenied: 'Enable location access to see distances to stores and get personalized recommendations.',
+        storeTypes: {
+          hypermarket: 'Hypermarket',
+          large: 'Large Store',
+          medium: 'Medium Store',
+          small: 'Small Store'
         }
+      },
+      
+      // Chat Tab
+      chat: {
+        title: 'AI Assistant',
+        subtitle: 'Get smart budget advice and local insights',
+        typeMessage: 'Type your message...',
+        quickActions: 'Quick Actions',
+        quickBudget: 'Check my budget',
+        quickStores: 'Find nearby stores',
+        quickDeals: 'Show best deals',
+        quickCoupons: 'Available coupons',
+        quickMeal: 'Meal for €5',
+        quickSavings: 'How to save money',
+        confidence: 'Confidence',
+        suggestions: 'Suggestions',
+        aiThinking: 'AI is thinking...',
+        welcomeMessage: 'Hello! I\'m your Latvian budget assistant. How can I help you save money today?',
+        errorMessage: 'Sorry, I encountered an error. Please try again or ask something else.'
       }
     }
   },
+  
   lv: {
     translation: {
+      // App
+      app: {
+        title: 'Latvijas Budžeta un Piedāvājumu Asistents',
+        subtitle: 'AI darbināma budžeta izsekošana Latvijai'
+      },
+      
       // Navigation
       nav: {
         budget: 'Budžets',
         deals: 'Piedāvājumi',
         coupons: 'Kuponi',
-        chat: 'AI Asistents'
+        stores: 'Veikalu Meklētājs',
+        chat: 'AI Čats'
       },
       
       // Common
       common: {
-        loading: 'Ielādē...',
+        add: 'Pievienot',
+        edit: 'Rediģēt',
         save: 'Saglabāt',
         cancel: 'Atcelt',
         delete: 'Dzēst',
-        edit: 'Rediģēt',
-        add: 'Pievienot',
         search: 'Meklēt',
         filter: 'Filtrēt',
-        price: 'Cena',
-        currency: '€',
-        settings: 'Iestatījumi',
-        language: 'Valoda'
+        refresh: 'Atjaunot',
+        loading: 'Ielādē...',
+        close: 'Aizvērt',
+        open: 'Atvērts',
+        closed: 'Slēgts',
+        yes: 'Jā',
+        no: 'Nē',
+        back: 'Atpakaļ',
+        next: 'Tālāk',
+        copied: 'Nokopēts!',
+        copy: 'Kopēt'
       },
-
+      
       // Budget Tab
       budget: {
-        title: 'Budžeta Sekotājs',
-        dailyBudget: 'Dienas Budžets',
-        weeklyBudget: 'Nedēļas Budžets',
-        monthlyBudget: 'Mēneša Budžets',
-        currentSpending: 'Pašreizējie Tēriņi',
-        remainingBudget: 'Atlikušais Budžets',
-        addExpense: 'Pievienot Izdevumu',
-        expenseDescription: 'Apraksts',
-        expenseAmount: 'Summa',
-        expenseCategory: 'Kategorija',
+        title: 'Budžeta Izsekotājs',
+        subtitle: 'Sekojiet saviem tēriņiem un pārvaldiet naudu',
+        daily: 'Dienas Budžets',
+        weekly: 'Nedēļas Budžets',
+        monthly: 'Mēneša Budžets',
+        addExpense: 'Pievienot Tēriņu',
+        recentExpenses: 'Pēdējie Tēriņi',
+        noExpenses: 'Nav tēriņu. Pievienojiet savu pirmo tēriņu!',
+        description: 'Apraksts',
+        amount: 'Summa',
+        category: 'Kategorija',
+        balance: 'Bilance',
+        currentBalance: 'Pašreizējā Bilance',
+        editBalance: 'Rediģēt Bilanci',
+        editBudget: 'Rediģēt Budžetu',
+        editBudgetLimits: 'Rediģēt Budžeta Limitus',
+        dailyBudgetEur: 'Dienas Budžets (EUR)',
+        weeklyBudgetEur: 'Nedēļas Budžets (EUR)',
+        monthlyBudgetEur: 'Mēneša Budžets (EUR)',
+        setLimits: 'Iestatiet savus tēriņu limitus labākai budžeta izsekošanai',
+        saveBudget: 'Saglabāt Budžetu',
+        balanceDeduction: 'Summa tiks atskaitīta no jūsu bilances',
+        smartTracking: 'Viedā Budžeta Izsekošana',
+        smartTrackingDesc: 'Iestatiet budžeta limitus un automātiski sekojiet tēriņiem. Visi dati tiek saglabāti lokāli jūsu pārlūkprogrammā.',
+        insights: {
+          title: 'AI Ieskati',
+          overDaily: 'Jūs esat pārsniedzis dienas budžetu šodien',
+          underDaily: 'Jūs iekļaujaties dienas budžetā - lieliski!',
+          nearMonthly: 'Jūs tuvojaties mēneša budžeta limitam',
+          foodHigh: 'Pārtikas tēriņi ir augsti šomēnes',
+          onTrack: 'Jūs esat pareizajā ceļā ar budžeta mērķiem!',
+          lowBalance: 'Jūsu bilance kļūst zema. Apsveriet piedāvājumu sadaļu ietaupījumiem!'
+        },
         categories: {
           food: 'Pārtika',
           transport: 'Transports',
-          shopping: 'Iepirkšanās',
           entertainment: 'Izklaide',
+          shopping: 'Iepirkšanās',
           bills: 'Rēķini',
           other: 'Cits'
-        },
-        insights: {
-          title: 'AI Ieskati',
-          overspending: 'Jūs pārtērējat kategorijā {{category}}',
-          saving: 'Lieliski! Jūs ietaupījāt {{amount}} šonedēļ',
-          recommendation: 'Mēģiniet iepirkties veikalā {{store}} labākiem piedāvājumiem'
         }
       },
-
+      
       // Deals Tab
       deals: {
         title: 'Labākie Piedāvājumi',
-        stores: {
-          maxima: 'Maxima',
-          rimi: 'Rimi',
-          barbora: 'Barbora',
-          citro: 'Citro'
-        },
-        categories: {
-          all: 'Visas Kategorijas',
-          food: 'Pārtika un Dzērieni',
-          household: 'Mājsaimniecība',
-          personal: 'Personīgā Aprūpe',
-          electronics: 'Elektronika'
-        },
+        subtitle: 'Atklājiet neticamus piedāvājumus visā Latvijā',
+        totalDeals: 'Kopā Piedāvājumi',
+        avgDiscount: 'Vid. Atlaide',
+        activeStores: 'Aktīvie Veikali',
+        lastUpdated: 'Pēdējo reizi Atjaunots',
+        store: 'Veikals',
+        category: 'Kategorija',
+        sortBy: 'Kārtot pēc',
+        distance: 'Attālums',
         discount: 'Atlaide',
-        originalPrice: 'Sākotnējā Cena',
-        salePrice: 'Akcijas Cena',
+        name: 'Nosaukums',
+        rating: 'Vērtējums',
+        allStores: 'Visi Veikali',
+        allCategories: 'Visas Kategorijas',
         validUntil: 'Derīgs līdz',
-        viewDeal: 'Skatīt Piedāvājumu'
+        getDirections: 'Iegūt Norādes',
+        noDeals: 'Nav atrasti piedāvājumi, kas atbilst jūsu kritērijiem',
+        smartDiscovery: 'Viedā Piedāvājumu Atklāšana',
+        smartDiscoveryDesc: 'Mūsu AI analizē veikalu akcijas, nedēļas bukletus un kopienas ziņojumus, lai atrastu labākos piedāvājumus Latvijā.',
+        features: {
+          flyerAnalysis: 'Nedēļas veikalu buklesu analīze',
+          communityVerification: 'Kopienas piedāvājumu pārbaude',
+          aiComparison: 'AI darbināma cenu salīdzināšana',
+          storeLocator: 'Izmantojiet Veikalu Meklētāju norādēm'
+        }
       },
-
+      
       // Coupons Tab
       coupons: {
         title: 'Atlaižu Kuponi',
+        subtitle: 'Aktīvie atlaižu kodi Latvijas veikaliem',
+        activeCoupons: 'Aktīvie Kuponi',
+        avgSuccessRate: 'Vid. Veiksmes Līmenis',
+        totalSavings: 'Kopējie Ietaupījumi',
+        partnerStores: 'Partneru Veikali',
         code: 'Kods',
-        description: 'Apraksts',
-        minPurchase: 'Min. Pirkums',
-        maxDiscount: 'Maks. Atlaide',
-        expiresOn: 'Beidzas',
-        copyCoupon: 'Kopēt Kodu',
+        copyCoupon: 'Kopēt Kuponu',
         copied: 'Nokopēts!',
-        active: 'Aktīvs',
-        expired: 'Beidzies'
+        minPurchase: 'Min. pirkums',
+        maxDiscount: 'Maks. atlaide',
+        expires: 'Beidzas',
+        successRate: 'Veiksmes līmenis',
+        timesUsed: 'Reižu izmantots',
+        verified: 'Pārbaudīts',
+        visitStore: 'Apmeklēt Veikalu',
+        noCoupons: 'Nav atrasti kuponi atlasītajiem filtriem',
+        liveVerification: 'Dzīvā Kuponu Pārbaude Aktīva',
+        liveVerificationDesc: 'Visi kuponu kodi tiek pārbaudīti reāllaikā no oficiālajiem veikalu API un kopienas ziņojumiem. Veiksmes līmeņi tiek atjaunoti, pamatojoties uz faktiskajiem lietošanas datiem.'
       },
-
-      // AI Chat
-      chat: {
-        title: 'AI Budžeta Asistents',
-        placeholder: 'Jautājiet man par budžetiem, piedāvājumiem vai ēdienu plānošanu...',
-        examples: {
-          budget: 'Cik es varu tērēt šodien?',
-          meal: 'Atrodiet man 5€ ēdienu',
-          deals: 'Kādi ir labākie piedāvājumi Maximā?',
-          coupon: 'Vai jums ir atlaižu kodi?'
-        },
-        responses: {
-          welcome: 'Sveiki! Es esmu jūsu AI budžeta asistents. Kā es varu palīdzēt jums ietaupīt naudu šodien?',
-          budgetCheck: 'Pamatojoties uz jūsu budžetu, jums ir {{amount}} atlikuši šodienai.',
-          mealSuggestion: 'Šeit ir daži {{price}} ēdienu ieteikumi no vietējiem veikaliem:',
-          dealAlert: 'Es atradu jums dažus lieliski piedāvājumus!'
+      
+      // Store Locator Tab
+      stores: {
+        title: 'Veikalu Meklētājs',
+        subtitle: 'Atrodiet tuvējos veikalus visā Latvijā',
+        storesFound: 'Atrasto Veikalu',
+        openNow: 'Tagad Atvērti',
+        withParking: 'Ar Stāvvietu',
+        avgRating: 'Vid. Vērtējums',
+        storeChain: 'Veikalu Ķēde',
+        city: 'Pilsēta',
+        allChains: 'Visas Ķēdes',
+        allCities: 'Visas Pilsētas',
+        directions: 'Norādes',
+        phone: 'Tālrunis',
+        features: 'Funkcijas',
+        parking: 'Stāvvieta',
+        atm: 'Bankomāts',
+        rating: 'Vērtējums',
+        noStores: 'Nav atrasti veikali, kas atbilst jūsu kritērijiem',
+        locationBased: 'Atrašanās Vietas Meklēšana',
+        locationBasedDesc: 'Attālumi aprēķināti no jūsu pašreizējās atrašanās vietas. Atļaujiet piekļuvi atrašanās vietai precīzākiem rezultātiem.',
+        locationBasedDescDenied: 'Iespējojiet piekļuvi atrašanās vietai, lai redzētu attālumus līdz veikaliem un saņemtu personalizētus ieteikumus.',
+        storeTypes: {
+          hypermarket: 'Hiperveikals',
+          large: 'Liels Veikals',
+          medium: 'Vidējs Veikals',
+          small: 'Mazs Veikals'
         }
+      },
+      
+      // Chat Tab
+      chat: {
+        title: 'AI Asistents',
+        subtitle: 'Saņemiet viedus budžeta padomus un vietējos ieskatus',
+        typeMessage: 'Ierakstiet savu ziņojumu...',
+        quickActions: 'Ātrās Darbības',
+        quickBudget: 'Pārbaudīt manu budžetu',
+        quickStores: 'Atrast tuvējos veikalus',
+        quickDeals: 'Rādīt labākos piedāvājumus',
+        quickCoupons: 'Pieejamie kuponi',
+        quickMeal: 'Ēdiens par €5',
+        quickSavings: 'Kā taupīt naudu',
+        confidence: 'Pārliecība',
+        suggestions: 'Ieteikumi',
+        aiThinking: 'AI domā...',
+        welcomeMessage: 'Sveiki! Es esmu jūsu Latvijas budžeta asistents. Kā varu palīdzēt jums šodien taupīt naudu?',
+        errorMessage: 'Atvainojiet, es saskāros ar kļūdu. Lūdzu, mēģiniet vēlreiz vai jautājiet kaut ko citu.'
       }
     }
   },
+  
   ru: {
     translation: {
+      // App
+      app: {
+        title: 'Латвийский Помощник по Бюджету и Скидкам',
+        subtitle: 'Отслеживание бюджета с ИИ для Латвии'
+      },
+      
       // Navigation
       nav: {
         budget: 'Бюджет',
-        deals: 'Предложения',
+        deals: 'Скидки',
         coupons: 'Купоны',
-        chat: 'AI Помощник'
+        stores: 'Поиск Магазинов',
+        chat: 'ИИ Чат'
       },
       
       // Common
       common: {
-        loading: 'Загрузка...',
+        add: 'Добавить',
+        edit: 'Редактировать',
         save: 'Сохранить',
         cancel: 'Отмена',
         delete: 'Удалить',
-        edit: 'Редактировать',
-        add: 'Добавить',
         search: 'Поиск',
         filter: 'Фильтр',
-        price: 'Цена',
-        currency: '€',
-        settings: 'Настройки',
-        language: 'Язык'
+        refresh: 'Обновить',
+        loading: 'Загрузка...',
+        close: 'Закрыть',
+        open: 'Открыто',
+        closed: 'Закрыто',
+        yes: 'Да',
+        no: 'Нет',
+        back: 'Назад',
+        next: 'Далее',
+        copied: 'Скопировано!',
+        copy: 'Копировать'
       },
-
+      
       // Budget Tab
       budget: {
         title: 'Трекер Бюджета',
-        dailyBudget: 'Дневной Бюджет',
-        weeklyBudget: 'Недельный Бюджет',
-        monthlyBudget: 'Месячный Бюджет',
-        currentSpending: 'Текущие Расходы',
-        remainingBudget: 'Остаток Бюджета',
+        subtitle: 'Отслеживайте расходы и управляйте деньгами',
+        daily: 'Дневной Бюджет',
+        weekly: 'Недельный Бюджет',
+        monthly: 'Месячный Бюджет',
         addExpense: 'Добавить Расход',
-        expenseDescription: 'Описание',
-        expenseAmount: 'Сумма',
-        expenseCategory: 'Категория',
+        recentExpenses: 'Последние Расходы',
+        noExpenses: 'Пока нет расходов. Добавьте свой первый расход!',
+        description: 'Описание',
+        amount: 'Сумма',
+        category: 'Категория',
+        balance: 'Баланс',
+        currentBalance: 'Текущий Баланс',
+        editBalance: 'Редактировать Баланс',
+        editBudget: 'Редактировать Бюджет',
+        editBudgetLimits: 'Редактировать Лимиты Бюджета',
+        dailyBudgetEur: 'Дневной Бюджет (EUR)',
+        weeklyBudgetEur: 'Недельный Бюджет (EUR)',
+        monthlyBudgetEur: 'Месячный Бюджет (EUR)',
+        setLimits: 'Установите лимиты расходов для лучшего отслеживания бюджета',
+        saveBudget: 'Сохранить Бюджет',
+        balanceDeduction: 'Сумма будет вычтена из вашего баланса',
+        smartTracking: 'Умное Отслеживание Бюджета',
+        smartTrackingDesc: 'Устанавливайте лимиты бюджета и автоматически отслеживайте расходы. Все данные сохраняются локально в вашем браузере.',
+        insights: {
+          title: 'ИИ Аналитика',
+          overDaily: 'Вы превысили дневной бюджет сегодня',
+          underDaily: 'Вы в рамках дневного бюджета - отлично!',
+          nearMonthly: 'Вы приближаетесь к лимиту месячного бюджета',
+          foodHigh: 'Расходы на еду высоки в этом месяце',
+          onTrack: 'Вы на правильном пути с целями бюджета!',
+          lowBalance: 'Ваш баланс становится низким. Рассмотрите вкладку со скидками для экономии!'
+        },
         categories: {
           food: 'Еда',
           transport: 'Транспорт',
-          shopping: 'Покупки',
           entertainment: 'Развлечения',
+          shopping: 'Покупки',
           bills: 'Счета',
           other: 'Другое'
-        },
-        insights: {
-          title: 'AI Анализ',
-          overspending: 'Вы превышаете бюджет в категории {{category}}',
-          saving: 'Отлично! Вы сэкономили {{amount}} на этой неделе',
-          recommendation: 'Попробуйте покупать в {{store}} для лучших предложений'
         }
       },
-
+      
       // Deals Tab
       deals: {
-        title: 'Лучшие Предложения',
-        stores: {
-          maxima: 'Maxima',
-          rimi: 'Rimi',
-          barbora: 'Barbora',
-          citro: 'Citro'
-        },
-        categories: {
-          all: 'Все Категории',
-          food: 'Еда и Напитки',
-          household: 'Для Дома',
-          personal: 'Личная Гигиена',
-          electronics: 'Электроника'
-        },
+        title: 'Лучшие Скидки',
+        subtitle: 'Откройте удивительные скидки по всей Латвии',
+        totalDeals: 'Всего Скидок',
+        avgDiscount: 'Средняя Скидка',
+        activeStores: 'Активные Магазины',
+        lastUpdated: 'Последнее Обновление',
+        store: 'Магазин',
+        category: 'Категория',
+        sortBy: 'Сортировать по',
+        distance: 'Расстояние',
         discount: 'Скидка',
-        originalPrice: 'Первоначальная Цена',
-        salePrice: 'Цена Акции',
-        validUntil: 'Действует до',
-        viewDeal: 'Посмотреть Предложение'
+        name: 'Название',
+        rating: 'Рейтинг',
+        allStores: 'Все Магазины',
+        allCategories: 'Все Категории',
+        validUntil: 'Действительно до',
+        getDirections: 'Проложить Маршрут',
+        noDeals: 'Не найдено скидок, соответствующих вашим критериям',
+        smartDiscovery: 'Умное Обнаружение Скидок',
+        smartDiscoveryDesc: 'Наш ИИ анализирует акции магазинов, еженедельные флаеры и отчеты сообщества, чтобы найти лучшие скидки в Латвии.',
+        features: {
+          flyerAnalysis: 'Анализ еженедельных флаеров магазинов',
+          communityVerification: 'Проверка скидок сообществом',
+          aiComparison: 'Сравнение цен с помощью ИИ',
+          storeLocator: 'Используйте Поиск Магазинов для направлений'
+        }
       },
-
+      
       // Coupons Tab
       coupons: {
-        title: 'Купоны на Скидку',
+        title: 'Скидочные Купоны',
+        subtitle: 'Активные коды скидок для латвийских магазинов',
+        activeCoupons: 'Активные Купоны',
+        avgSuccessRate: 'Средний Процент Успеха',
+        totalSavings: 'Общая Экономия',
+        partnerStores: 'Партнерские Магазины',
         code: 'Код',
-        description: 'Описание',
-        minPurchase: 'Мин. Покупка',
-        maxDiscount: 'Макс. Скидка',
-        expiresOn: 'Истекает',
-        copyCoupon: 'Копировать Код',
+        copyCoupon: 'Копировать Купон',
         copied: 'Скопировано!',
-        active: 'Активный',
-        expired: 'Истёк'
+        minPurchase: 'Мин. покупка',
+        maxDiscount: 'Макс. скидка',
+        expires: 'Истекает',
+        successRate: 'Процент успеха',
+        timesUsed: 'Раз использован',
+        verified: 'Проверено',
+        visitStore: 'Посетить Магазин',
+        noCoupons: 'Не найдено купонов для выбранных фильтров',
+        liveVerification: 'Активна Живая Проверка Купонов',
+        liveVerificationDesc: 'Все коды купонов проверяются в реальном времени из официальных API магазинов и отчетов сообщества. Показатели успеха обновляются на основе фактических данных использования.'
       },
-
-      // AI Chat
-      chat: {
-        title: 'AI Помощник по Бюджету',
-        placeholder: 'Спросите меня о бюджетах, предложениях или планировании питания...',
-        examples: {
-          budget: 'Сколько я могу потратить сегодня?',
-          meal: 'Найдите мне еду на 5€',
-          deals: 'Какие лучшие предложения в Maxima?',
-          coupon: 'У вас есть коды скидок?'
-        },
-        responses: {
-          welcome: 'Привет! Я ваш AI помощник по бюджету. Как я могу помочь вам сэкономить деньги сегодня?',
-          budgetCheck: 'На основе вашего бюджета, у вас осталось {{amount}} на сегодня.',
-          mealSuggestion: 'Вот несколько идей еды за {{price}} из местных магазинов:',
-          dealAlert: 'Я нашёл для вас отличные предложения!'
+      
+      // Store Locator Tab
+      stores: {
+        title: 'Поиск Магазинов',
+        subtitle: 'Найдите ближайшие магазины по всей Латвии',
+        storesFound: 'Найдено Магазинов',
+        openNow: 'Открыто Сейчас',
+        withParking: 'С Парковкой',
+        avgRating: 'Средний Рейтинг',
+        storeChain: 'Сеть Магазинов',
+        city: 'Город',
+        allChains: 'Все Сети',
+        allCities: 'Все Города',
+        directions: 'Маршрут',
+        phone: 'Телефон',
+        features: 'Особенности',
+        parking: 'Парковка',
+        atm: 'Банкомат',
+        rating: 'Рейтинг',
+        noStores: 'Не найдено магазинов, соответствующих вашим критериям',
+        locationBased: 'Поиск по Местоположению',
+        locationBasedDesc: 'Расстояния рассчитаны от вашего текущего местоположения. Разрешите доступ к местоположению для более точных результатов.',
+        locationBasedDescDenied: 'Включите доступ к местоположению, чтобы видеть расстояния до магазинов и получать персонализированные рекомендации.',
+        storeTypes: {
+          hypermarket: 'Гипермаркет',
+          large: 'Большой Магазин',
+          medium: 'Средний Магазин',
+          small: 'Малый Магазин'
         }
+      },
+      
+      // Chat Tab
+      chat: {
+        title: 'ИИ Помощник',
+        subtitle: 'Получите умные советы по бюджету и местную информацию',
+        typeMessage: 'Введите ваше сообщение...',
+        quickActions: 'Быстрые Действия',
+        quickBudget: 'Проверить мой бюджет',
+        quickStores: 'Найти ближайшие магазины',
+        quickDeals: 'Показать лучшие скидки',
+        quickCoupons: 'Доступные купоны',
+        quickMeal: 'Еда за €5',
+        quickSavings: 'Как сэкономить деньги',
+        confidence: 'Уверенность',
+        suggestions: 'Предложения',
+        aiThinking: 'ИИ думает...',
+        welcomeMessage: 'Привет! Я ваш помощник по бюджету в Латвии. Как я могу помочь вам сэкономить деньги сегодня?',
+        errorMessage: 'Извините, я столкнулся с ошибкой. Пожалуйста, попробуйте еще раз или спросите что-то еще.'
       }
     }
   }
@@ -343,14 +575,12 @@ i18n
     resources,
     fallbackLng: 'en',
     debug: false,
-    
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage'],
+      caches: ['localStorage']
     },
-
     interpolation: {
-      escapeValue: false,
+      escapeValue: false
     }
   });
 

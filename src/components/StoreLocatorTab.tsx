@@ -656,10 +656,10 @@ const StoreLocatorTab: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Store Locator
+            {t('stores.title')}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Find nearby stores across Latvia
+            {t('stores.subtitle')}
           </p>
         </div>
         <button
@@ -668,7 +668,7 @@ const StoreLocatorTab: React.FC = () => {
           className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
         >
           <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
+          {t('common.refresh')}
         </button>
       </div>
 
@@ -681,7 +681,7 @@ const StoreLocatorTab: React.FC = () => {
               <div className="text-2xl font-bold text-blue-700 dark:text-blue-400">
                 {filteredStores.length}
               </div>
-              <div className="text-sm text-blue-600 dark:text-blue-500">Stores Found</div>
+              <div className="text-sm text-blue-600 dark:text-blue-500">{t('stores.storesFound')}</div>
             </div>
           </div>
         </div>
@@ -693,7 +693,7 @@ const StoreLocatorTab: React.FC = () => {
               <div className="text-2xl font-bold text-green-700 dark:text-green-400">
                 {filteredStores.filter(s => isStoreOpen(s)).length}
               </div>
-              <div className="text-sm text-green-600 dark:text-green-500">Open Now</div>
+              <div className="text-sm text-green-600 dark:text-green-500">{t('stores.openNow')}</div>
             </div>
           </div>
         </div>
