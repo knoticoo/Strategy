@@ -1,235 +1,230 @@
-# 🏠💰 Budget & Property Hub Latvia - Advanced Financial Platform
+# 🏠💰 Budget & Property Hub Latvia - Advanced Edition
 
-> **A comprehensive, AI-powered financial platform specifically designed for the Latvian market. Combining smart budget management with advanced property search, mortgage calculations, and market analytics - all with PWA capabilities for mobile use.**
+A comprehensive, AI-powered financial platform specifically designed for the Latvian market. Combining smart budget management with advanced property search, mortgage calculations, and market analytics - all with PWA capabilities for mobile use.
 
-![Latvia](https://img.shields.io/badge/🇱🇻-Latvia-maroon?style=for-the-badge)
-![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
-![PWA](https://img.shields.io/badge/PWA-Ready-green?style=for-the-badge)
-
-## 🚀 **Live Demo**
-**Coming Soon** - Deploy to your preferred platform
-
-## ✨ **Advanced Features**
+## 🚀 **NEW ADVANCED FEATURES** 
 
 ### 🧠 **AI-Powered Smart Insights**
 - **Automated spending analysis** with pattern detection
 - **Personalized financial recommendations** 
 - **Anomaly detection** for unusual spending patterns
-- **Savings optimization** suggestions based on real data
+- **Savings optimization** suggestions
 - **Property affordability calculations** based on income
-- **Smart financial goals** - Emergency fund and house down payment goals
 
-### 🗺️ **Interactive Property Map**
-- **Real Latvian coordinates** for all major cities
-- **Interactive property markers** with detailed popups
-- **Regional market overlays** showing average prices and growth
-- **Quick location buttons** for Rīga, Jūrmala, Liepāja, Daugavpils
-- **Price range filtering** to match your budget
-- **Mobile-optimized** touch controls
-
-### 🏦 **Comprehensive Mortgage Calculator**
-- **All major Latvian banks**: Swedbank, SEB, Luminor, Citadele, Rietumu
-- **Real interest rates** and current market terms
-- **Advanced affordability analysis** using Latvian banking standards
-- **Payment schedules** with year-by-year breakdown
-- **Best deal recommendations** automatically sorted by total cost
-- **DTI ratio validation** enforcing 40% maximum debt-to-income
-
-### 🔔 **Real-Time Alerts & Notifications**
-- **Custom price alerts** for property searches
-- **Push notifications** via Service Worker
-- **Market trend alerts** when conditions change
-- **Background monitoring** even when app is closed
-- **Email integration** ready for deployment
-
-### 📈 **Market Intelligence**
-- **6-month and 1-year price forecasts** for all regions
-- **Investment potential scoring** for properties
-- **Market confidence indicators** with AI analysis
-- **Buy/wait recommendations** based on market conditions
-- **Historical trend analysis** and growth projections
-
-### 🌐 **Real Estate Integration**
-- **ss.lv scraping** with respectful rate limiting
-- **Advanced search filters** for location, price, area, rooms
+### 🏠 **Enhanced Property Search & Analytics**
+- **Real ss.lv integration** with advanced scraping
+- **Interactive property map** with Latvian coordinates
+- **Comprehensive mortgage calculator** for all major Latvian banks (Swedbank, SEB, Luminor, Citadele, Rietumu)
+- **Market trend analysis** and price forecasting
+- **Price alerts** with push notifications
 - **Property recommendations** based on budget and preferences
-- **Market analytics** including price per sqm and days on market
-- **Similar property suggestions** using AI matching
 
-### 💳 **Banking Integration**
-- **Revolut API** with Latvia-specific endpoints
-- **Real-time balance sync** and transaction categorization
-- **Multi-currency support** optimized for EUR
-- **Secure OAuth flow** with token management
-- **Bank-grade security** and error handling
+### 🏦 **Latvian Banking Integration**
+- **Real Revolut API** connection for Latvia
+- **Multi-bank mortgage comparison** with current rates
+- **Affordability calculator** using Latvian banking standards
+- **DTI ratio analysis** (max 40% as per LV regulations)
+- **Smart loan recommendations**
 
 ### 📱 **Progressive Web App (PWA)**
-- **Full offline functionality** - works without internet
-- **Mobile app installation** - add to home screen
-- **Background sync** - data syncs when connection returns
-- **Push notifications** for important alerts
-- **App shortcuts** for quick actions
-- **Service Worker** with advanced caching strategies
+- **Offline functionality** with service worker
+- **Push notifications** for price alerts
+- **Mobile app-like experience**
+- **Background sync** for transactions
+- **Installable** on mobile devices
 
-## 🇱🇻 **Latvian Market Specialization**
+### 📊 **Market Intelligence**
+- **Real-time market trends** for Latvian regions
+- **Price growth predictions** with confidence levels
+- **Investment potential scoring**
+- **Regional comparison** (Rīga, Jūrmala, Liepāja, etc.)
+- **Buy/wait recommendations** based on market analysis
 
-### 🏛️ **Banking Integration**
-| Bank | Interest Rate | Min Down Payment | Max Term | Processing Fee |
-|------|---------------|------------------|----------|----------------|
-| **Swedbank** | 4.2% | 15% | 30 years | 0.5% |
-| **SEB** | 4.1% | 20% | 30 years | 0.4% |
-| **Luminor** | 4.3% | 15% | 25 years | 0.6% |
-| **Citadele** | 4.5% | 20% | 30 years | 0.5% |
-| **Rietumu** | 4.8% | 25% | 25 years | 0.7% |
+## Features
 
-### 🏙️ **Regional Coverage**
-| Region | Avg Price/sqm | Growth Rate | Investment Score |
-|--------|---------------|-------------|------------------|
-| **Rīga Centrs** | €2,800 | +5.2% | ⭐⭐⭐⭐⭐ |
-| **Jūrmala** | €2,200 | +3.8% | ⭐⭐⭐⭐ |
-| **Liepāja** | €1,100 | +2.1% | ⭐⭐⭐ |
-| **Daugavpils** | €700 | +1.5% | ⭐⭐ |
+### 💰 Budget Management
+- **Transaction Tracking**: Add income and expenses with categories
+- **Visual Analytics**: Pie charts and bar charts for expense distribution
+- **Budget Overview**: Set budgets per category and track spending
+- **Revolut Integration**: Connect your Revolut account (mock implementation)
+- **Real-time Balance**: See your total balance and financial overview
 
-## 🛠️ **Tech Stack**
+### 🏠 House Search
+- **Price Filtering**: Set maximum price (e.g., €40,000) to find affordable properties
+- **Property Search**: Search properties from ss.lv (simulated)
+- **Advanced Filters**: Filter by area, property type, location
+- **Direct Links**: Click to view full listings on ss.lv
+- **Sort Options**: Sort by price, area, or number of rooms
 
-### **Frontend**
-- **React 18** with hooks and modern patterns
-- **TypeScript 5** for complete type safety
-- **Tailwind CSS** for responsive, modern design
-- **Recharts** for beautiful data visualizations
-- **React Leaflet** for interactive mapping
-- **Lucide React** for consistent iconography
+## Tech Stack
 
-### **Services & APIs**
-- **Revolut API** integration for banking
-- **ss.lv scraping** for real estate data
-- **OpenStreetMap** tiles for mapping
-- **Web Push API** for notifications
-- **Geolocation API** for location services
+- **Frontend**: React 18 with TypeScript
+- **Styling**: Tailwind CSS
+- **Charts**: Recharts
+- **Icons**: Lucide React
+- **Routing**: React Router v6
+- **HTTP Client**: Axios
+- **API Integration**: Revolut API (mock), ss.lv scraping (mock)
 
-### **PWA Technologies**
-- **Service Worker** for offline functionality
-- **Web App Manifest** for installation
-- **Push API** for real-time notifications
-- **Background Sync** for offline actions
-- **Cache API** for performance optimization
+## Getting Started
 
-## 🚀 **Quick Start**
-
-### **Prerequisites**
-- Node.js 18+ 
+### Prerequisites
+- Node.js (v16 or higher)
 - npm or yarn
-- Modern browser (Chrome 80+, Firefox 74+, Safari 13+)
 
-### **Installation**
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd budget-house-app
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Edit `.env` and add your Revolut API credentials:
+   ```
+   REACT_APP_REVOLUT_CLIENT_ID=your_client_id
+   REACT_APP_REVOLUT_CLIENT_SECRET=your_client_secret
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm start
+   ```
+
+5. **Open the app**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## Usage
+
+### Budget Tab
+1. **View Dashboard**: See your balance, income, expenses, and Revolut account
+2. **Add Transactions**: Click "Add Transaction" to log new income or expenses
+3. **Track Budgets**: Monitor spending against your budget limits
+4. **Connect Revolut**: Click "Connect" on the Revolut card (demo mode)
+
+### House Search Tab
+1. **Set Filters**: Enter your maximum price (e.g., €40,000)
+2. **Search Location**: Filter by city or area
+3. **Apply Filters**: Set minimum area, property type
+4. **Browse Results**: View properties within your budget
+5. **Visit Listings**: Click "View on ss.lv" to open the original listing
+
+## API Integration
+
+### Revolut Integration
+The app includes a mock Revolut service that demonstrates:
+- OAuth authentication flow
+- Account balance retrieval
+- Transaction history
+- Real-time financial data sync
+
+To implement real Revolut integration:
+1. Register at [Revolut Developer Portal](https://developer.revolut.com/)
+2. Get your API credentials
+3. Update the `revolutService.ts` with real API calls
+4. Implement proper OAuth flow on your backend
+
+### ss.lv Integration
+The house search includes a mock ss.lv service that simulates:
+- Property search with price filters
+- Location-based filtering
+- Property details extraction
+- Direct links to listings
+
+To implement real ss.lv scraping:
+1. Create a backend service (recommended for CORS and rate limiting)
+2. Use libraries like Puppeteer or Cheerio for web scraping
+3. Respect ss.lv's robots.txt and terms of service
+4. Implement proper error handling and rate limiting
+
+## Mobile Friendly
+
+The app is fully responsive and optimized for mobile devices:
+- Touch-friendly navigation
+- Responsive grid layouts
+- Mobile-optimized charts
+- Collapsible mobile menu
+
+## Future Enhancements
+
+### Budget Features
+- [ ] Expense categories customization
+- [ ] Recurring transactions
+- [ ] Financial goals tracking
+- [ ] Export to CSV/PDF
+- [ ] Multi-currency support
+- [ ] Bank synchronization (other banks)
+
+### House Search Features
+- [ ] Saved searches
+- [ ] Property favorites
+- [ ] Price alerts
+- [ ] Map integration
+- [ ] Mortgage calculator
+- [ ] Property comparison tool
+
+### Technical Improvements
+- [ ] PWA (Progressive Web App)
+- [ ] Offline mode
+- [ ] Push notifications
+- [ ] Dark mode
+- [ ] Backend API
+- [ ] User authentication
+- [ ] Data persistence
+
+## Wrapping as Mobile App
+
+This web app can be wrapped as a mobile app using:
+
+### Capacitor (Recommended)
 ```bash
-# Clone the repository
-git clone https://github.com/knoticoo/Strategy.git
-cd Strategy/Budget/budget-house-app
-
-# Install dependencies
-npm install
-
-# Start development server
-npm start
-
-# Open http://localhost:3000
+npm install @capacitor/core @capacitor/cli
+npx cap init
+npx cap add ios
+npx cap add android
+npx cap build
 ```
 
-### **Production Build**
+### Electron (Desktop)
 ```bash
-# Create optimized build
-npm run build
-
-# Serve with any static server
-npx serve -s build
+npm install electron
+# Add electron scripts to package.json
 ```
 
-## 📱 **PWA Installation**
-
-### **Mobile (iOS/Android)**
-1. Open the app in your mobile browser
-2. Look for "Add to Home Screen" prompt
-3. The app installs like a native app
-4. Enjoy offline functionality and push notifications
-
-### **Desktop**
-1. Open in Chrome/Edge/Firefox
-2. Click the install icon in the address bar
-3. App opens in its own window
-4. Full desktop app experience
-
-## 🌍 **Deployment Options**
-
-### **Vercel (Recommended)**
+### Cordova
 ```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel --prod
+npm install -g cordova
+cordova create myapp
+cordova platform add ios android
+cordova build
 ```
 
-### **Netlify**
-```bash
-# Build
-npm run build
-
-# Drag and drop the build folder to Netlify
-```
-
-### **Ubuntu VPS**
-```bash
-# Use the included script
-chmod +x ubuntu-quick-start.sh
-./ubuntu-quick-start.sh
-```
-
-## 📊 **Performance**
-
-- **Lighthouse Score**: 95+ (Performance, Accessibility, Best Practices, SEO)
-- **First Contentful Paint**: <1.5s
-- **Largest Contentful Paint**: <2.5s
-- **Cumulative Layout Shift**: <0.1
-- **Time to Interactive**: <3s
-
-## 🔐 **Security & Privacy**
-
-- **No hardcoded API keys** - all credentials via environment variables
-- **Rate limiting** for all external API calls
-- **Input sanitization** and validation
-- **Secure token management** for banking APIs
-- **HTTPS only** in production
-- **Data encryption** for sensitive information
-
-## 🤝 **Contributing**
+## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
-## 📄 **License**
+## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 **Acknowledgments**
+## Support
 
-- **Latvian Banking Association** for banking standards
-- **ss.lv** for real estate data structure reference
-- **OpenStreetMap** contributors for mapping data
-- **React community** for excellent libraries and tools
-
-## 📞 **Support**
-
-- **Issues**: [GitHub Issues](https://github.com/knoticoo/Strategy/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/knoticoo/Strategy/discussions)
-- **Email**: Coming soon
+For support, email your-email@domain.com or create an issue in the repository.
 
 ---
 
-**🎉 Built with ❤️ for Latvia 🇱🇻**
-
-*Transform your financial life with AI-powered insights and comprehensive property search, all designed specifically for the Latvian market.*
+**Note**: This is a demo application. The Revolut integration and ss.lv scraping are mock implementations. For production use, implement proper API integration and respect all terms of service.

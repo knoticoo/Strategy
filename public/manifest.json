@@ -1,0 +1,75 @@
+{
+  "short_name": "BudgetHub LV",
+  "name": "Budget & Property Hub Latvia",
+  "description": "Smart budget management and property search for Latvia. Track expenses, connect to Revolut, find properties on ss.lv with mortgage calculator.",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#3B82F6",
+  "background_color": "#F9FAFB",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["finance", "lifestyle", "productivity"],
+  "lang": "lv",
+  "dir": "ltr",
+  "shortcuts": [
+    {
+      "name": "Add Transaction",
+      "short_name": "Add Expense",
+      "description": "Quickly add a new expense or income",
+      "url": "/?action=add-transaction",
+      "icons": [{ "src": "/icons/add-transaction-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Property Search",
+      "short_name": "Find Property",
+      "description": "Search for properties in Latvia",
+      "url": "/house-search",
+      "icons": [{ "src": "/icons/house-search-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Mortgage Calculator",
+      "short_name": "Calculator",
+      "description": "Calculate mortgage payments with Latvian banks",
+      "url": "/?tab=mortgage",
+      "icons": [{ "src": "/icons/calculator-96.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/budget-overview.png",
+      "type": "image/png",
+      "sizes": "1280x720",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshots/mobile-budget.png",
+      "type": "image/png",
+      "sizes": "750x1334",
+      "form_factor": "narrow"
+    }
+  ],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  }
+}
