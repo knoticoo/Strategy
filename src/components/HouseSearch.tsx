@@ -1,6 +1,6 @@
 // Enhanced House Search Component for Latvian Market
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search, MapPin, Home, Bed, Bath, Square, ExternalLink, SortAsc, SortDesc, Filter, Star, Heart, Calendar, Eye, Calculator, Bell, TrendingUp, Map, AlertCircle, Euro, Building } from 'lucide-react';
+import { Search, MapPin, Home, Square, ExternalLink, Filter, Bell, TrendingUp, Euro, Building } from 'lucide-react';
 import PropertyMap from './PropertyMap';
 import MortgageCalculator from './MortgageCalculator';
 import ssLvService, { SSProperty, SearchFilters, MarketAnalytics } from '../services/ssLvScrapingService';
@@ -32,7 +32,7 @@ const HouseSearch: React.FC = () => {
   const [regions] = useState<LatvianRegion[]>(latvianBankService.getRegions());
   
   // User preferences for smart recommendations
-  const [userPreferences, setUserPreferences] = useState({
+  const [userPreferences] = useState({
     monthlyIncome: 2500,
     budget: 80000,
     preferredLocation: 'Rīga',
@@ -40,27 +40,7 @@ const HouseSearch: React.FC = () => {
     type: 'apartment' as 'apartment' | 'house'
   });
 
-  // Load data on component mount
-  useEffect(() => {
-    searchProperties();
-    loadMarketData();
-    loadForecasts();
-  }, []);
-
-  // Search properties when filters change
-  useEffect(() => {
-    const delayedSearch = setTimeout(() => {
-      searchProperties();
-    }, 500);
-    return () => clearTimeout(delayedSearch);
-  }, [filters]);
-
-  // Generate smart recommendations when user preferences change
-  useEffect(() => {
-    generateRecommendations();
-  }, [userPreferences, properties]);
-
-  const searchProperties = async () => {
+  const searchProperties = useCallback(async () => {
     setLoading(true);
     try {
       const results = await ssLvService.searchProperties(filters);
@@ -77,18 +57,18 @@ const HouseSearch: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
-  const loadMarketData = async () => {
+  const loadMarketData = useCallback(async () => {
     try {
       const analytics = await ssLvService.getMarketAnalytics('Rīga');
       setMarketAnalytics(analytics);
     } catch (error) {
       console.error('Error loading market data:', error);
     }
-  };
+  }, []);
 
-  const loadForecasts = async () => {
+  const loadForecasts = useCallback(async () => {
     try {
       const regionNames = regions.map(r => r.name);
       const forecasts = await smartInsightsService.generateMarketForecasts(regionNames);
@@ -96,9 +76,9 @@ const HouseSearch: React.FC = () => {
     } catch (error) {
       console.error('Error loading forecasts:', error);
     }
-  };
+  }, [regions]);
 
-  const generateRecommendations = async () => {
+  const generateRecommendations = useCallback(async () => {
     if (properties.length === 0) return;
     
     try {
@@ -115,7 +95,27 @@ const HouseSearch: React.FC = () => {
     } catch (error) {
       console.error('Error generating recommendations:', error);
     }
-  };
+  }, [properties, userPreferences]);
+
+  // Load data on component mount
+  useEffect(() => {
+    searchProperties();
+    loadMarketData();
+    loadForecasts();
+  }, [searchProperties, loadMarketData, loadForecasts]);
+
+  // Search properties when filters change (debounced)
+  useEffect(() => {
+    const delayedSearch = setTimeout(() => {
+      searchProperties();
+    }, 500);
+    return () => clearTimeout(delayedSearch);
+  }, [searchProperties]);
+
+  // Generate smart recommendations when user preferences or properties change
+  useEffect(() => {
+    generateRecommendations();
+  }, [generateRecommendations]);
 
   const createPriceAlert = async (targetPrice: number) => {
     const alert = {

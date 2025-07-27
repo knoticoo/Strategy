@@ -1,5 +1,5 @@
 // Smart Insights Service - AI-Powered Financial & Property Recommendations
-import axios from 'axios';
+// Note: axios import removed as it's not currently used
 import { Transaction } from '../components/BudgetApp';
 import { SSProperty } from './ssLvScrapingService';
 import latvianBankService, { MortgageCalculation } from './latvianBankService';
@@ -69,7 +69,7 @@ class SmartInsightsService {
     const insights: SmartInsight[] = [];
     const now = new Date();
     const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const last3Months = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+    // Note: last3Months currently not used in calculations
 
     // Group transactions by category
     const categorySpending = this.groupTransactionsByCategory(transactions);
@@ -288,7 +288,7 @@ class SmartInsightsService {
   detectSpendingAnomalies(transactions: Transaction[]): SmartInsight[] {
     const insights: SmartInsight[] = [];
     const now = new Date();
-    const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    // Note: lastWeek currently not used in calculations
 
     // Group by day of week to find patterns
     const dayOfWeekSpending = new Array(7).fill(0);
@@ -500,4 +500,5 @@ class SmartInsightsService {
   }
 }
 
-export default new SmartInsightsService();
+const smartInsightsService = new SmartInsightsService();
+export default smartInsightsService;

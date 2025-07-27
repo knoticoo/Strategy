@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { SSProperty } from '../services/ssLvScrapingService';
 import { LatvianRegion } from '../services/latvianBankService';
-import { MapPin, Home, Euro, Square, Eye, Star, Phone, ExternalLink } from 'lucide-react';
+import { MapPin, Home, Euro, Square, Eye, Phone, ExternalLink } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 
 // Fix default markers

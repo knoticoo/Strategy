@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { Plus, TrendingUp, TrendingDown, CreditCard, Wallet, ArrowUpRight, ArrowDownRight, DollarSign, Receipt, Target, Eye, EyeOff, Lightbulb, Home, Bell, Star, AlertTriangle } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Plus, TrendingUp, TrendingDown, CreditCard, Wallet, ArrowUpRight, ArrowDownRight, DollarSign, Receipt, Target, Eye, EyeOff, Lightbulb, Home, Star, AlertTriangle } from 'lucide-react';
 import smartInsightsService, { SmartInsight, FinancialGoal } from '../services/smartInsightsService';
 import latvianBankService from '../services/latvianBankService';
 
-interface Transaction {
+export interface Transaction {
   id: string;
   type: 'income' | 'expense';
   amount: number;
@@ -93,12 +93,7 @@ const BudgetApp: React.FC = () => {
 
   const balance = totalIncome - totalExpenses;
 
-  // Generate smart insights when transactions change
-  useEffect(() => {
-    generateInsights();
-  }, [transactions]);
-
-  const generateInsights = async () => {
+  const generateInsights = useCallback(async () => {
     if (transactions.length === 0) return;
     
     setLoading(true);
@@ -122,7 +117,12 @@ const BudgetApp: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [transactions, totalIncome]);
+
+  // Generate smart insights when transactions change
+  useEffect(() => {
+    generateInsights();
+  }, [generateInsights]);
 
   // Prepare data for charts
   const expensesByCategory = transactions
