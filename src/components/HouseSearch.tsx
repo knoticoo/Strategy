@@ -1,10 +1,11 @@
 // Enhanced House Search Component - Ultra Modern Design with Animations & Modals
 import React, { useState, useEffect, useCallback } from 'react';
+import './HouseSearch.css';
 import { 
   Search, MapPin, Home, Square, Filter, Bell, Star, Eye, Heart, Calendar, 
   ArrowRight, BarChart3, X, Bed, Bath, Wifi, Car, TreePine, Shield,
   PlayCircle, Maximize2, ChevronLeft, ChevronRight, Share2, Bookmark,
-  Phone, Mail, MessageCircle, Camera, ArrowUpRight, Zap
+  Phone, MessageCircle, Camera, ArrowUpRight, Zap
 } from 'lucide-react';
 import PropertyMap from './PropertyMap';
 import MortgageCalculator from './MortgageCalculator';
@@ -44,7 +45,8 @@ const PropertyCard: React.FC<{
   property: SSProperty;
   onSelect: (property: SSProperty) => void;
   className?: string;
-}> = ({ property, onSelect, className = "" }) => {
+  style?: React.CSSProperties;
+}> = ({ property, onSelect, className = "", style }) => {
   const [imageIndex, setImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -62,6 +64,7 @@ const PropertyCard: React.FC<{
   return (
     <div 
       className={`group relative bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] cursor-pointer ${className}`}
+      style={style}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => onSelect(property)}
@@ -617,59 +620,64 @@ const HouseSearch: React.FC = () => {
               {showFilters && (
                 <div className="mt-6 p-6 bg-white/80 backdrop-blur-2xl rounded-3xl border border-white/30 shadow-2xl animate-fadeIn">
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    {[
-                      {
-                        label: 'Maksimālā cena',
-                        value: filters.maxPrice,
-                        options: [50000, 100000, 150000, 200000, 300000, 500000],
-                        onChange: (value: number) => setFilters(prev => ({ ...prev, maxPrice: value }))
-                      },
-                      {
-                        label: 'Rajons',
-                        value: filters.location,
-                        options: ['Rīga', 'Jūrmala', 'Liepāja', 'Daugavpils', 'Jelgava'],
-                        onChange: (value: string) => setFilters(prev => ({ ...prev, location: value }))
-                      },
-                      {
-                        label: 'Kārtošana',
-                        value: filters.sortBy,
-                        options: [
-                          { value: 'price_asc', label: 'Cena: No zemākās' },
-                          { value: 'price_desc', label: 'Cena: No augstākās' },
-                          { value: 'area_desc', label: 'Platība: No lielākās' },
-                          { value: 'newest', label: 'Jaunākie' }
-                        ],
-                        onChange: (value: string) => setFilters(prev => ({ ...prev, sortBy: value as any }))
-                      }
-                    ].map((filter, idx) => (
-                      <div key={idx}>
-                        <label className="block text-sm font-semibold text-gray-700 mb-3">{filter.label}</label>
-                        <select
-                          value={filter.value}
-                          onChange={(e) => filter.onChange(idx === 0 ? Number(e.target.value) : e.target.value)}
-                          className="w-full px-4 py-3 bg-white/90 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg font-medium"
-                        >
-                          {Array.isArray(filter.options[0]) 
-                            ? (filter.options as any[]).map((option) => (
-                                <option key={option.value} value={option.value}>{option.label}</option>
-                              ))
-                            : (filter.options as any[]).map((option) => (
-                                <option key={option} value={option}>
-                                  {idx === 0 ? `€${option.toLocaleString()}` : option}
-                                </option>
-                              ))
-                          }
-                        </select>
-                      </div>
-                    ))}
-                    <div className="flex items-end">
-                      <button
-                        onClick={() => setShowFilters(false)}
-                        className="w-full px-4 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-2xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 font-medium shadow-lg transform hover:scale-105"
-                      >
-                        Paslēpt filtrus
-                      </button>
-                    </div>
+                                         <div>
+                       <label className="block text-sm font-semibold text-gray-700 mb-3">Maksimālā cena</label>
+                       <select
+                         value={filters.maxPrice}
+                         onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: Number(e.target.value) }))}
+                         className="w-full px-4 py-3 bg-white/90 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg font-medium"
+                       >
+                         <option value={50000}>€50,000</option>
+                         <option value={100000}>€100,000</option>
+                         <option value={150000}>€150,000</option>
+                         <option value={200000}>€200,000</option>
+                         <option value={300000}>€300,000</option>
+                         <option value={500000}>€500,000</option>
+                       </select>
+                     </div>
+                     
+                     <div>
+                       <label className="block text-sm font-semibold text-gray-700 mb-3">Rajons</label>
+                       <select
+                         value={filters.location}
+                         onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
+                         className="w-full px-4 py-3 bg-white/90 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg font-medium"
+                       >
+                         <option value="Rīga">Rīga</option>
+                         <option value="Jūrmala">Jūrmala</option>
+                         <option value="Liepāja">Liepāja</option>
+                         <option value="Daugavpils">Daugavpils</option>
+                         <option value="Jelgava">Jelgava</option>
+                       </select>
+                     </div>
+
+                     <div>
+                       <label className="block text-sm font-semibold text-gray-700 mb-3">Kārtošana</label>
+                       <select
+                         value={filters.sortBy}
+                         onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value as any }))}
+                         className="w-full px-4 py-3 bg-white/90 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg font-medium"
+                       >
+                         <option value="price_asc">Cena: No zemākās</option>
+                         <option value="price_desc">Cena: No augstākās</option>
+                         <option value="area_desc">Platība: No lielākās</option>
+                         <option value="newest">Jaunākie</option>
+                       </select>
+                     </div>
+
+                     {/* This will be the fourth column */}
+                     <div className="flex items-end">
+                       <button
+                         onClick={() => setShowFilters(false)}
+                         className="w-full px-4 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-2xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 font-medium shadow-lg transform hover:scale-105"
+                       >
+                         Paslēpt filtrus
+                       </button>
+                     </div>
+
+                     {/* Remove this entire .map() block
+                     {[].map((filter, idx) => (
+                      
                   </div>
                 </div>
               )}
@@ -769,15 +777,15 @@ const HouseSearch: React.FC = () => {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredProperties.map((property, index) => (
-                      <PropertyCard
-                        key={property.id}
-                        property={property}
-                        onSelect={handlePropertySelect}
-                        className="animate-fadeInUp"
-                        style={{ animationDelay: `${index * 100}ms` } as any}
-                      />
-                    ))}
+                                         {filteredProperties.map((property, index) => (
+                       <PropertyCard
+                         key={property.id}
+                         property={property}
+                         onSelect={handlePropertySelect}
+                         className="animate-fadeInUp"
+                         style={{ animationDelay: `${index * 100}ms` }}
+                       />
+                     ))}
                   </div>
                 )}
               </div>
@@ -828,33 +836,7 @@ const HouseSearch: React.FC = () => {
         }}
       />
 
-      {/* Custom Styles */}
-      <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-fadeIn {
-          animation: fadeIn 0.6s ease-out;
-        }
-
-        .animate-fadeInUp {
-          animation: fadeInUp 0.8s ease-out both;
-        }
-
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      `}</style>
+      
     </>
   );
 };
