@@ -326,4 +326,5 @@ class LatvianBankService {
   }
 }
 
-export default new LatvianBankService();
+const latvianBankService = new LatvianBankService();
+export default latvianBankService;

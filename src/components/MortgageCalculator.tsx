@@ -1,7 +1,7 @@
 // Latvian Mortgage Calculator with Bank Comparisons
-import React, { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
-import { Calculator, Building, Percent, Calendar, Euro, TrendingDown, TrendingUp, AlertCircle, CheckCircle, Star } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { Calculator, Building, Calendar, Euro, AlertCircle, CheckCircle } from 'lucide-react';
 import latvianBankService, { LatvianBank, MortgageCalculation } from '../services/latvianBankService';
 
 interface MortgageCalculatorProps {
@@ -27,12 +27,7 @@ const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
     setPropertyPrice(initialPrice);
   }, [initialPrice]);
 
-  useEffect(() => {
-    calculateMortgages();
-    calculateAffordability();
-  }, [propertyPrice, downPaymentPercentage, loanTerm, monthlyIncome, existingDebts]);
-
-  const calculateMortgages = () => {
+  const calculateMortgages = useCallback(() => {
     try {
       const results = latvianBankService.compareAllBanks(
         propertyPrice,
@@ -47,12 +42,17 @@ const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
       console.error('Mortgage calculation error:', error);
       setCalculations([]);
     }
-  };
+  }, [propertyPrice, downPaymentPercentage, loanTerm, onCalculationChange]);
 
-  const calculateAffordability = () => {
+  const calculateAffordability = useCallback(() => {
     const result = latvianBankService.calculateAffordability(monthlyIncome, existingDebts);
     setAffordability(result);
-  };
+  }, [monthlyIncome, existingDebts]);
+
+  useEffect(() => {
+    calculateMortgages();
+    calculateAffordability();
+  }, [calculateMortgages, calculateAffordability]);
 
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat('lv-LV', {
@@ -65,11 +65,6 @@ const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
   const formatPercentage = (value: number): string => {
     return `${value.toFixed(1)}%`;
-  };
-
-  const getBankLogo = (bankId: string): string => {
-    const bank = banks.find(b => b.id === bankId);
-    return bank?.logoUrl || '';
   };
 
   const getAffordabilityColor = (ratio: number): string => {

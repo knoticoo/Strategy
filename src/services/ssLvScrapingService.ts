@@ -2,11 +2,11 @@
 import axios from 'axios';
 import axiosRateLimit from 'axios-rate-limit';
 
-// Rate limited axios instance to respect ss.lv
-const http = axiosRateLimit(axios.create(), { 
-  maxRequests: 2, 
-  perMilliseconds: 1000 
-});
+// Rate limited axios instance to respect ss.lv (currently using mock data)
+// const http = axiosRateLimit(axios.create(), { 
+//   maxRequests: 2, 
+//   perMilliseconds: 1000 
+// });
 
 export interface SSProperty {
   id: string;
@@ -279,7 +279,7 @@ class SSLvScrapingService {
       rooms: [rooms]
     });
 
-    const avgPrice = comparables.reduce((sum, prop) => sum + prop.price, 0) / comparables.length;
+    // Note: avgPrice currently not used in valuation
     const avgPricePerSqm = comparables.reduce((sum, prop) => sum + (prop.pricePerSqm || 0), 0) / comparables.length;
 
     return {
@@ -455,4 +455,5 @@ class SSLvScrapingService {
   }
 }
 
-export default new SSLvScrapingService();
+const ssLvService = new SSLvScrapingService();
+export default ssLvService;
