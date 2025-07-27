@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { 
   Plus, 
@@ -9,12 +9,10 @@ import {
   BarChart3, 
   CheckCircle, 
   Trash2,
-  CreditCard,
-  Link,
-  RefreshCw,
-  Zap
+  Wallet,
+  Edit3,
+  Save
 } from 'lucide-react';
-import revolutService, { RevolutAccount } from '../services/revolutService';
 
 interface Expense {
   id: string;
@@ -22,7 +20,7 @@ interface Expense {
   amount: number;
   category: string;
   date: string;
-  source?: 'manual' | 'revolut';
+  source: 'manual';
 }
 
 interface Budget {
@@ -31,75 +29,32 @@ interface Budget {
   monthly: number;
 }
 
+interface UserBalance {
+  current: number;
+  currency: string;
+  lastUpdated: string;
+}
+
 const BudgetTab: React.FC = () => {
   const { t } = useTranslation();
   const [budget, setBudget] = useState<Budget>({ daily: 20, weekly: 140, monthly: 600 });
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [userBalance, setUserBalance] = useState<UserBalance>({ current: 500, currency: 'EUR', lastUpdated: new Date().toISOString() });
   const [showAddExpense, setShowAddExpense] = useState(false);
+  const [showEditBalance, setShowEditBalance] = useState(false);
   const [newExpense, setNewExpense] = useState({ description: '', amount: '', category: 'food' });
-  
-  // Revolut integration states
-  const [revolutAccounts, setRevolutAccounts] = useState<RevolutAccount[]>([]);
-  const [isRevolutConnected, setIsRevolutConnected] = useState(false);
-  const [isRevolutLoading, setIsRevolutLoading] = useState(false);
-  const [lastRevolutSync, setLastRevolutSync] = useState<Date | null>(null);
-
-  // Auto-sync Revolut data if connected
-  const syncRevolutData = useCallback(async () => {
-    if (!revolutService.isAuthenticated()) return;
-    
-    setIsRevolutLoading(true);
-    try {
-      // Fetch accounts
-      const accounts = await revolutService.getAccounts();
-      setRevolutAccounts(accounts);
-      
-      // Fetch recent transactions and convert to expenses
-      const transactions = await revolutService.getTransactionsByDateRange(
-        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
-        new Date()
-      );
-      
-      const revolutExpenses: Expense[] = transactions
-        .filter(tx => tx.type === 'CARD_PAYMENT' && tx.state === 'COMPLETED')
-        .map(tx => ({
-          id: `revolut_${tx.id}`,
-          description: tx.legs[0]?.description || 'Revolut Payment',
-          amount: Math.abs(tx.legs[0]?.amount || 0),
-          category: categorizeRevolutTransaction(tx.legs[0]?.description || ''),
-          date: tx.completedAt || tx.createdAt,
-          source: 'revolut' as const
-        }));
-      
-      // Merge with existing expenses (avoid duplicates)
-      setExpenses(prev => {
-        const manualExpenses = prev.filter(expense => expense.source !== 'revolut');
-        return [...manualExpenses, ...revolutExpenses];
-      });
-      
-      setLastRevolutSync(new Date());
-    } catch (error) {
-      console.error('Revolut sync error:', error);
-    }
-    setIsRevolutLoading(false);
-  }, []);
+  const [editBalance, setEditBalance] = useState('');
 
   // Load data from localStorage
   useEffect(() => {
     const savedBudget = localStorage.getItem('budget');
     const savedExpenses = localStorage.getItem('expenses');
+    const savedBalance = localStorage.getItem('userBalance');
     
     if (savedBudget) setBudget(JSON.parse(savedBudget));
     if (savedExpenses) setExpenses(JSON.parse(savedExpenses));
-
-    // Check Revolut connection status
-    setIsRevolutConnected(revolutService.isAuthenticated());
-    
-    // Auto-sync Revolut data if connected
-    if (revolutService.isAuthenticated()) {
-      syncRevolutData();
-    }
-  }, [syncRevolutData]);
+    if (savedBalance) setUserBalance(JSON.parse(savedBalance));
+  }, []);
 
   // Save budget to localStorage
   useEffect(() => {
@@ -111,70 +66,10 @@ const BudgetTab: React.FC = () => {
     localStorage.setItem('expenses', JSON.stringify(expenses));
   }, [expenses]);
 
-  const connectRevolut = async () => {
-    try {
-      const authURL = revolutService.getAuthURL();
-      window.open(authURL, '_blank', 'width=600,height=700');
-      
-      // Listen for the OAuth callback
-      const handleMessage = async (event: MessageEvent) => {
-        if (event.origin !== window.location.origin) return;
-        
-        if (event.data.type === 'REVOLUT_AUTH_SUCCESS') {
-          const { code, state } = event.data;
-          const success = await revolutService.exchangeCodeForTokens(code, state);
-          
-          if (success) {
-            setIsRevolutConnected(true);
-            await syncRevolutData();
-          }
-          
-          window.removeEventListener('message', handleMessage);
-        }
-      };
-      
-      window.addEventListener('message', handleMessage);
-    } catch (error) {
-      console.error('Revolut connection error:', error);
-    }
-  };
-
-  const disconnectRevolut = () => {
-    revolutService.disconnect();
-    setIsRevolutConnected(false);
-    setRevolutAccounts([]);
-    setLastRevolutSync(null);
-    
-    // Remove Revolut expenses
-    setExpenses(prev => prev.filter(expense => expense.source !== 'revolut'));
-  };
-
-  const categorizeRevolutTransaction = (description: string): string => {
-    const desc = description.toLowerCase();
-    
-    if (desc.includes('maxima') || desc.includes('rimi') || desc.includes('barbora') || 
-        desc.includes('grocery') || desc.includes('food') || desc.includes('restaurant')) {
-      return 'food';
-    }
-    if (desc.includes('transport') || desc.includes('bus') || desc.includes('taxi') || 
-        desc.includes('fuel') || desc.includes('parking')) {
-      return 'transport';
-    }
-    if (desc.includes('entertainment') || desc.includes('cinema') || desc.includes('bar') || 
-        desc.includes('club') || desc.includes('game')) {
-      return 'entertainment';
-    }
-    if (desc.includes('shop') || desc.includes('store') || desc.includes('clothing') || 
-        desc.includes('amazon') || desc.includes('online')) {
-      return 'shopping';
-    }
-    if (desc.includes('bill') || desc.includes('utility') || desc.includes('phone') || 
-        desc.includes('internet') || desc.includes('insurance')) {
-      return 'bills';
-    }
-    
-    return 'other';
-  };
+  // Save balance to localStorage
+  useEffect(() => {
+    localStorage.setItem('userBalance', JSON.stringify(userBalance));
+  }, [userBalance]);
 
   const addExpense = () => {
     if (!newExpense.description || !newExpense.amount) return;
@@ -189,12 +84,47 @@ const BudgetTab: React.FC = () => {
     };
     
     setExpenses([expense, ...expenses]);
+    
+    // Deduct from balance
+    setUserBalance(prev => ({
+      ...prev,
+      current: prev.current - expense.amount,
+      lastUpdated: new Date().toISOString()
+    }));
+    
     setNewExpense({ description: '', amount: '', category: 'food' });
     setShowAddExpense(false);
   };
 
   const deleteExpense = (id: string) => {
+    const expense = expenses.find(exp => exp.id === id);
+    if (expense) {
+      // Add amount back to balance
+      setUserBalance(prev => ({
+        ...prev,
+        current: prev.current + expense.amount,
+        lastUpdated: new Date().toISOString()
+      }));
+    }
     setExpenses(expenses.filter(expense => expense.id !== id));
+  };
+
+  const saveBalance = () => {
+    const newBalance = parseFloat(editBalance);
+    if (!isNaN(newBalance) && newBalance >= 0) {
+      setUserBalance({
+        current: newBalance,
+        currency: 'EUR',
+        lastUpdated: new Date().toISOString()
+      });
+      setShowEditBalance(false);
+      setEditBalance('');
+    }
+  };
+
+  const openEditBalance = () => {
+    setEditBalance(userBalance.current.toString());
+    setShowEditBalance(true);
   };
 
   // Calculate spending statistics
@@ -236,6 +166,10 @@ const BudgetTab: React.FC = () => {
     if (foodSpending > monthSpending * 0.5) {
       insights.push(t('budget.insights.foodHigh'));
     }
+
+    if (userBalance.current < 50) {
+      insights.push('Your balance is getting low. Consider checking the deals tab for savings!');
+    }
     
     if (insights.length === 0) {
       insights.push(t('budget.insights.onTrack'));
@@ -255,13 +189,9 @@ const BudgetTab: React.FC = () => {
     }
   };
 
-  const revolutBalance = revolutAccounts.reduce((total, account) => 
-    account.currency === 'EUR' ? total + account.balance : total, 0
-  );
-
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
-      {/* Header with Revolut Integration */}
+      {/* Header with Balance */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -272,67 +202,48 @@ const BudgetTab: React.FC = () => {
           </p>
         </div>
         
-        {/* Revolut Connection */}
+        {/* Current Balance */}
         <div className="flex items-center space-x-4">
-          {isRevolutConnected ? (
-            <div className="flex items-center space-x-2">
-              <div className="flex items-center bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-3 py-2 rounded-lg">
-                <CreditCard className="h-4 w-4 mr-2" />
-                <span className="text-sm font-medium">
-                  €{revolutBalance.toFixed(2)} EUR
-                </span>
+          <div className="flex items-center bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg border border-green-200 dark:border-green-800">
+            <Wallet className="h-5 w-5 mr-2" />
+            <div className="text-right">
+              <div className="text-lg font-bold">
+                €{userBalance.current.toFixed(2)}
               </div>
-              
-              <button
-                onClick={syncRevolutData}
-                disabled={isRevolutLoading}
-                className="flex items-center bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-              >
-                <RefreshCw className={`h-4 w-4 mr-2 ${isRevolutLoading ? 'animate-spin' : ''}`} />
-                <span className="text-sm">
-                  {isRevolutLoading ? 'Syncing...' : 'Sync'}
-                </span>
-              </button>
-              
-              <button
-                onClick={disconnectRevolut}
-                className="text-gray-500 hover:text-red-600 p-2"
-                title="Disconnect Revolut"
-              >
-                <Link className="h-4 w-4 rotate-45" />
-              </button>
+              <div className="text-xs opacity-75">
+                Current Balance
+              </div>
             </div>
-          ) : (
-            <button
-              onClick={connectRevolut}
-              className="flex items-center bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all"
-            >
-              <CreditCard className="h-4 w-4 mr-2" />
-              Connect Revolut
-            </button>
-          )}
+          </div>
+          
+          <button
+            onClick={openEditBalance}
+            className="flex items-center bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            title="Edit Balance"
+          >
+            <Edit3 className="h-4 w-4 mr-2" />
+            Edit
+          </button>
         </div>
       </div>
 
-      {/* Revolut Sync Status */}
-      {isRevolutConnected && lastRevolutSync && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Zap className="h-5 w-5 text-blue-600 mr-2" />
-              <span className="text-blue-700 dark:text-blue-400 font-medium">
-                Real-time Banking Integration Active
-              </span>
-            </div>
-            <span className="text-sm text-blue-600 dark:text-blue-400">
-              Last sync: {lastRevolutSync.toLocaleTimeString()}
+      {/* Balance Status */}
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Wallet className="h-5 w-5 text-blue-600 mr-2" />
+            <span className="text-blue-700 dark:text-blue-400 font-medium">
+              Manual Balance Management
             </span>
           </div>
-          <p className="text-sm text-blue-600 dark:text-blue-400 mt-2">
-            Your Revolut transactions are automatically imported and categorized.
-          </p>
+          <span className="text-sm text-blue-600 dark:text-blue-400">
+            Last updated: {new Date(userBalance.lastUpdated).toLocaleString()}
+          </span>
         </div>
-      )}
+        <p className="text-sm text-blue-600 dark:text-blue-400 mt-2">
+          Your expenses are automatically deducted from your balance. Edit your balance anytime.
+        </p>
+      </div>
 
       {/* Budget Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -510,12 +421,9 @@ const BudgetTab: React.FC = () => {
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           {new Date(expense.date).toLocaleDateString()}
                         </p>
-                        {expense.source === 'revolut' && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                            <CreditCard className="h-3 w-3 mr-1" />
-                            Revolut
-                          </span>
-                        )}
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+                          Manual
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -523,14 +431,12 @@ const BudgetTab: React.FC = () => {
                     <span className="font-semibold text-gray-900 dark:text-white">
                       €{expense.amount.toFixed(2)}
                     </span>
-                    {expense.source === 'manual' && (
-                      <button
-                        onClick={() => deleteExpense(expense.id)}
-                        className="text-red-500 hover:text-red-700 p-1"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    )}
+                    <button
+                      onClick={() => deleteExpense(expense.id)}
+                      className="text-red-500 hover:text-red-700 p-1"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
               ))}
@@ -538,6 +444,56 @@ const BudgetTab: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Edit Balance Modal */}
+      {showEditBalance && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Edit Current Balance
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Current Balance (EUR)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={editBalance}
+                  onChange={(e) => setEditBalance(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="500.00"
+                  autoFocus
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Enter your current account balance. Expenses will be deducted automatically.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex space-x-3 mt-6">
+              <button
+                onClick={() => {
+                  setShowEditBalance(false);
+                  setEditBalance('');
+                }}
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveBalance}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Add Expense Modal */}
       {showAddExpense && (
@@ -573,6 +529,9 @@ const BudgetTab: React.FC = () => {
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                   placeholder="0.00"
                 />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Amount will be deducted from your balance: €{userBalance.current.toFixed(2)}
+                </p>
               </div>
               
               <div>
