@@ -5,9 +5,10 @@ import {
   ShoppingBag, 
   Ticket, 
   Bot, 
-  Globe,
-  Sun,
-  Moon
+  Globe, 
+  Sun, 
+  Moon,
+  MapPin
 } from 'lucide-react';
 import './i18n/config';
 
@@ -16,8 +17,9 @@ import BudgetTab from './components/BudgetTab';
 import DealsTab from './components/DealsTab';
 import CouponsTab from './components/CouponsTab';
 import ChatTab from './components/ChatTab';
+import StoreLocatorTab from './components/StoreLocatorTab';
 
-type TabType = 'budget' | 'deals' | 'coupons' | 'chat';
+type TabType = 'budget' | 'deals' | 'coupons' | 'stores' | 'chat';
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -50,34 +52,41 @@ function App() {
     localStorage.setItem('language', language);
   };
 
-  const tabs = [
-    {
-      id: 'budget' as TabType,
-      name: t('nav.budget'),
-      icon: Wallet,
-      color: 'from-blue-500 to-blue-600',
-      bgColor: 'bg-blue-50'
+    const tabs = [
+    { 
+      id: 'budget' as TabType, 
+      name: t('nav.budget'), 
+      icon: Wallet, 
+      color: 'text-blue-600', 
+      bgColor: 'bg-blue-50 dark:bg-blue-900/20' 
     },
-    {
-      id: 'deals' as TabType,
-      name: t('nav.deals'),
-      icon: ShoppingBag,
-      color: 'from-green-500 to-green-600',
-      bgColor: 'bg-green-50'
+    { 
+      id: 'deals' as TabType, 
+      name: t('nav.deals'), 
+      icon: ShoppingBag, 
+      color: 'text-green-600', 
+      bgColor: 'bg-green-50 dark:bg-green-900/20' 
     },
-    {
-      id: 'coupons' as TabType,
-      name: t('nav.coupons'),
-      icon: Ticket,
-      color: 'from-purple-500 to-purple-600',
-      bgColor: 'bg-purple-50'
+    { 
+      id: 'coupons' as TabType, 
+      name: t('nav.coupons'), 
+      icon: Ticket, 
+      color: 'text-purple-600', 
+      bgColor: 'bg-purple-50 dark:bg-purple-900/20' 
     },
-    {
-      id: 'chat' as TabType,
-      name: t('nav.chat'),
-      icon: Bot,
-      color: 'from-orange-500 to-orange-600',
-      bgColor: 'bg-orange-50'
+    { 
+      id: 'stores' as TabType, 
+      name: 'Store Locator', 
+      icon: MapPin, 
+      color: 'text-orange-600', 
+      bgColor: 'bg-orange-50 dark:bg-orange-900/20' 
+    },
+    { 
+      id: 'chat' as TabType, 
+      name: t('nav.chat'), 
+      icon: Bot, 
+      color: 'text-indigo-600', 
+      bgColor: 'bg-indigo-50 dark:bg-indigo-900/20' 
     }
   ];
 
@@ -89,6 +98,8 @@ function App() {
         return <DealsTab />;
       case 'coupons':
         return <CouponsTab />;
+      case 'stores':
+        return <StoreLocatorTab />;
       case 'chat':
         return <ChatTab />;
       default:
