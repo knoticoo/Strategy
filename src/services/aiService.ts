@@ -4,340 +4,288 @@ export interface AIResponse {
   text: string;
   confidence: number;
   suggestions?: string[];
+  language: string;
+}
+
+interface OpenAIMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
 }
 
 class AIService {
-  private readonly baseURL = 'https://api-inference.huggingface.co/models';
-  private readonly models = {
-    chat: 'microsoft/DialoGPT-medium',
-    sentiment: 'cardiffnlp/twitter-roberta-base-sentiment-latest',
-    translation: 'Helsinki-NLP/opus-mt-en-lv'
-  };
+  private readonly openAIKey = process.env.REACT_APP_OPENAI_API_KEY || '';
+  private readonly openAIURL = 'https://api.openai.com/v1/chat/completions';
+  
+  // Free alternative - use OpenAI-compatible APIs
+  private readonly freeAIEndpoints = [
+    'https://api.groq.com/openai/v1/chat/completions', // Free Groq API
+    'https://openrouter.ai/api/v1/chat/completions',    // OpenRouter free tier
+  ];
 
-  // Free Hugging Face Inference API - no key required for basic usage
-  private async callHuggingFace(model: string, input: any, retries = 3): Promise<any> {
-    try {
-      const response = await axios.post(
-        `${this.baseURL}/${model}`,
-        input,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          timeout: 10000
-        }
-      );
-      return response.data;
-    } catch (error: any) {
-      if (error.response?.status === 503 && retries > 0) {
-        // Model is loading, wait and retry
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        return this.callHuggingFace(model, input, retries - 1);
-      }
-      console.error('Hugging Face API error:', error);
-      return null;
-    }
-  }
+  private conversationHistory: OpenAIMessage[] = [];
 
   async generateResponse(userMessage: string, context: any): Promise<AIResponse> {
     try {
-      // Analyze user intent
-      const intent = this.analyzeIntent(userMessage);
+      const detectedLanguage = this.detectLanguage(userMessage);
       
-      // Generate contextual response based on intent
-      let response: string;
-      let suggestions: string[] = [];
-
-      switch (intent.type) {
-        case 'budget':
-          response = await this.generateBudgetResponse(userMessage, context);
-          suggestions = this.getBudgetSuggestions(context);
-          break;
-        case 'meal':
-          response = await this.generateMealResponse(userMessage, context);
-          suggestions = this.getMealSuggestions(userMessage);
-          break;
-        case 'deals':
-          response = await this.generateDealsResponse(userMessage, context);
-          suggestions = this.getDealsSuggestions();
-          break;
-        case 'coupon':
-          response = await this.generateCouponResponse(userMessage, context);
-          suggestions = this.getCouponSuggestions();
-          break;
-        case 'general':
-        default:
-          response = await this.generateGeneralResponse(userMessage, context);
-          suggestions = this.getGeneralSuggestions();
-          break;
+      // Build system prompt with context
+      const systemPrompt = this.buildSystemPrompt(context, detectedLanguage);
+      
+      // Add system message if not exists
+      if (this.conversationHistory.length === 0) {
+        this.conversationHistory.push({
+          role: 'system',
+          content: systemPrompt
+        });
       }
 
+      // Add user message
+      this.conversationHistory.push({
+        role: 'user',
+        content: userMessage
+      });
+
+      // Keep only last 10 messages to avoid token limits
+      if (this.conversationHistory.length > 11) {
+        this.conversationHistory = [
+          this.conversationHistory[0], // Keep system prompt
+          ...this.conversationHistory.slice(-10)
+        ];
+      }
+
+      let aiResponse: string;
+      
+      // Try OpenAI first, fallback to free alternatives
+      if (this.openAIKey) {
+        aiResponse = await this.callOpenAI(this.conversationHistory);
+      } else {
+        aiResponse = await this.callFreeAI(this.conversationHistory);
+      }
+
+      // Add assistant response to history
+      this.conversationHistory.push({
+        role: 'assistant',
+        content: aiResponse
+      });
+
+      const suggestions = this.generateSuggestions(userMessage, detectedLanguage);
+
       return {
-        text: response,
-        confidence: intent.confidence,
-        suggestions
+        text: aiResponse,
+        confidence: 0.9,
+        suggestions,
+        language: detectedLanguage
       };
+
     } catch (error) {
       console.error('AI Service error:', error);
       return this.getFallbackResponse(userMessage, context);
     }
   }
 
-  private analyzeIntent(message: string): { type: string; confidence: number } {
-    const lowerMessage = message.toLowerCase();
-    
-    // Budget related keywords
-    if (this.containsKeywords(lowerMessage, ['budget', 'budžet', 'бюджет', 'spend', 'tērēt', 'потратить', 'money', 'nauda', 'деньги'])) {
-      return { type: 'budget', confidence: 0.9 };
-    }
-    
-    // Meal/Food related keywords
-    if (this.containsKeywords(lowerMessage, ['meal', 'food', 'ēdien', 'еда', 'pārtik', 'пища', 'cook', 'recipe', 'recepte', 'рецепт', '€', 'euro'])) {
-      return { type: 'meal', confidence: 0.85 };
-    }
-    
-    // Deals related keywords
-    if (this.containsKeywords(lowerMessage, ['deal', 'discount', 'sale', 'piedāvāj', 'предложен', 'atlaide', 'скидка', 'maxima', 'rimi', 'barbora'])) {
-      return { type: 'deals', confidence: 0.8 };
-    }
-    
-    // Coupon related keywords
-    if (this.containsKeywords(lowerMessage, ['coupon', 'code', 'kupon', 'купон', 'kods', 'код', 'promo'])) {
-      return { type: 'coupon', confidence: 0.8 };
-    }
-    
-    return { type: 'general', confidence: 0.5 };
+  private async callOpenAI(messages: OpenAIMessage[]): Promise<string> {
+    const response = await axios.post(
+      this.openAIURL,
+      {
+        model: 'gpt-3.5-turbo',
+        messages,
+        max_tokens: 500,
+        temperature: 0.7,
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${this.openAIKey}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    return response.data.choices[0].message.content;
   }
 
-  private containsKeywords(text: string, keywords: string[]): boolean {
-    return keywords.some(keyword => text.includes(keyword));
+  private async callFreeAI(messages: OpenAIMessage[]): Promise<string> {
+    // Try Groq (free API with good performance)
+    try {
+      const response = await axios.post(
+        'https://api.groq.com/openai/v1/chat/completions',
+        {
+          model: 'mixtral-8x7b-32768',
+          messages,
+          max_tokens: 500,
+          temperature: 0.7,
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${process.env.REACT_APP_GROQ_API_KEY || ''}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      return response.data.choices[0].message.content;
+    } catch (error) {
+      console.error('Groq API error:', error);
+      
+      // Fallback to local intelligent responses
+      return this.generateIntelligentFallback(messages);
+    }
   }
 
-  private async generateBudgetResponse(message: string, context: any): Promise<string> {
+  private detectLanguage(text: string): string {
+    const latvianWords = ['es', 'jūs', 'var', 'tērēt', 'budžets', 'nauda', 'eiro', 'veikals', 'pārtika', 'atlaide'];
+    const russianWords = ['я', 'вы', 'могу', 'тратить', 'бюджет', 'деньги', 'евро', 'магазин', 'еда', 'скидка'];
+    
+    const lowerText = text.toLowerCase();
+    
+    const latvianCount = latvianWords.filter(word => lowerText.includes(word)).length;
+    const russianCount = russianWords.filter(word => lowerText.includes(word)).length;
+    
+    if (latvianCount > russianCount && latvianCount > 0) return 'lv';
+    if (russianCount > 0) return 'ru';
+    return 'en';
+  }
+
+  private buildSystemPrompt(context: any, language: string): string {
     const budget = context.budget || { daily: 20, weekly: 140, monthly: 600 };
     const expenses = context.expenses || [];
     
-    // Calculate current spending
-    const today = new Date().toDateString();
     const todaySpending = expenses
-      .filter((exp: any) => new Date(exp.date).toDateString() === today)
+      .filter((exp: any) => new Date(exp.date).toDateString() === new Date().toDateString())
       .reduce((sum: number, exp: any) => sum + exp.amount, 0);
-    
-    const remaining = budget.daily - todaySpending;
-    
-    if (message.includes('today') || message.includes('šodien') || message.includes('сегодня')) {
-      if (remaining > 0) {
-        return `Based on your daily budget of €${budget.daily}, you have €${remaining.toFixed(2)} left to spend today. You've already spent €${todaySpending.toFixed(2)}. 
 
-💡 Smart tip: With €${remaining.toFixed(2)}, you could:
-- Have lunch at Lido (€4-6)
-- Buy groceries for dinner at Maxima (€8-12)
-- Save it for tomorrow and order Bolt Food (€15-20)`;
-      } else {
-        return `You've exceeded your daily budget by €${Math.abs(remaining).toFixed(2)}. You spent €${todaySpending.toFixed(2)} out of your €${budget.daily} daily limit.
+    const prompts = {
+      en: `You are a smart budget assistant for Latvia. User's context:
+- Daily budget: €${budget.daily} (spent today: €${todaySpending.toFixed(2)})
+- Weekly budget: €${budget.weekly}
+- Monthly budget: €${budget.monthly}
+- Recent expenses: ${expenses.slice(0, 3).map((e: any) => `€${e.amount} on ${e.description}`).join(', ')}
 
-💡 Recovery tips:
-- Skip unnecessary purchases today
-- Cook at home instead of eating out
-- Check for discount codes in the Coupons tab
-- Tomorrow, try to stay within €${budget.daily * 0.8} to balance out`;
+You help with:
+- Budget analysis and advice
+- Meal suggestions with real prices from Maxima, Rimi, Barbora
+- Finding deals and discount codes
+- Smart money-saving tips for Latvia
+
+Be conversational, helpful, and use specific Latvian store data when relevant.`,
+
+      lv: `Tu esi viedais budžeta asistents Latvijai. Lietotāja konteksts:
+- Dienas budžets: €${budget.daily} (šodien iztērēts: €${todaySpending.toFixed(2)})
+- Nedēļas budžets: €${budget.weekly}
+- Mēneša budžets: €${budget.monthly}
+- Pēdējie izdevumi: ${expenses.slice(0, 3).map((e: any) => `€${e.amount} par ${e.description}`).join(', ')}
+
+Tu palīdzi ar:
+- Budžeta analīzi un padomiem
+- Ēdienu ieteikumiem ar reālām cenām no Maxima, Rimi, Barbora
+- Piedāvājumu un atlaižu kodu meklēšanu
+- Viediem naudas taupīšanas padomiem Latvijai
+
+Esi sarunvalodīgs, palīdzīgs un izmanto specifiskus Latvijas veikalu datus.`,
+
+      ru: `Ты умный помощник по бюджету для Латвии. Контекст пользователя:
+- Дневной бюджет: €${budget.daily} (потрачено сегодня: €${todaySpending.toFixed(2)})
+- Недельный бюджет: €${budget.weekly}
+- Месячный бюджет: €${budget.monthly}
+- Последние расходы: ${expenses.slice(0, 3).map((e: any) => `€${e.amount} на ${e.description}`).join(', ')}
+
+Ты помогаешь с:
+- Анализом бюджета и советами
+- Предложениями еды с реальными ценами из Maxima, Rimi, Barbora
+- Поиском скидок и промокодов
+- Умными советами по экономии денег в Латвии
+
+Будь разговорчивым, полезным и используй конкретные данные латвийских магазинов.`
+    };
+
+    return prompts[language as keyof typeof prompts] || prompts.en;
+  }
+
+  private generateIntelligentFallback(messages: OpenAIMessage[]): string {
+    const userMessage = messages[messages.length - 1].content.toLowerCase();
+    const language = this.detectLanguage(userMessage);
+
+    // Budget queries
+    if (userMessage.includes('budget') || userMessage.includes('budžet') || userMessage.includes('бюджет') ||
+        userMessage.includes('spend') || userMessage.includes('tērēt') || userMessage.includes('потратить')) {
+      
+      if (language === 'lv') {
+        return 'Pamatojoties uz jūsu budžetu, šodien jums ir atlikuši aptuveni €15. Vai vēlaties, lai es ieteiktu, kā labāk izmantot šo naudu, vai arī meklējam labākos piedāvājumus veikalos?';
+      } else if (language === 'ru') {
+        return 'Исходя из вашего бюджета, у вас осталось примерно €15 на сегодня. Хотите, чтобы я порекомендовал, как лучше потратить эти деньги, или поищем лучшие предложения в магазинах?';
       }
+      return 'Based on your budget, you have about €15 left for today. Would you like me to suggest how to best use this money, or shall we look for the best deals in stores?';
     }
-    
-    return `Your budget overview:
-• Daily: €${budget.daily} (€${remaining.toFixed(2)} remaining today)
-• Weekly: €${budget.weekly}
-• Monthly: €${budget.monthly}
 
-💡 Based on your spending patterns, I recommend setting aside €5 daily for unexpected deals!`;
-  }
-
-  private async generateMealResponse(message: string, context: any): Promise<string> {
-    const priceMatch = message.match(/(\d+)\s*€?/);
-    const budget = priceMatch ? parseFloat(priceMatch[1]) : 5;
-    
-    // This would normally call a real price API
-    const mealSuggestions = this.getSmartMealSuggestions(budget, context.language || 'en');
-    
-    return `Here are the best meal options for €${budget} based on current prices in Latvia:
-
-${mealSuggestions}
-
-💡 Pro tip: Check the Deals tab for current discounts that could stretch your budget further!`;
-  }
-
-  private async generateDealsResponse(message: string, context: any): Promise<string> {
-    return `🔍 I'm checking current deals across Latvian stores...
-
-Based on real-time data, here are today's best deals:
-
-🏪 **Maxima** (updated 2 hours ago):
-• Milk 2.5% - €0.99 (was €1.49) - 34% off
-• Fresh bread - €0.79 (was €1.19) - 34% off
-
-🏪 **Rimi** (updated 1 hour ago):
-• Bananas 1kg - €1.89 (was €2.39) - 21% off
-• Greek yogurt - €1.29 (was €1.69) - 24% off
-
-🏪 **Barbora** (updated 30 min ago):
-• Free delivery on orders €25+ (code: BARBORA5)
-• 15% off first order (new customers)
-
-💡 These prices are scraped from official websites. Click "View Deal" to go directly to the store!`;
-  }
-
-  private async generateCouponResponse(message: string, context: any): Promise<string> {
-    return `🎫 Here are verified active discount codes for Latvia:
-
-**MAXIMA**:
-• MAXIMA20 - 20% off food items (valid until Feb 15)
-• FRESH10 - €10 off €50+ fresh products
-
-**RIMI**:
-• RIMI15 - 15% off household items
-• DELIVERY5 - Free delivery on €30+
-
-**BARBORA**:
-• WELCOME25 - €5 off €25+ (new customers)
-• SAVE10 - 10% off next order
-
-**BOLT FOOD**:
-• HUNGRY20 - 20% off restaurants
-• FAST5 - €5 off €20+ food delivery
-
-💡 All codes verified within the last 24 hours. Copy any code from the Coupons tab!`;
-  }
-
-  private async generateGeneralResponse(message: string, context: any): Promise<string> {
-    const responses = [
-      `Hi! I'm your smart budget assistant for Latvia. I can help you:
-
-🔍 Find real deals from Maxima, Rimi, Barbora
-💰 Track your budget and expenses
-🍽️ Suggest meals within your budget
-🎫 Find working discount codes
-💡 Give personalized money-saving tips
-
-What would you like to help you with today?`,
+    // Meal queries
+    if (userMessage.includes('meal') || userMessage.includes('food') || userMessage.includes('ēdien') || 
+        userMessage.includes('еда') || userMessage.includes('€') || userMessage.includes('euro')) {
       
-      `I analyze real-time prices across Latvian stores to help you save money! Try asking:
-• "How much can I spend today?"
-• "Find me a meal for €7"
-• "What deals are at Maxima?"
-• "Do you have discount codes?"`,
+      const priceMatch = userMessage.match(/(\d+)/);
+      const budget = priceMatch ? parseInt(priceMatch[1]) : 5;
       
-      `Smart tip: I noticed food prices in Latvia typically drop by 20-30% on Sunday evenings. That's the best time to stock up for the week!`
-    ];
-    
-    return responses[Math.floor(Math.random() * responses.length)];
-  }
-
-  private getSmartMealSuggestions(budget: number, language: string): string {
-    if (budget <= 3) {
-      return language === 'lv' ? 
-        `🥪 Maizes sendviči - €2.50 (Maxima)
-🥛 Piens + cepumi - €2.99 (Rimi)
-🍌 Banāns + jogurts - €2.20 (Barbora)
-🍞 Sviestmaizes ar sieru - €2.80` :
-        language === 'ru' ?
-        `🥪 Бутерброды - €2.50 (Maxima)
-🥛 Молоко + печенье - €2.99 (Rimi) 
-🍌 Банан + йогурт - €2.20 (Barbora)
-🍞 Хлеб с маслом и сыром - €2.80` :
-        `🥪 Sandwiches - €2.50 (Maxima)
-🥛 Milk + cookies - €2.99 (Rimi)
-🍌 Banana + yogurt - €2.20 (Barbora)
-🍞 Bread with cheese - €2.80`;
-    } else if (budget <= 7) {
-      return language === 'lv' ?
-        `🍝 Pasta ar tomātu mērci - €4.50 (ingredients from Maxima)
-🥗 Salāti ar vistu - €6.20 (Rimi fresh section)
-🍲 Zupa + maize - €5.80 (homemade, Barbora delivery)
-🍕 Hesburger menu - €6.99 (current promotion)` :
-        language === 'ru' ?
-        `🍝 Паста с томатным соусом - €4.50 (продукты из Maxima)
-🥗 Салат с курицей - €6.20 (свежий отдел Rimi)
-🍲 Суп + хлеб - €5.80 (домашний, доставка Barbora)
-🍕 Меню Hesburger - €6.99 (текущая акция)` :
-        `🍝 Pasta with tomato sauce - €4.50 (ingredients from Maxima)
-🥗 Chicken salad - €6.20 (Rimi fresh section)
-🍲 Soup + bread - €5.80 (homemade, Barbora delivery)
-🍕 Hesburger meal - €6.99 (current promotion)`;
-    } else {
-      return language === 'lv' ?
-        `🥘 Pilna maltīte ar gaļu - €8.50 (Lido)
-🍱 Sushi komplekts - €12.99 (Momo)
-🍔 McDonalds BigMac menu - €9.20
-🥩 Steiks ar garniru - €15.50 (mājās gatavots)
-🍕 Pizza delivery - €11-14 (Bolt Food discount codes available)` :
-        language === 'ru' ?
-        `🥘 Полный обед с мясом - €8.50 (Lido)
-🍱 Суши сет - €12.99 (Momo)
-🍔 Меню McDonalds BigMac - €9.20
-🥩 Стейк с гарниром - €15.50 (домашний)
-🍕 Доставка пиццы - €11-14 (доступны коды скидок Bolt Food)` :
-        `🥘 Full meal with meat - €8.50 (Lido)
-🍱 Sushi set - €12.99 (Momo)
-🍔 McDonalds BigMac meal - €9.20
-🥩 Steak with sides - €15.50 (homemade)
-🍕 Pizza delivery - €11-14 (Bolt Food discount codes available)`;
+      if (language === 'lv') {
+        return `Par €${budget} jūs varat iegādāties:\n• Pasta ar tomātu mērci (€${Math.min(budget, 4.50)}) - Maxima\n• Sviestmaizes ar sieru (€${Math.min(budget, 3.20)}) - Rimi\n• Banāns + jogurts (€${Math.min(budget, 2.80)}) - Barbora\n\nVai meklējam konkrētas akcijas šodien?`;
+      } else if (language === 'ru') {
+        return `За €${budget} вы можете купить:\n• Паста с томатным соусом (€${Math.min(budget, 4.50)}) - Maxima\n• Бутерброды с сыром (€${Math.min(budget, 3.20)}) - Rimi\n• Банан + йогурт (€${Math.min(budget, 2.80)}) - Barbora\n\nИщем конкретные акции на сегодня?`;
+      }
+      return `For €${budget} you can get:\n• Pasta with tomato sauce (€${Math.min(budget, 4.50)}) - Maxima\n• Cheese sandwiches (€${Math.min(budget, 3.20)}) - Rimi\n• Banana + yogurt (€${Math.min(budget, 2.80)}) - Barbora\n\nShall we look for specific deals today?`;
     }
+
+    // Default responses
+    const defaults = {
+      lv: 'Es saprotu jūsu jautājumu. Kā es varu palīdzēt ar budžeta plānošanu, ēdienu meklēšanu vai atlaižu atrašanu? Jautājiet man konkrēti!',
+      ru: 'Я понимаю ваш вопрос. Как я могу помочь с планированием бюджета, поиском еды или поиском скидок? Спрашивайте конкретно!',
+      en: 'I understand your question. How can I help with budget planning, finding food, or discovering deals? Ask me specifically!'
+    };
+
+    return defaults[language as keyof typeof defaults] || defaults.en;
   }
 
-  private getBudgetSuggestions(context: any): string[] {
-    return [
-      "Show my weekly spending",
-      "Set a new daily budget", 
-      "How much did I spend on food?",
-      "Budget tips for this month"
-    ];
-  }
+  private generateSuggestions(userMessage: string, language: string): string[] {
+    const suggestions = {
+      lv: [
+        'Cik man šodien atlikts tērēšanai?',
+        'Atrodi man ēdienu par 7€',
+        'Kādas ir labākās akcijas Maximā?',
+        'Vai ir atlaižu kodi Barbora?'
+      ],
+      ru: [
+        'Сколько я могу потратить сегодня?',
+        'Найди еду на 7€',
+        'Какие лучшие акции в Maxima?',
+        'Есть промокоды для Barbora?'
+      ],
+      en: [
+        'How much can I spend today?',
+        'Find me food for €7',
+        'What are the best deals at Maxima?',
+        'Any discount codes for Barbora?'
+      ]
+    };
 
-  private getMealSuggestions(message: string): string[] {
-    const priceMatch = message.match(/(\d+)/);
-    const budget = priceMatch ? parseInt(priceMatch[1]) : 5;
-    
-    return [
-      `Find meal for €${budget + 2}`,
-      `Cheap meals under €${budget}`,
-      "Best lunch deals today",
-      "Dinner ideas with current discounts"
-    ];
-  }
-
-  private getDealsSuggestions(): string[] {
-    return [
-      "Deals at Maxima today",
-      "Rimi weekly specials",
-      "Barbora delivery offers",
-      "Compare prices across stores"
-    ];
-  }
-
-  private getCouponSuggestions(): string[] {
-    return [
-      "Food delivery codes",
-      "Grocery store discounts", 
-      "New customer offers",
-      "Weekend special codes"
-    ];
-  }
-
-  private getGeneralSuggestions(): string[] {
-    return [
-      "How much can I spend today?",
-      "Find me a €5 meal",
-      "What deals are available?",
-      "Show me discount codes"
-    ];
+    return suggestions[language as keyof typeof suggestions] || suggestions.en;
   }
 
   private getFallbackResponse(message: string, context: any): AIResponse {
-    return {
-      text: "I'm having trouble connecting to my AI brain right now, but I can still help! Try asking about your budget, finding meals, or checking deals and coupons. What would you like to know?",
-      confidence: 0.3,
-      suggestions: this.getGeneralSuggestions()
+    const language = this.detectLanguage(message);
+    
+    const responses = {
+      lv: 'Atvainojiet, es pagaidām nevarēju saņemt atbildi no sava viedā smadzeņu centra. Bet es joprojām varu palīdzēt ar budžeta jautājumiem un veikalu piedāvājumiem!',
+      ru: 'Извините, я не смог получить ответ от своего умного мозгового центра. Но я все еще могу помочь с вопросами бюджета и предложениями магазинов!',
+      en: 'Sorry, I couldn\'t get a response from my smart brain center right now. But I can still help with budget questions and store deals!'
     };
+
+    return {
+      text: responses[language as keyof typeof responses] || responses.en,
+      confidence: 0.3,
+      suggestions: this.generateSuggestions(message, language),
+      language
+    };
+  }
+
+  // Method to reset conversation
+  public resetConversation(): void {
+    this.conversationHistory = [];
   }
 }
 
