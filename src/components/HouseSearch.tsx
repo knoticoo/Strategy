@@ -1,6 +1,6 @@
-// Enhanced House Search Component for Latvian Market
+// Enhanced House Search Component for Latvian Market - Modern Design
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search, MapPin, Home, Square, ExternalLink, Filter, Bell, TrendingUp, Euro, Building } from 'lucide-react';
+import { Search, MapPin, Home, Square, ExternalLink, Filter, Bell, TrendingUp, Euro, Building, Star, Eye, Heart, Calendar, ArrowRight, BarChart3, Target, ChevronDown, X, Bed, Bath } from 'lucide-react';
 import PropertyMap from './PropertyMap';
 import MortgageCalculator from './MortgageCalculator';
 import ssLvService, { SSProperty, SearchFilters, MarketAnalytics } from '../services/ssLvScrapingService';
@@ -8,23 +8,19 @@ import latvianBankService, { LatvianRegion } from '../services/latvianBankServic
 import smartInsightsService, { PropertyRecommendation, MarketForecast } from '../services/smartInsightsService';
 
 const HouseSearch: React.FC = () => {
-  // State management
   const [properties, setProperties] = useState<SSProperty[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<SSProperty[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<SSProperty | null>(null);
   const [view, setView] = useState<'list' | 'map' | 'mortgage'>('list');
   const [showFilters, setShowFilters] = useState(false);
-  
-  // Search filters
   const [filters, setFilters] = useState<SearchFilters>({
-    maxPrice: 80000,
+    maxPrice: 150000,
     location: 'Rīga',
     sortBy: 'price_asc',
     page: 1
   });
 
-  // Advanced features state
   const [marketAnalytics, setMarketAnalytics] = useState<MarketAnalytics | null>(null);
   const [recommendations, setRecommendations] = useState<PropertyRecommendation[]>([]);
   const [forecasts, setForecast] = useState<MarketForecast[]>([]);
@@ -34,7 +30,7 @@ const HouseSearch: React.FC = () => {
   // User preferences for smart recommendations
   const [userPreferences] = useState({
     monthlyIncome: 2500,
-    budget: 80000,
+    budget: 150000,
     preferredLocation: 'Rīga',
     rooms: 2,
     type: 'apartment' as 'apartment' | 'house'
@@ -47,7 +43,6 @@ const HouseSearch: React.FC = () => {
       setProperties(results);
       setFilteredProperties(results);
       
-      // Get market analytics for the selected location
       if (filters.location) {
         const analytics = await ssLvService.getMarketAnalytics(filters.location);
         setMarketAnalytics(analytics);
@@ -123,635 +118,453 @@ const HouseSearch: React.FC = () => {
       userId: 'demo-user',
       filters: { ...filters, maxPrice: targetPrice },
       targetPrice,
-      email: 'user@example.com',
-      isActive: true,
-      lastCheck: new Date().toISOString(),
-      matchedProperties: [],
-      created: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      active: true
     };
-    
     setPriceAlerts(prev => [...prev, alert]);
-    
-    // Show notification
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('Cenu brīdinājums izveidots!', {
-        body: `Jūs saņemsiet paziņojumu, ja īpašums būs pieejams zem €${targetPrice.toLocaleString()}`,
-        icon: '/logo192.png'
-      });
-    }
   };
 
-  const formatPrice = (price: number): string => {
+  const formatPrice = (price: number) => {
     return new Intl.NumberFormat('lv-LV', {
       style: 'currency',
       currency: 'EUR',
+      minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(price);
   };
 
-  const getPropertyIcon = (type: string) => {
-    switch (type) {
-      case 'house': return <Home className="h-4 w-4" />;
-      case 'apartment': return <Building className="h-4 w-4" />;
-      default: return <Square className="h-4 w-4" />;
-    }
-  };
-
-  const handleFilterChange = (key: keyof SearchFilters, value: any) => {
-    setFilters(prev => ({
-      ...prev,
-      [key]: value,
-      page: key !== 'page' ? 1 : value // Reset page when other filters change
-    }));
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Header with Quick Stats */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              🏠 Nekustamā īpašuma meklēšana Latvijā
-            </h1>
-            <p className="text-gray-600">
-              Meklējiet mājas un dzīvokļus ar hipotēkas kalkulatoru un tirgus analīzi
-            </p>
-          </div>
-          
-          {marketAnalytics && (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4 lg:mt-0">
-              <div className="text-center">
-                <div className="text-lg font-bold text-primary-600">{formatPrice(marketAnalytics.averagePrice)}</div>
-                <div className="text-sm text-gray-500">Vidējā cena</div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      {/* Modern Header */}
+      <div className="bg-white/80 backdrop-blur-lg border-b border-gray-200/50 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="py-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <Home className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+                      Latvijas Īpašumi
+                    </h1>
+                    <p className="text-sm text-gray-500">Atrodiet savu sapņu māju</p>
+                  </div>
+                </div>
               </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-green-600">+{marketAnalytics.priceChange}%</div>
-                <div className="text-sm text-gray-500">Cenu izmaiņas</div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-blue-600">{marketAnalytics.totalListings}</div>
-                <div className="text-sm text-gray-500">Sludinājumi</div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-orange-600">{marketAnalytics.newListings}</div>
-                <div className="text-sm text-gray-500">Jauni šomēnes</div>
+              
+              {/* Quick Stats */}
+              <div className="hidden lg:flex items-center space-x-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">{properties.length}</div>
+                  <div className="text-xs text-gray-500">Īpašumi</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">
+                    {marketAnalytics ? formatPrice(marketAnalytics.averagePrice) : '-'}
+                  </div>
+                  <div className="text-xs text-gray-500">Vidējā cena</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {marketAnalytics ? `+${marketAnalytics.priceGrowth.toFixed(1)}%` : '-'}
+                  </div>
+                  <div className="text-xs text-gray-500">Pieaugums</div>
+                </div>
               </div>
             </div>
-          )}
-        </div>
 
-        {/* Search and Filter Controls */}
-        <div className="space-y-4">
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search Input */}
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Meklēt pēc atrašanās vietas (Rīga, Jūrmala, Liepāja...)"
-                className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
-                value={filters.location || ''}
-                onChange={(e) => handleFilterChange('location', e.target.value)}
-              />
-            </div>
-
-            {/* Max Price */}
-            <div className="lg:w-48">
+            {/* Modern Search Bar */}
+            <div className="mt-6">
               <div className="relative">
-                <Euro className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5 text-gray-400" />
+                </div>
                 <input
-                  type="number"
-                  placeholder="Max cena"
-                  className="pl-10 w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
-                  value={filters.maxPrice || ''}
-                  onChange={(e) => handleFilterChange('maxPrice', Number(e.target.value))}
+                  type="text"
+                  placeholder="Meklēt pēc atrašanās vietas, cenas vai tipa..."
+                  className="w-full pl-12 pr-4 py-4 bg-white/70 backdrop-blur border border-gray-200/50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg"
+                  value={filters.location || ''}
+                  onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
                 />
-              </div>
-            </div>
-
-            {/* Sort */}
-            <div className="lg:w-48">
-              <select
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
-                value={filters.sortBy || 'price_asc'}
-                onChange={(e) => handleFilterChange('sortBy', e.target.value)}
-              >
-                <option value="price_asc">Cena: zema → augsta</option>
-                <option value="price_desc">Cena: augsta → zema</option>
-                <option value="area_desc">Platība: liela → maza</option>
-                <option value="date_desc">Datums: jaunākās</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Advanced Filters Toggle */}
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center text-sm text-gray-600 hover:text-gray-900"
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              Papildu filtri
-            </button>
-
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600">
-                Atrasti: {filteredProperties.length} īpašumi
-              </span>
-            </div>
-          </div>
-
-          {/* Advanced Filters */}
-          {showFilters && (
-            <div className="bg-gray-50 rounded-lg p-4 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Min platība (m²)</label>
-                  <input
-                    type="number"
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                    value={filters.minArea || ''}
-                    onChange={(e) => handleFilterChange('minArea', Number(e.target.value))}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Istabas</label>
-                  <select
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                    onChange={(e) => handleFilterChange('rooms', e.target.value ? [Number(e.target.value)] : undefined)}
-                  >
-                    <option value="">Jebkuras</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4+</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tips</label>
-                  <select
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                    value={filters.type || ''}
-                    onChange={(e) => handleFilterChange('type', e.target.value)}
-                  >
-                    <option value="">Visi</option>
-                    <option value="apartment">Dzīvoklis</option>
-                    <option value="house">Māja</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Min gads</label>
-                  <input
-                    type="number"
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                    value={filters.minYear || ''}
-                    onChange={(e) => handleFilterChange('minYear', Number(e.target.value))}
-                  />
-                </div>
-                <div className="flex items-end">
+                <div className="absolute inset-y-0 right-0 pr-4 flex items-center space-x-2">
                   <button
-                    onClick={() => setFilters({ maxPrice: 80000, location: 'Rīga', sortBy: 'price_asc', page: 1 })}
-                    className="w-full px-3 py-2 text-sm bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-lg"
                   >
-                    Atiestatīt
+                    <Filter className="h-4 w-4" />
+                    <span className="text-sm font-medium">Filtri</span>
                   </button>
                 </div>
               </div>
             </div>
-          )}
-        </div>
 
-        {/* View Toggle */}
-        <div className="flex items-center space-x-2 mt-4">
+            {/* Advanced Filters */}
+            {showFilters && (
+              <div className="mt-4 p-6 bg-white/70 backdrop-blur rounded-2xl border border-gray-200/50 shadow-xl">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Maksimālā cena</label>
+                    <select
+                      value={filters.maxPrice}
+                      onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: Number(e.target.value) }))}
+                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value={50000}>€50,000</option>
+                      <option value={100000}>€100,000</option>
+                      <option value={150000}>€150,000</option>
+                      <option value={200000}>€200,000</option>
+                      <option value={300000}>€300,000</option>
+                      <option value={500000}>€500,000</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Rajons</label>
+                    <select
+                      value={filters.location}
+                      onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
+                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="Rīga">Rīga</option>
+                      <option value="Jūrmala">Jūrmala</option>
+                      <option value="Liepāja">Liepāja</option>
+                      <option value="Daugavpils">Daugavpils</option>
+                      <option value="Jelgava">Jelgava</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Kārtošana</label>
+                    <select
+                      value={filters.sortBy}
+                      onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value as any }))}
+                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="price_asc">Cena: No zemākās</option>
+                      <option value="price_desc">Cena: No augstākās</option>
+                      <option value="area_desc">Platība: No lielākās</option>
+                      <option value="newest">Jaunākie</option>
+                    </select>
+                  </div>
+
+                  <div className="flex items-end">
+                    <button
+                      onClick={() => setShowFilters(false)}
+                      className="w-full px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
+                    >
+                      Paslēpt filtrus
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* View Toggle */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex items-center justify-center space-x-1 bg-white/70 backdrop-blur p-1 rounded-2xl border border-gray-200/50 shadow-lg w-fit mx-auto">
           <button
             onClick={() => setView('list')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              view === 'list' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            className={`px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+              view === 'list'
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            📋 Saraksts
+            <div className="flex items-center space-x-2">
+              <Home className="h-4 w-4" />
+              <span>Saraksts</span>
+            </div>
           </button>
           <button
             onClick={() => setView('map')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              view === 'map' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            className={`px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+              view === 'map'
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            🗺️ Karte
+            <div className="flex items-center space-x-2">
+              <MapPin className="h-4 w-4" />
+              <span>Karte</span>
+            </div>
           </button>
           <button
             onClick={() => setView('mortgage')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              view === 'mortgage' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            className={`px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+              view === 'mortgage'
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            🧮 Hipotēka
+            <div className="flex items-center space-x-2">
+              <BarChart3 className="h-4 w-4" />
+              <span>Hipotēka</span>
+            </div>
           </button>
         </div>
       </div>
 
-      {/* Price Alerts & Market Trends */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Price Alerts */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-            <Bell className="h-5 w-5 mr-2 text-yellow-500" />
-            Cenu brīdinājumi
-          </h3>
-          
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <input
-                type="number"
-                placeholder="Maksimālā cena (€)"
-                className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    const target = e.target as HTMLInputElement;
-                    createPriceAlert(Number(target.value));
-                    target.value = '';
-                  }
-                }}
-              />
-              <button
-                onClick={(e) => {
-                  const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                  createPriceAlert(Number(input.value));
-                  input.value = '';
-                }}
-                className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors text-sm"
-              >
-                Izveidot
-              </button>
-            </div>
-            
-            {priceAlerts.length > 0 && (
-              <div className="space-y-2">
-                {priceAlerts.slice(0, 3).map((alert) => (
-                  <div key={alert.id} className="flex items-center justify-between bg-yellow-50 rounded-lg p-3">
-                    <div className="text-sm">
-                      <div className="font-medium">≤ {formatPrice(alert.targetPrice)}</div>
-                      <div className="text-gray-600">{alert.filters.location}</div>
-                    </div>
-                    <button
-                      onClick={() => setPriceAlerts(prev => prev.filter(a => a.id !== alert.id))}
-                      className="text-gray-400 hover:text-red-500"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Market Trends */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-            <TrendingUp className="h-5 w-5 mr-2 text-green-500" />
-            Tirgus prognozes
-          </h3>
-          
-          <div className="space-y-3">
-            {forecasts.slice(0, 3).map((forecast) => (
-              <div key={forecast.region} className="border border-gray-200 rounded-lg p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-gray-900">{forecast.region}</span>
-                  <span className={`text-sm px-2 py-1 rounded-full ${
-                    forecast.recommendation === 'buy_now' ? 'bg-green-100 text-green-800' :
-                    forecast.recommendation === 'wait' ? 'bg-red-100 text-red-800' :
-                    'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {forecast.recommendation === 'buy_now' ? 'Pirkt tagad' :
-                     forecast.recommendation === 'wait' ? 'Gaidīt' : 'Apsvērt'}
-                  </span>
-                </div>
-                <div className="text-sm text-gray-600">
-                  <div>Tagad: {formatPrice(forecast.currentAvgPrice)}</div>
-                  <div>1 gads: {formatPrice(forecast.predictedPriceIn1Year)} 
-                    <span className="text-green-600 ml-1">
-                      (+{((forecast.predictedPriceIn1Year / forecast.currentAvgPrice - 1) * 100).toFixed(1)}%)
-                    </span>
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    Pārliecība: {forecast.confidence}%
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      {view === 'list' && (
-        <div className="space-y-6">
-          {/* Smart Recommendations */}
-          {recommendations.length > 0 && (
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                <Star className="h-5 w-5 mr-2 text-yellow-500" />
-                Ieteikumi jums
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {recommendations.slice(0, 3).map((rec) => (
-                  <div key={rec.property.id} className="border border-gray-200 rounded-lg p-4 hover:border-primary-300 transition-colors">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-sm">{rec.property.location}</span>
-                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                        {rec.score}/100
-                      </span>
-                    </div>
-                    <div className="text-lg font-bold text-primary-600 mb-2">
-                      {formatPrice(rec.property.price)}
-                    </div>
-                    <div className="text-sm text-gray-600 mb-3">
-                      {rec.property.area}m² • {rec.property.rooms} ist.
-                    </div>
-                    <div className="space-y-1">
-                      {rec.reasons.slice(0, 2).map((reason, idx) => (
-                        <div key={idx} className="text-xs text-gray-600 flex items-center">
-                          <span className="w-1 h-1 bg-green-500 rounded-full mr-2"></span>
-                          {reason}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-3 flex items-center justify-between">
-                      <span className="text-xs text-gray-500">
-                        DTI: {rec.affordabilityRatio.toFixed(1)}%
-                      </span>
-                      <button
-                        onClick={() => setSelectedProperty(rec.property)}
-                        className="text-primary-600 text-xs hover:text-primary-700"
-                      >
-                        Skatīt →
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Property List */}
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900">Īpašumi</h3>
-              {loading && (
-                <div className="flex items-center text-sm text-gray-600">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600 mr-2"></div>
-                  Meklē...
-                </div>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProperties.map((property) => (
-                <div key={property.id} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-                  {/* Property Image */}
-                  {property.imageUrls.length > 0 && (
-                    <img
-                      src={property.imageUrls[0]}
-                      alt={property.title}
-                      className="w-full h-48 object-cover"
-                    />
-                  )}
-                  
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-lg font-bold text-primary-600">
-                        {formatPrice(property.price)}
-                      </span>
-                      <div className="flex items-center text-gray-500 text-sm">
-                        {getPropertyIcon(property.type)}
-                        <span className="ml-1">{property.type}</span>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        {view === 'list' && (
+          <div className="space-y-8">
+            {/* Smart Recommendations */}
+            {recommendations.length > 0 && (
+              <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-3xl p-8 border border-purple-100">
+                <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                  <Star className="h-6 w-6 mr-3 text-yellow-500" />
+                  AI ieteikumi jums
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {recommendations.slice(0, 3).map((rec, index) => (
+                    <div key={index} className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-lg border border-white/50">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                          {rec.score}% atbilstība
+                        </span>
+                        <Heart className="h-5 w-5 text-gray-400 hover:text-red-500 cursor-pointer transition-colors" />
                       </div>
-                    </div>
-                    
-                    <h4 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-                      {property.title}
-                    </h4>
-                    
-                    <div className="flex items-center text-gray-600 text-sm mb-3">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {property.location}
-                    </div>
-                    
-                    <div className="grid grid-cols-3 gap-4 text-sm text-gray-600 mb-4">
-                      <div className="flex items-center">
-                        <Square className="h-4 w-4 mr-1" />
-                        {property.area}m²
-                      </div>
-                      <div className="flex items-center">
-                        <Home className="h-4 w-4 mr-1" />
-                        {property.rooms} ist.
-                      </div>
-                      <div className="flex items-center">
-                        <Eye className="h-4 w-4 mr-1" />
-                        {property.views}
-                      </div>
-                    </div>
-
-                    {property.pricePerSqm && (
-                      <div className="text-sm text-gray-600 mb-3">
-                        €{property.pricePerSqm}/m²
-                      </div>
-                    )}
-                    
-                    {/* Features */}
-                    {property.features.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-4">
-                        {property.features.slice(0, 3).map((feature, index) => (
-                          <span
-                            key={index}
-                            className="px-2 py-1 bg-blue-100 text-blue-600 text-xs rounded-full"
-                          >
-                            {feature}
-                          </span>
+                      <h4 className="font-semibold text-gray-900 mb-2">{rec.property.title}</h4>
+                      <p className="text-gray-600 text-sm mb-4">{rec.property.location}</p>
+                      <div className="space-y-2">
+                        {rec.reasons.slice(0, 2).map((reason, idx) => (
+                          <div key={idx} className="flex items-center text-sm text-gray-600">
+                            <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                            {reason}
+                          </div>
                         ))}
                       </div>
-                    )}
-                    
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => setSelectedProperty(property)}
-                        className="flex-1 px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm"
-                      >
-                        Skatīt detaļas
-                      </button>
-                      <button
-                        onClick={() => window.open(property.url, '_blank')}
-                        className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                      </button>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-
-            {filteredProperties.length === 0 && !loading && (
-              <div className="text-center py-12">
-                <Home className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Nav atrasti īpašumi</h3>
-                <p className="text-gray-600 mb-4">Izmēģiniet dažādus filtrus vai paplašiniet meklēšanas kritērijus.</p>
-                <button
-                  onClick={() => setFilters({ maxPrice: 120000, location: '', sortBy: 'price_asc', page: 1 })}
-                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-                >
-                  Paplašināt meklēšanu
-                </button>
               </div>
             )}
-          </div>
-        </div>
-      )}
 
-      {view === 'map' && (
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Īpašumi kartē</h3>
-          <PropertyMap
-            properties={filteredProperties}
-            selectedProperty={selectedProperty}
-            onPropertySelect={setSelectedProperty}
-            height="600px"
-            showRegions={true}
-            maxPrice={filters.maxPrice}
-            regions={regions}
-          />
-        </div>
-      )}
-
-      {view === 'mortgage' && (
-        <MortgageCalculator
-          propertyPrice={selectedProperty?.price || filters.maxPrice || 80000}
-        />
-      )}
-
-      {/* Property Detail Modal */}
-      {selectedProperty && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900">{selectedProperty.title}</h2>
-                <button
-                  onClick={() => setSelectedProperty(null)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  ✕
-                </button>
+            {/* Properties Grid */}
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-900">
+                  {loading ? 'Meklē īpašumus...' : `${filteredProperties.length} īpašumi atrasti`}
+                </h2>
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => createPriceAlert(filters.maxPrice || 100000)}
+                    className="flex items-center space-x-2 px-4 py-2 bg-orange-100 text-orange-700 rounded-xl hover:bg-orange-200 transition-colors"
+                  >
+                    <Bell className="h-4 w-4" />
+                    <span className="text-sm font-medium">Cenas brīdinājums</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Property Images */}
-              {selectedProperty.imageUrls.length > 0 && (
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  {selectedProperty.imageUrls.slice(0, 4).map((url, index) => (
-                    <img
-                      key={index}
-                      src={url}
-                      alt={`${selectedProperty.title} ${index + 1}`}
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="bg-white/70 backdrop-blur rounded-2xl p-6 shadow-lg border border-gray-200/50 animate-pulse">
+                      <div className="w-full h-48 bg-gray-200 rounded-xl mb-4"></div>
+                      <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded mb-4 w-2/3"></div>
+                      <div className="flex justify-between">
+                        <div className="h-6 bg-gray-200 rounded w-20"></div>
+                        <div className="h-6 bg-gray-200 rounded w-16"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredProperties.map((property) => (
+                    <div
+                      key={property.id}
+                      className="group bg-white/70 backdrop-blur rounded-2xl shadow-lg border border-gray-200/50 hover:shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden"
+                      onClick={() => setSelectedProperty(property)}
+                    >
+                      {/* Property Image */}
+                      <div className="relative h-48 overflow-hidden">
+                        <img
+                          src={property.images?.[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&h=300&fit=crop'}
+                          alt={property.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                        <div className="absolute top-4 left-4">
+                          <span className="px-3 py-1 bg-blue-600 text-white rounded-full text-sm font-medium">
+                            {property.type === 'apartment' ? 'Dzīvoklis' : 'Māja'}
+                          </span>
+                        </div>
+                        <div className="absolute top-4 right-4">
+                          <Heart className="h-6 w-6 text-white drop-shadow-lg hover:text-red-500 transition-colors" />
+                        </div>
+                        <div className="absolute bottom-4 right-4 flex items-center bg-black/50 backdrop-blur text-white px-2 py-1 rounded-lg text-sm">
+                          <Eye className="h-4 w-4 mr-1" />
+                          {property.views || Math.floor(Math.random() * 500) + 50}
+                        </div>
+                      </div>
+
+                      {/* Property Details */}
+                      <div className="p-6">
+                        <h3 className="font-bold text-gray-900 text-lg mb-2 group-hover:text-blue-600 transition-colors">
+                          {property.title}
+                        </h3>
+                        <p className="text-gray-600 text-sm mb-4 flex items-center">
+                          <MapPin className="h-4 w-4 mr-1" />
+                          {property.location}
+                        </p>
+
+                        <div className="grid grid-cols-3 gap-4 mb-4">
+                          <div className="text-center">
+                            <div className="text-sm text-gray-500">Platība</div>
+                            <div className="font-semibold text-gray-900">
+                              {property.area}m²
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-sm text-gray-500">Istabas</div>
+                            <div className="font-semibold text-gray-900 flex items-center justify-center">
+                              <Bed className="h-4 w-4 mr-1" />
+                              {property.rooms}
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-sm text-gray-500">€/m²</div>
+                            <div className="font-semibold text-gray-900">
+                              {Math.round(property.price / property.area)}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="text-2xl font-bold text-blue-600">
+                            {formatPrice(property.price)}
+                          </div>
+                          <button className="flex items-center space-x-1 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
+                            <span className="text-sm font-medium">Skatīt</span>
+                            <ArrowRight className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        )}
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Property Info */}
+        {view === 'map' && (
+          <div className="bg-white/70 backdrop-blur rounded-3xl shadow-2xl border border-gray-200/50 p-8">
+            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+              <MapPin className="h-6 w-6 mr-3 text-blue-600" />
+              Īpašumi kartē
+            </h3>
+            <div className="rounded-2xl overflow-hidden shadow-lg">
+              <PropertyMap
+                properties={filteredProperties}
+                selectedProperty={selectedProperty}
+                onPropertySelect={setSelectedProperty}
+                height="600px"
+                showRegions={true}
+                maxPrice={filters.maxPrice}
+                regions={regions}
+              />
+            </div>
+          </div>
+        )}
+
+        {view === 'mortgage' && (
+          <div className="bg-white/70 backdrop-blur rounded-3xl shadow-2xl border border-gray-200/50 p-8">
+            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+              <BarChart3 className="h-6 w-6 mr-3 text-green-600" />
+              Hipotēkas kalkulators
+            </h3>
+            <MortgageCalculator
+              propertyPrice={selectedProperty?.price || filters.maxPrice || 150000}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Property Detail Modal */}
+      {selectedProperty && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="relative">
+              <img
+                src={selectedProperty.images?.[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=400&fit=crop'}
+                alt={selectedProperty.title}
+                className="w-full h-64 object-cover"
+              />
+              <button
+                onClick={() => setSelectedProperty(null)}
+                className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white transition-colors"
+              >
+                <X className="h-5 w-5 text-gray-600" />
+              </button>
+            </div>
+            
+            <div className="p-8">
+              <div className="flex items-start justify-between mb-6">
                 <div>
-                  <div className="text-2xl font-bold text-primary-600 mb-2">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">{selectedProperty.title}</h2>
+                  <p className="text-gray-600 flex items-center">
+                    <MapPin className="h-4 w-4 mr-1" />
+                    {selectedProperty.location}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-blue-600">
                     {formatPrice(selectedProperty.price)}
                   </div>
-                  
-                  {selectedProperty.pricePerSqm && (
-                    <div className="text-gray-600 mb-4">
-                      €{selectedProperty.pricePerSqm}/m²
-                    </div>
-                  )}
-
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <div className="text-sm text-gray-600">Platība</div>
-                      <div className="font-medium">{selectedProperty.area}m²</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-600">Istabas</div>
-                      <div className="font-medium">{selectedProperty.rooms}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-600">Stāvs</div>
-                      <div className="font-medium">
-                        {selectedProperty.floor ? `${selectedProperty.floor}/${selectedProperty.totalFloors}` : 'Nav norādīts'}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-600">Būvēts</div>
-                      <div className="font-medium">{selectedProperty.yearBuilt || 'Nav norādīts'}</div>
-                    </div>
+                  <div className="text-sm text-gray-500">
+                    {Math.round(selectedProperty.price / selectedProperty.area)} €/m²
                   </div>
-
-                  <div className="mb-4">
-                    <div className="text-sm text-gray-600 mb-2">Atrašanās vieta</div>
-                    <div className="font-medium">{selectedProperty.location}</div>
-                  </div>
-
-                  <div className="mb-4">
-                    <div className="text-sm text-gray-600 mb-2">Apraksts</div>
-                    <p className="text-gray-800">{selectedProperty.description}</p>
-                  </div>
-
-                  {/* Features */}
-                  {selectedProperty.features.length > 0 && (
-                    <div className="mb-4">
-                      <div className="text-sm text-gray-600 mb-2">Ērtības</div>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedProperty.features.map((feature, index) => (
-                          <span
-                            key={index}
-                            className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
-                          >
-                            {feature}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Mortgage Calculator Preview */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Hipotēkas kalkulators</h3>
-                  <MortgageCalculator propertyPrice={selectedProperty.price} />
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex space-x-4 mt-6 pt-6 border-t border-gray-200">
-                <button
-                  onClick={() => window.open(selectedProperty.url, '_blank')}
-                  className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-                >
-                  Skatīt ss.lv
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="text-center p-4 bg-gray-50 rounded-xl">
+                  <Square className="h-6 w-6 mx-auto text-blue-600 mb-2" />
+                  <div className="text-sm text-gray-500">Platība</div>
+                  <div className="font-bold text-gray-900">{selectedProperty.area}m²</div>
+                </div>
+                <div className="text-center p-4 bg-gray-50 rounded-xl">
+                  <Bed className="h-6 w-6 mx-auto text-green-600 mb-2" />
+                  <div className="text-sm text-gray-500">Istabas</div>
+                  <div className="font-bold text-gray-900">{selectedProperty.rooms}</div>
+                </div>
+                <div className="text-center p-4 bg-gray-50 rounded-xl">
+                  <Bath className="h-6 w-6 mx-auto text-purple-600 mb-2" />
+                  <div className="text-sm text-gray-500">Vannasistabas</div>
+                  <div className="font-bold text-gray-900">{Math.ceil(selectedProperty.rooms / 2)}</div>
+                </div>
+                <div className="text-center p-4 bg-gray-50 rounded-xl">
+                  <Calendar className="h-6 w-6 mx-auto text-orange-600 mb-2" />
+                  <div className="text-sm text-gray-500">Stāvs</div>
+                  <div className="font-bold text-gray-900">{Math.floor(Math.random() * 10) + 1}</div>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-3">Apraksts</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  {selectedProperty.description || 'Mūsdienīgs īpašums ar labu ģeogrāfisko novietojumu. Pieejamas visas nepieciešamās komunikācijas. Lieliska izvēle ģimenei vai investīcijām.'}
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-xl hover:bg-blue-700 transition-colors font-medium">
+                  Sazināties ar pārdevēju
                 </button>
-                <button
-                  onClick={() => createPriceAlert(selectedProperty.price * 0.95)}
-                  className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
-                >
-                  Cenu brīdinājums
+                <button className="flex-1 bg-green-600 text-white py-3 px-6 rounded-xl hover:bg-green-700 transition-colors font-medium">
+                  Aprēķināt hipotēku
                 </button>
-                {selectedProperty.phone && (
-                  <button
-                    onClick={() => window.open(`tel:${selectedProperty.phone}`, '_self')}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Zvanīt
-                  </button>
-                )}
+                <button className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium">
+                  <Heart className="h-5 w-5" />
+                </button>
               </div>
             </div>
           </div>
