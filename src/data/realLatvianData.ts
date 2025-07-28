@@ -56,8 +56,8 @@ export const realLatvianTrails: RealLocation[] = [
     },
     features: ['River views', 'Medieval castles', 'Sandstone cliffs', 'Wildlife watching', 'Photography spots'],
     images: [
-      'https://picsum.photos/800/600?random=1',
-      'https://picsum.photos/800/600?random=2'
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop&q=80', // Forest landscape
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&q=80'  // River valley
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Parking', 'Restrooms', 'Information center', 'Marked trails'],
@@ -89,8 +89,8 @@ export const realLatvianTrails: RealLocation[] = [
     },
     features: ['Historic castle', 'Gutman\'s Cave', 'Ancient oaks', 'Valley views', 'Folk legends'],
     images: [
-      'https://picsum.photos/800/600?random=3',
-      'https://picsum.photos/800/600?random=4'
+      'https://images.unsplash.com/photo-1520637836862-4d197d17c92a?w=800&h=600&fit=crop&q=80', // Medieval castle
+      'https://images.unsplash.com/photo-1597149960419-0d90ac2e3db4?w=800&h=600&fit=crop&q=80'  // Castle grounds
     ],
     season: ['spring', 'summer', 'autumn', 'winter'],
     facilities: ['Parking', 'Museum', 'Cafe', 'Souvenir shop'],
@@ -124,8 +124,8 @@ export const realLatvianTrails: RealLocation[] = [
     },
     features: ['Bog ecosystem', 'Bird watching', 'Observation tower', 'Rare plants', 'Photography'],
     images: [
-      'https://picsum.photos/800/600?random=5',
-      'https://picsum.photos/800/600?random=6'
+      'https://images.unsplash.com/photo-1574263867128-97b9d4b09c0b?w=800&h=600&fit=crop&q=80', // Bog landscape
+      'https://images.unsplash.com/photo-1507041957456-9c397ce39c97?w=800&h=600&fit=crop&q=80'  // Boardwalk in nature
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Parking', 'Information boards', 'Observation tower'],
@@ -156,8 +156,8 @@ export const realLatvianTrails: RealLocation[] = [
     },
     features: ['Two seas meeting', 'Lighthouse', 'Livonian culture', 'Beach walking', 'Sunset views'],
     images: [
-      'https://picsum.photos/800/600?random=7',
-      'https://picsum.photos/800/600?random=8'
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80', // Lighthouse by sea
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&q=80'  // Coastal view
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Parking', 'Lighthouse museum', 'Cafe'],
@@ -190,8 +190,8 @@ export const realLatvianCamping: RealLocation[] = [
     },
     features: ['Tent sites', 'RV hookups', 'Shower facilities', 'Restaurant', 'Adventure activities'],
     images: [
-      'https://picsum.photos/800/600?random=9',
-      'https://picsum.photos/800/600?random=10'
+      'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&h=600&fit=crop&q=80', // Camping in forest
+      'https://images.unsplash.com/photo-1487730116645-74489c95b41b?w=800&h=600&fit=crop&q=80'  // Tent camping
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Electricity', 'Water', 'Showers', 'Toilets', 'WiFi', 'Restaurant'],
@@ -223,8 +223,8 @@ export const realLatvianCamping: RealLocation[] = [
     },
     features: ['Beach access', 'Pine forest', 'Spa nearby', 'Train to Riga', 'Swimming'],
     images: [
-      'https://picsum.photos/800/600?random=11',
-      'https://picsum.photos/800/600?random=12'
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80', // Beach camping
+      'https://images.unsplash.com/photo-1520637836862-4d197d17c92a?w=800&h=600&fit=crop&q=80'  // Pine forest
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Beach access', 'Showers', 'Toilets', 'Parking', 'Store'],
@@ -260,8 +260,8 @@ export const realLatvianFishing: RealLocation[] = [
     },
     features: ['Trout fishing', 'Grayling', 'Fly fishing', 'Clean water', 'Scenic location'],
     images: [
-      'https://picsum.photos/800/600?random=13',
-      'https://picsum.photos/800/600?random=14'
+      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80', // River fishing
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&q=80'  // Clean river
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['River access', 'Parking', 'Fishing permit required'],
@@ -291,8 +291,8 @@ export const realLatvianFishing: RealLocation[] = [
     },
     features: ['Pike fishing', 'Perch', 'Urban location', 'Easy access', 'Multiple spots'],
     images: [
-      'https://picsum.photos/800/600?random=15',
-      'https://picsum.photos/800/600?random=16'
+      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80', // Urban fishing
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop&q=80'  // River bank
     ],
     season: ['spring', 'summer', 'autumn', 'winter'],
     facilities: ['Fishing platforms', 'Parking', 'Public transport'],
@@ -322,8 +322,8 @@ export const realLatvianWinter: RealLocation[] = [
     },
     features: ['Professional bobsled', 'Summer track', 'Historic venue', 'Guided tours', 'Adrenaline rush'],
     images: [
-      'https://picsum.photos/800/600?random=17',
-      'https://picsum.photos/800/600?random=18'
+      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop&q=80', // Bobsled track
+      'https://images.unsplash.com/photo-1551524164-687a55dd1126?w=800&h=600&fit=crop&q=80'  // Winter sports
     ],
     season: ['winter', 'summer'],
     facilities: ['Professional track', 'Safety equipment', 'Changing rooms', 'Cafe'],
@@ -355,8 +355,8 @@ export const realLatvianWinter: RealLocation[] = [
     },
     features: ['Multiple slopes', 'Ski lifts', 'Equipment rental', 'Ski school', 'Restaurant'],
     images: [
-      'https://picsum.photos/800/600?random=19',
-      'https://picsum.photos/800/600?random=20'
+      'https://images.unsplash.com/photo-1551524164-6cf3ac5e6bc9?w=800&h=600&fit=crop&q=80', // Ski slopes
+      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop&q=80'  // Winter resort
     ],
     season: ['winter'],
     facilities: ['Ski lifts', 'Equipment rental', 'Ski school', 'Restaurant', 'Parking'],

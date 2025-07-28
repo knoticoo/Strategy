@@ -284,7 +284,7 @@ const TrailsTab: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center text-sm text-gray-700 mb-3 bg-gray-50 rounded-lg p-2">
+                <div className="flex items-center text-sm text-gray-700 dark:text-gray-300 mb-3 bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
                   <MapPin className="h-4 w-4 mr-2 text-green-600" />
                   <span className="font-medium">{trail.region}</span>
                   {userLocation && (
@@ -301,20 +301,20 @@ const TrailsTab: React.FC = () => {
 
                 {/* Trail Stats */}
                 <div className="grid grid-cols-3 gap-3 mb-4">
-                  <div className="text-center bg-green-50 rounded-lg p-3">
+                  <div className="text-center bg-green-50 dark:bg-green-900/20 rounded-lg p-3">
                     <Route className="h-5 w-5 text-green-600 mx-auto mb-1" />
-                    <div className="text-xs text-gray-600 font-medium">Distance</div>
-                    <div className="text-sm font-bold text-gray-900">{trail.distance || 'N/A'}</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">Distance</div>
+                    <div className="text-sm font-bold text-gray-900 dark:text-white">{trail.distance || 'N/A'}</div>
                   </div>
-                  <div className="text-center bg-blue-50 rounded-lg p-3">
+                  <div className="text-center bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
                     <Clock className="h-5 w-5 text-blue-600 mx-auto mb-1" />
-                    <div className="text-xs text-gray-600 font-medium">Duration</div>
-                    <div className="text-sm font-bold text-gray-900">{trail.duration}</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">Duration</div>
+                    <div className="text-sm font-bold text-gray-900 dark:text-white">{trail.duration}</div>
                   </div>
-                  <div className="text-center bg-orange-50 rounded-lg p-3">
+                  <div className="text-center bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3">
                     <TrendingUp className="h-5 w-5 text-orange-600 mx-auto mb-1" />
-                    <div className="text-xs text-gray-600 font-medium">Elevation</div>
-                    <div className="text-sm font-bold text-gray-900">{trail.elevation || 'N/A'}</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">Elevation</div>
+                    <div className="text-sm font-bold text-gray-900 dark:text-white">{trail.elevation || 'N/A'}</div>
                   </div>
                 </div>
 

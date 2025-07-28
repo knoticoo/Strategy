@@ -29,7 +29,7 @@ interface Achievement {
   description: string;
   icon: React.ComponentType<any>;
   unlockedAt: string;
-  category: 'distance' | 'trails' | 'social' | 'time' | 'special';
+  category: 'distance' | 'trails' | 'social' | 'time' | 'special' | 'points';
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
   points: number;
 }
@@ -93,49 +93,102 @@ const GamificationTab: React.FC = () => {
       const currentLevel = levels.find(level => userXP >= level.minXP && userXP < level.maxXP) || levels[levels.length - 1];
       setUserLevel(currentLevel);
 
-      // Mock achievements
-      const mockAchievements: Achievement[] = [
-        {
+      // Generate real achievements based on user stats
+      const realAchievements: Achievement[] = [];
+      
+      // Trail completion achievements
+      if (currentUser.stats.trailsCompleted >= 1) {
+        realAchievements.push({
           id: '1',
           title: 'First Steps',
           description: 'Complete your first trail',
           icon: Target,
-          unlockedAt: '2024-01-10',
+          unlockedAt: currentUser.joinDate,
           category: 'trails',
           rarity: 'common',
           points: 50
-        },
-        {
+        });
+      }
+      
+      if (currentUser.stats.trailsCompleted >= 5) {
+        realAchievements.push({
           id: '2',
-          title: 'Distance Runner',
-          description: 'Walk 50km in total',
+          title: 'Trail Explorer',
+          description: 'Complete 5 trails',
           icon: Route,
-          unlockedAt: '2024-01-15',
-          category: 'distance',
+          unlockedAt: currentUser.joinDate,
+          category: 'trails',
           rarity: 'rare',
           points: 100
-        },
-        {
+        });
+      }
+      
+      if (currentUser.stats.trailsCompleted >= 10) {
+        realAchievements.push({
           id: '3',
-          title: 'Peak Climber',
-          description: 'Reach 10 mountain peaks',
+          title: 'Adventure Master',
+          description: 'Complete 10 trails',
           icon: Mountain,
-          unlockedAt: '2024-01-20',
+          unlockedAt: currentUser.joinDate,
           category: 'trails',
           rarity: 'epic',
           points: 200
-        },
-        {
+        });
+      }
+      
+      // Photo sharing achievements
+      if (currentUser.stats.photosShared >= 1) {
+        realAchievements.push({
           id: '4',
-          title: 'Streak Master',
-          description: 'Maintain 7-day activity streak',
-          icon: Flame,
-          unlockedAt: '2024-01-25',
-          category: 'time',
+          title: 'Photographer',
+          description: 'Share your first photo',
+          icon: Award,
+          unlockedAt: currentUser.joinDate,
+          category: 'social',
+          rarity: 'common',
+          points: 25
+        });
+      }
+      
+      if (currentUser.stats.photosShared >= 10) {
+        realAchievements.push({
+          id: '5',
+          title: 'Documentarian',
+          description: 'Share 10 photos',
+          icon: Medal,
+          unlockedAt: currentUser.joinDate,
+          category: 'social',
+          rarity: 'rare',
+          points: 100
+        });
+      }
+      
+      // Points achievements
+      if (currentUser.stats.points >= 1000) {
+        realAchievements.push({
+          id: '6',
+          title: 'Point Collector',
+          description: 'Earn 1000 points',
+          icon: Trophy,
+          unlockedAt: currentUser.joinDate,
+          category: 'points',
+          rarity: 'epic',
+          points: 150
+        });
+      }
+      
+      if (currentUser.stats.points >= 2000) {
+        realAchievements.push({
+          id: '7',
+          title: 'Legend',
+          description: 'Earn 2000 points',
+          icon: Crown,
+          unlockedAt: currentUser.joinDate,
+          category: 'points',
           rarity: 'legendary',
-          points: 500
-        }
-      ];
+          points: 300
+        });
+      }
 
       // Mock challenges
       const mockChallenges: Challenge[] = [
@@ -197,18 +250,18 @@ const GamificationTab: React.FC = () => {
           rank: 2
         },
         {
-          id: '3',
-          name: 'You',
-          avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
+          id: currentUser.id,
+          name: currentUser.name,
+          avatar: currentUser.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
           level: currentLevel?.level || 1,
           xp: currentUser.stats.points,
-                      streak: 12, // Mock streak for now
-          badges: mockAchievements.length,
+          streak: 12, // Mock streak for now
+          badges: realAchievements.length,
           rank: 3
         }
       ];
 
-      setAchievements(mockAchievements);
+      setAchievements(realAchievements);
       setChallenges(mockChallenges);
       setLeaderboard(mockLeaderboard);
       setLoading(false);
@@ -266,40 +319,32 @@ const GamificationTab: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-base-200 to-base-300 p-4 md:p-6 animate-fade-in">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="text-center mb-8 animate-slide-down">
-        <div className="flex items-center justify-center mb-4">
-          <div className="bg-gradient-to-r from-primary to-secondary p-4 rounded-full animate-glow">
-            <Trophy className="h-8 w-8 text-white animate-bounce-slow" />
-          </div>
-        </div>
-        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
-          Adventure Rewards
-        </h1>
-        <p className="text-base-content/70 text-lg">
+      <div className="text-center">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          🏆 Adventure Progress
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400">
           Level up your outdoor adventures and earn amazing rewards!
         </p>
       </div>
 
       {/* User Stats Card */}
-      <div className="card bg-gradient-to-r from-primary/10 to-secondary/10 shadow-2xl mb-8 animate-scale-in">
-        <div className="card-body">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            {/* Avatar & Level */}
-            <div className="flex flex-col items-center">
-              <div className="avatar placeholder">
-                <div className="bg-primary text-primary-content rounded-full w-20 h-20 animate-float">
-                  <span className="text-2xl font-bold">{userLevel?.level}</span>
-                </div>
-              </div>
-              <div className={`badge ${userLevel?.bgColor} ${userLevel?.color} badge-lg mt-2 animate-wiggle`}>
-                {userLevel?.title}
-              </div>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          {/* Avatar & Level */}
+          <div className="flex flex-col items-center">
+            <div className="w-20 h-20 bg-green-600 text-white rounded-full flex items-center justify-center">
+              <span className="text-2xl font-bold">{userLevel?.level}</span>
             </div>
+            <div className={`px-3 py-1 rounded-full text-sm font-medium mt-2 ${userLevel?.bgColor} ${userLevel?.color}`}>
+              {userLevel?.title}
+            </div>
+          </div>
 
-            {/* XP Progress */}
-            <div className="flex-1 w-full">
+          {/* XP Progress */}
+          <div className="flex-1 w-full">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-medium text-base-content/70">Experience Points</span>
                 <span className="text-sm font-bold text-primary">{currentUser?.stats.points} XP</span>
@@ -312,44 +357,47 @@ const GamificationTab: React.FC = () => {
               <div className="flex justify-between text-xs text-base-content/50 mt-1">
                 <span>{userLevel?.minXP} XP</span>
                 <span>{userLevel?.maxXP} XP</span>
-              </div>
             </div>
+          </div>
 
-            {/* Streak */}
-            <div className="stats shadow">
-              <div className="stat place-items-center">
-                <div className="stat-figure text-secondary">
-                  <Flame className="h-8 w-8 animate-pulse-slow" />
-                </div>
-                <div className="stat-title">Streak</div>
-                <div className="stat-value text-secondary">12</div>
-                <div className="stat-desc">days active</div>
+          {/* Streak */}
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
+              <div className="text-orange-600 mb-2">
+                <Flame className="h-8 w-8 mx-auto" />
               </div>
-            </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Streak</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">12</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">days active</div>
           </div>
         </div>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="tabs tabs-boxed bg-base-100 shadow-lg mb-6 animate-slide-up">
+      <div className="flex justify-center mb-6">
+        <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
         {[
           { id: 'overview', label: 'Overview', icon: Target },
           { id: 'achievements', label: 'Achievements', icon: Trophy },
           { id: 'challenges', label: 'Challenges', icon: Zap },
           { id: 'leaderboard', label: 'Leaderboard', icon: Crown }
-        ].map((tab) => {
-          const Icon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              className={`tab tab-lg gap-2 ${activeTab === tab.id ? 'tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id as any)}
-            >
-              <Icon className="h-4 w-4" />
-              <span className="hidden sm:inline">{tab.label}</span>
-            </button>
-          );
-        })}
+          ].map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`flex items-center space-x-2 px-4 py-2 rounded transition-colors ${
+                  activeTab === tab.id
+                    ? 'bg-white dark:bg-gray-600 text-green-600 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-green-600'
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                <span className="text-sm font-medium hidden sm:inline">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Content */}

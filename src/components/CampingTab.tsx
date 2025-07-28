@@ -243,7 +243,7 @@ const CampingTab: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center text-sm text-gray-700 mb-3 bg-gray-50 rounded-lg p-2">
+                <div className="flex items-center text-sm text-gray-700 dark:text-gray-300 mb-3 bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
                   <MapPin className="h-4 w-4 mr-2 text-green-600" />
                   <span className="font-medium">{campsite.region}</span>
                   {userLocation && (
@@ -294,7 +294,7 @@ const CampingTab: React.FC = () => {
                 </div>
 
                 {/* Pricing & Actions */}
-                <div className="flex justify-between items-center bg-gray-50 rounded-lg p-3">
+                <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
                   <div className="text-sm">
                     {campsite.pricing?.free ? (
                       <div className="flex items-center gap-2">
