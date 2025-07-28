@@ -110,7 +110,7 @@ const CommunityTab: React.FC = () => {
       
       alert('Post created successfully!');
       setShowCreatePost(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating post:', error);
       const errorMessage = error.response?.data?.error || error.message || 'Unknown error';
       alert(`Error creating post: ${errorMessage}`);

@@ -243,7 +243,7 @@ const AuthTab: React.FC = () => {
       const response = await api.uploadFile(file);
       console.log('Upload response:', response);
       return response.url;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading file:', error);
       const errorMessage = error.response?.data?.error || error.message || 'Unknown upload error';
       alert(`Upload failed: ${errorMessage}`);
@@ -395,7 +395,7 @@ const AuthTab: React.FC = () => {
             loadRecentActivity();
           }, 500);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Login error:', error);
         alert(`Login failed: ${error.response?.data?.error || error.message || 'Unknown error'}`);
         return;
@@ -1860,7 +1860,7 @@ const AuthTab: React.FC = () => {
                 const stats = await api.getStats();
                 console.log('API Stats:', stats);
                 alert(`API Working! Online users: ${stats.onlineUsers}, Total users: ${stats.totalUsers}`);
-              } catch (error) {
+              } catch (error: any) {
                 console.error('API Test failed:', error);
                 alert(`API Test failed: ${error.message}`);
               }
