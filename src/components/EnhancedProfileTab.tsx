@@ -5,21 +5,16 @@ import {
   User,
   Camera,
   MapPin,
-  Calendar,
   Trophy,
   Users,
   Heart,
   MessageCircle,
-  Star,
-  Award,
   Map,
   Activity,
   Settings,
   UserPlus,
   UserMinus,
   Badge,
-  Palette,
-  Upload,
   Plus,
   X,
   Edit3,
@@ -94,13 +89,6 @@ const EnhancedProfileTab: React.FC = () => {
   const [newPhotoCaption, setNewPhotoCaption] = useState('');
   const [showAddPhoto, setShowAddPhoto] = useState(false);
 
-  useEffect(() => {
-    if (currentUser) {
-      loadProfileData();
-      setEditedBio(currentUser.bio || '');
-    }
-  }, [currentUser]);
-
   const loadProfileData = async () => {
     try {
       // Load achievements
@@ -126,6 +114,13 @@ const EnhancedProfileTab: React.FC = () => {
       console.error('Error loading profile data:', error);
     }
   };
+
+  useEffect(() => {
+    if (currentUser) {
+      loadProfileData();
+      setEditedBio(currentUser.bio || '');
+    }
+  }, [currentUser, loadProfileData]);
 
   const handleSaveBio = async () => {
     if (!currentUser) return;

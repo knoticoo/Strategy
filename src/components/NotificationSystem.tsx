@@ -4,16 +4,7 @@ import * as api from '../services/api';
 import {
   Bell,
   X,
-  Heart,
-  MessageCircle,
-  UserPlus,
-  MapPin,
-  Trophy,
-  AlertTriangle,
-  Info,
   CheckCircle,
-  Calendar,
-  Zap,
   Settings,
   Volume2,
   VolumeX,
@@ -78,27 +69,6 @@ const NotificationSystem: React.FC = () => {
   const wsRef = useRef<WebSocket | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  useEffect(() => {
-    if (isLoggedIn && currentUser) {
-      loadNotifications();
-      loadNotificationSettings();
-      setupWebSocket();
-      requestNotificationPermission();
-    }
-
-    return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
-    };
-  }, [isLoggedIn, currentUser]);
-
-  useEffect(() => {
-    // Create notification sound
-    audioRef.current = new Audio('/notification-sound.mp3');
-    audioRef.current.volume = 0.5;
-  }, []);
-
   const loadNotifications = async () => {
     try {
       const notificationsData = await api.getUserNotifications(currentUser!.id);
@@ -142,6 +112,37 @@ const NotificationSystem: React.FC = () => {
       setTimeout(setupWebSocket, 5000);
     };
   };
+
+  const requestNotificationPermission = async () => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      const permission = await Notification.requestPermission();
+      setSettings(prev => ({
+        ...prev,
+        pushEnabled: permission === 'granted'
+      }));
+    }
+  };
+
+  useEffect(() => {
+    // Create notification sound
+    audioRef.current = new Audio('/notification-sound.mp3');
+    audioRef.current.volume = 0.5;
+  }, []);
+
+  useEffect(() => {
+    if (isLoggedIn && currentUser) {
+      loadNotifications();
+      loadNotificationSettings();
+      setupWebSocket();
+      requestNotificationPermission();
+    }
+
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+    };
+  }, [isLoggedIn, currentUser]);
 
   const handleNewNotification = (notification: Notification) => {
     setNotifications(prev => [notification, ...prev]);
@@ -203,7 +204,9 @@ const NotificationSystem: React.FC = () => {
     setTimeout(() => {
       toast.style.transform = 'translateX(100%)';
       setTimeout(() => {
-        document.body.removeChild(toast);
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast);
+        }
       }, 300);
     }, 5000);
 
@@ -211,19 +214,11 @@ const NotificationSystem: React.FC = () => {
     toast.querySelector('button')?.addEventListener('click', () => {
       toast.style.transform = 'translateX(100%)';
       setTimeout(() => {
-        document.body.removeChild(toast);
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast);
+        }
       }, 300);
     });
-  };
-
-  const requestNotificationPermission = async () => {
-    if ('Notification' in window && Notification.permission === 'default') {
-      const permission = await Notification.requestPermission();
-      setSettings(prev => ({
-        ...prev,
-        pushEnabled: permission === 'granted'
-      }));
-    }
   };
 
   const markAsRead = async (notificationId: string) => {
