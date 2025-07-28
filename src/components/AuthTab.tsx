@@ -181,261 +181,156 @@ const AuthTab: React.FC = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
-        const avatarUrl = event.target?.result as string;
-        if (currentUser) {
-          const updatedUser = { ...currentUser, avatar: avatarUrl };
-          login(updatedUser); // This will update the user in context
-        }
+        // In a real app, you would upload this to a server
+        // For now, we'll just store it as a data URL
+        console.log('Avatar uploaded:', event.target?.result);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  if (isLoggedIn && currentUser) {
-    return (
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            👤 {t('auth.profile')}
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            Welcome back, {currentUser.name}!
-          </p>
-        </div>
-
-        {/* Navigation Tabs */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-          <div className="flex flex-wrap border-b border-gray-200 dark:border-gray-700">
-            <button
-              onClick={() => setActiveSection('profile')}
-              className={`px-6 py-3 font-medium text-sm rounded-t-xl transition-colors ${
-                activeSection === 'profile'
-                  ? 'bg-green-50 dark:bg-green-900/20 text-green-600 border-b-2 border-green-600'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-              }`}
-            >
-              <User className="h-4 w-4 inline-block mr-2" />
-              Profile
-            </button>
-            <button
-              onClick={() => setActiveSection('favorites')}
-              className={`px-6 py-3 font-medium text-sm rounded-t-xl transition-colors ${
-                activeSection === 'favorites'
-                  ? 'bg-pink-50 dark:bg-pink-900/20 text-pink-600 border-b-2 border-pink-600'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-              }`}
-            >
-              <Heart className="h-4 w-4 inline-block mr-2" />
-              Favorites
-            </button>
-            <button
-              onClick={() => setActiveSection('progress')}
-              className={`px-6 py-3 font-medium text-sm rounded-t-xl transition-colors ${
-                activeSection === 'progress'
-                  ? 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 border-b-2 border-yellow-600'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-              }`}
-            >
-              <Trophy className="h-4 w-4 inline-block mr-2" />
-              Progress
-            </button>
-            {isAdmin && (
-              <button
-                onClick={() => setActiveSection('admin')}
-                className={`px-6 py-3 font-medium text-sm rounded-t-xl transition-colors ${
-                  activeSection === 'admin'
-                    ? 'bg-red-50 dark:bg-red-900/20 text-red-600 border-b-2 border-red-600'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
-              >
-                <Shield className="h-4 w-4 inline-block mr-2" />
-                Admin Panel
-              </button>
-            )}
-          </div>
-
-          <div className="p-6">
-            {activeSection === 'profile' && renderProfileSection()}
-            {activeSection === 'favorites' && renderFavoritesSection()}
-            {activeSection === 'progress' && renderProgressSection()}
-            {activeSection === 'admin' && isAdmin && renderAdminSection()}
-          </div>
-        </div>
-
-        {/* Logout Button */}
-        <div className="text-center">
-          <button
-            onClick={handleLogout}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Render Profile Section
+  // Render Functions
   const renderProfileSection = () => (
     <div className="space-y-6">
-
-        {/* Profile Card */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            {/* Avatar */}
-            <div className="relative">
-              <img
-                src={currentUser.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face'}
-                alt={currentUser.name}
-                className="w-24 h-24 rounded-full border-4 border-green-500 object-cover"
+      {/* Profile Card */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          {/* Avatar */}
+          <div className="relative">
+            <img
+              src={currentUser?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face'}
+              alt={currentUser?.name}
+              className="w-24 h-24 rounded-full border-4 border-green-500 object-cover"
+            />
+            <label className="absolute bottom-0 right-0 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors cursor-pointer">
+              <Camera className="h-4 w-4" />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="hidden"
               />
-              <label className="absolute bottom-0 right-0 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors cursor-pointer">
-                <Camera className="h-4 w-4" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleAvatarUpload}
-                />
-              </label>
-            </div>
+            </label>
+          </div>
 
-            {/* User Info */}
-            <div className="flex-1 text-center md:text-left">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                {currentUser.name}
-              </h3>
-              <div className="space-y-2 text-gray-600 dark:text-gray-400">
+          {/* User Info */}
+          <div className="flex-1 text-center md:text-left">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              {currentUser?.name}
+            </h3>
+            <div className="space-y-2 text-gray-600 dark:text-gray-400">
+              <div className="flex items-center justify-center md:justify-start gap-2">
+                <Mail className="h-4 w-4" />
+                <span>{currentUser?.email}</span>
+              </div>
+              {currentUser?.location && (
                 <div className="flex items-center justify-center md:justify-start gap-2">
-                  <Mail className="h-4 w-4" />
-                  <span>{currentUser.email}</span>
-                </div>
-                {currentUser.location && (
-                  <div className="flex items-center justify-center md:justify-start gap-2">
-                    <MapPin className="h-4 w-4" />
-                    <span>{currentUser.location}</span>
-                  </div>
-                )}
-                <div className="text-sm">
-                  Member since {new Date(currentUser.joinDate).toLocaleDateString()}
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-3">
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
-                <Settings className="h-4 w-4" />
-                Edit Profile
-              </button>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 text-center">
-            <Map className="h-8 w-8 text-green-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {currentUser.stats.trailsCompleted}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Trails Completed
-            </div>
-          </div>
-
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-center">
-            <Camera className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {currentUser.stats.photosShared}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Photos Shared
-            </div>
-          </div>
-
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4 text-center">
-            <Trophy className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {currentUser.stats.points}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Points Earned
-            </div>
-          </div>
-
-          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 text-center">
-            <Heart className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              Level {currentUser.stats.level}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Current Level
-            </div>
-          </div>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Recent Activity
-          </h3>
-          {currentUser.stats.points > 0 ? (
-            <div className="space-y-4">
-              {currentUser.stats.photosShared > 0 && (
-                <div className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-                    <Camera className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-900 dark:text-white">
-                      Shared {currentUser.stats.photosShared} adventure photo{currentUser.stats.photosShared > 1 ? 's' : ''}
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      +{currentUser.stats.photosShared * 10} points earned
-                    </div>
-                  </div>
+                  <MapPin className="h-4 w-4" />
+                  <span>{currentUser.location}</span>
                 </div>
               )}
-              
-              {currentUser.stats.level > 1 && (
-                <div className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
-                    <Trophy className="h-5 w-5 text-yellow-600" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-900 dark:text-white">
-                      Reached Level {currentUser.stats.level}
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      Milestone achieved!
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <div className="text-gray-400 mb-2">
-                <Trophy className="h-12 w-12 mx-auto" />
+              <div className="text-sm">
+                Member since {new Date(currentUser?.joinDate || '').toLocaleDateString()}
               </div>
-              <p className="text-gray-600 dark:text-gray-400">
-                Start your adventure journey! Share photos and complete activities to see your progress here.
-              </p>
             </div>
-          )}
+          </div>
         </div>
       </div>
-    )
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 text-center">
+          <Map className="h-8 w-8 text-green-600 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+            {currentUser?.stats.trailsCompleted}
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Trails Completed
+          </div>
+        </div>
+
+        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-center">
+          <Camera className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+            {currentUser?.stats.photosShared}
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Photos Shared
+          </div>
+        </div>
+
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4 text-center">
+          <Trophy className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+            {currentUser?.stats.points}
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Points Earned
+          </div>
+        </div>
+
+        <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 text-center">
+          <Heart className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+            Level {currentUser?.stats.level}
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Current Level
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+          Recent Activity
+        </h3>
+        {currentUser && currentUser.stats.points > 0 ? (
+          <div className="space-y-4">
+            {currentUser.stats.photosShared > 0 && (
+              <div className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                  <Camera className="h-5 w-5 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-gray-900 dark:text-white">
+                    Shared {currentUser.stats.photosShared} adventure photo{currentUser.stats.photosShared > 1 ? 's' : ''}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    +{currentUser.stats.photosShared * 10} points earned
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {currentUser.stats.level > 1 && (
+              <div className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
+                  <Trophy className="h-5 w-5 text-yellow-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-gray-900 dark:text-white">
+                    Reached Level {currentUser.stats.level}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    Milestone achieved!
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <div className="text-gray-400 mb-2">
+              <Trophy className="h-12 w-12 mx-auto" />
+            </div>
+            <p className="text-gray-600 dark:text-gray-400">
+              Start your adventure journey! Share photos and complete activities to see your progress here.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 
   // Render Favorites Section
@@ -469,16 +364,16 @@ const AuthTab: React.FC = () => {
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Level {currentUser.stats.level}
+              Level {currentUser?.stats.level}
             </span>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              {currentUser.stats.points}/100 XP
+              {currentUser?.stats.points}/100 XP
             </span>
           </div>
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
             <div 
               className="bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-300"
-              style={{ width: `${Math.min((currentUser.stats.points / 100) * 100, 100)}%` }}
+              style={{ width: `${Math.min(((currentUser?.stats.points || 0) / 100) * 100, 100)}%` }}
             ></div>
           </div>
         </div>
@@ -486,11 +381,11 @@ const AuthTab: React.FC = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">{currentUser.stats.trailsCompleted}</div>
+            <div className="text-2xl font-bold text-green-600">{currentUser?.stats.trailsCompleted}</div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Trails Completed</div>
           </div>
           <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600">{currentUser.stats.photosShared}</div>
+            <div className="text-2xl font-bold text-blue-600">{currentUser?.stats.photosShared}</div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Photos Shared</div>
           </div>
         </div>
@@ -904,6 +799,94 @@ const AuthTab: React.FC = () => {
     </div>
   );
 
+  // Main component logic
+  if (isLoggedIn && currentUser) {
+    return (
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            👤 {t('auth.profile')}
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            Welcome back, {currentUser.name}!
+          </p>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+          <div className="flex flex-wrap border-b border-gray-200 dark:border-gray-700">
+            <button
+              onClick={() => setActiveSection('profile')}
+              className={`px-6 py-3 font-medium text-sm rounded-t-xl transition-colors ${
+                activeSection === 'profile'
+                  ? 'bg-green-50 dark:bg-green-900/20 text-green-600 border-b-2 border-green-600'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              <User className="h-4 w-4 inline-block mr-2" />
+              Profile
+            </button>
+            <button
+              onClick={() => setActiveSection('favorites')}
+              className={`px-6 py-3 font-medium text-sm rounded-t-xl transition-colors ${
+                activeSection === 'favorites'
+                  ? 'bg-pink-50 dark:bg-pink-900/20 text-pink-600 border-b-2 border-pink-600'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              <Heart className="h-4 w-4 inline-block mr-2" />
+              Favorites
+            </button>
+            <button
+              onClick={() => setActiveSection('progress')}
+              className={`px-6 py-3 font-medium text-sm rounded-t-xl transition-colors ${
+                activeSection === 'progress'
+                  ? 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 border-b-2 border-yellow-600'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              <Trophy className="h-4 w-4 inline-block mr-2" />
+              Progress
+            </button>
+            {isAdmin && (
+              <button
+                onClick={() => setActiveSection('admin')}
+                className={`px-6 py-3 font-medium text-sm rounded-t-xl transition-colors ${
+                  activeSection === 'admin'
+                    ? 'bg-red-50 dark:bg-red-900/20 text-red-600 border-b-2 border-red-600'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                <Shield className="h-4 w-4 inline-block mr-2" />
+                Admin Panel
+              </button>
+            )}
+          </div>
+
+          <div className="p-6">
+            {activeSection === 'profile' && renderProfileSection()}
+            {activeSection === 'favorites' && renderFavoritesSection()}
+            {activeSection === 'progress' && renderProgressSection()}
+            {activeSection === 'admin' && isAdmin && renderAdminSection()}
+          </div>
+        </div>
+
+        {/* Logout Button */}
+        <div className="text-center">
+          <button
+            onClick={handleLogout}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Render Auth Form
   return (
     <div className="max-w-md mx-auto space-y-6">
       {/* Header */}
