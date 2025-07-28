@@ -14,8 +14,10 @@ import {
 } from 'lucide-react';
 
 const CommunityTab: React.FC = () => {
-  const { currentUser, isLoggedIn, communityPosts, addCommunityPost, toggleLike } = useUser();
+  const { currentUser, isLoggedIn, communityPosts, addCommunityPost, toggleLike, addComment } = useUser();
   const [showCreatePost, setShowCreatePost] = useState(false);
+  const [showComments, setShowComments] = useState<string | null>(null);
+  const [newComment, setNewComment] = useState('');
   const [newPost, setNewPost] = useState({
     content: '',
     type: 'photo' as 'photo' | 'check-in' | 'review' | 'achievement',
@@ -42,6 +44,13 @@ const CommunityTab: React.FC = () => {
       image: ''
     });
     setShowCreatePost(false);
+  };
+
+  const handleAddComment = (postId: string) => {
+    if (!newComment.trim()) return;
+    
+    addComment(postId, newComment);
+    setNewComment('');
   };
 
   const formatTimestamp = (timestamp: string) => {
@@ -327,22 +336,85 @@ const CommunityTab: React.FC = () => {
                     <Heart className={`h-5 w-5 ${post.likedBy.includes(currentUser?.id || '') ? 'fill-current' : ''}`} />
                     <span>{post.likes}</span>
                   </button>
-                  <button className="flex items-center gap-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <MessageCircle className="h-5 w-5" />
-                    <span>{post.comments.length}</span>
-                  </button>
+                                   <button 
+                   onClick={() => setShowComments(showComments === post.id ? null : post.id)}
+                   className="flex items-center gap-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                 >
+                   <MessageCircle className="h-5 w-5" />
+                   <span>{post.comments.length}</span>
+                 </button>
                   <button className="flex items-center gap-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
                     <Share className="h-5 w-5" />
                     <span>Share</span>
                   </button>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-  );
-};
+                                 </div>
+
+                 {/* Comments Section */}
+                 {showComments === post.id && (
+                   <div className="border-t border-gray-200 dark:border-gray-700 mt-4 pt-4">
+                     {/* Existing Comments */}
+                     <div className="space-y-3 mb-4">
+                       {post.comments.map((comment) => (
+                         <div key={comment.id} className="flex gap-3">
+                           <img
+                             src={comment.userAvatar}
+                             alt={comment.userName}
+                             className="w-8 h-8 rounded-full"
+                           />
+                           <div className="flex-1 bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                             <div className="flex items-center gap-2 mb-1">
+                               <span className="font-medium text-sm text-gray-900 dark:text-white">
+                                 {comment.userName}
+                               </span>
+                               <span className="text-xs text-gray-500 dark:text-gray-400">
+                                 {formatTimestamp(comment.timestamp)}
+                               </span>
+                             </div>
+                             <p className="text-sm text-gray-700 dark:text-gray-300">
+                               {comment.content}
+                             </p>
+                           </div>
+                         </div>
+                       ))}
+                     </div>
+
+                     {/* Add Comment */}
+                     <div className="flex gap-3">
+                       <img
+                         src={currentUser?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face'}
+                         alt={currentUser?.name}
+                         className="w-8 h-8 rounded-full"
+                       />
+                       <div className="flex-1 flex gap-2">
+                         <input
+                           type="text"
+                           value={newComment}
+                           onChange={(e) => setNewComment(e.target.value)}
+                           placeholder="Write a comment..."
+                           className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                           onKeyPress={(e) => {
+                             if (e.key === 'Enter') {
+                               handleAddComment(post.id);
+                             }
+                           }}
+                         />
+                         <button
+                           onClick={() => handleAddComment(post.id)}
+                           className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                         >
+                           Post
+                         </button>
+                       </div>
+                     </div>
+                   </div>
+                 )}
+               </div>
+             </div>
+           ))
+         )}
+       </div>
+     </div>
+   );
+ };
 
 export default CommunityTab;
