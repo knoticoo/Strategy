@@ -18,20 +18,7 @@ import {
   Map
 } from 'lucide-react';
 
-// interface LocalAppUser {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  location?: string;
-  joinDate: string;
-  stats: {
-    trailsCompleted: number;
-    photosShared: number;
-    points: number;
-    level: number;
-  };
-// }
+
 
 const AuthTab: React.FC = () => {
   const { t } = useTranslation();
