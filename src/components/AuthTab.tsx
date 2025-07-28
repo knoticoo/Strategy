@@ -44,6 +44,7 @@ const AuthTab: React.FC = () => {
   const [trails, setTrails] = useState<api.ApiTrail[]>([]);
   const [users, setUsers] = useState<api.ApiUser[]>([]);
   const [stats, setStats] = useState<api.ApiStats | null>(null);
+  const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileData, setProfileData] = useState({
     name: '',
@@ -72,6 +73,7 @@ const AuthTab: React.FC = () => {
       loadTrails();
       loadUsers();
       loadStats();
+      loadRecentActivity();
     }
   }, [isAdmin]);
 
@@ -99,6 +101,15 @@ const AuthTab: React.FC = () => {
       setStats(statsData);
     } catch (error) {
       console.error('Error loading stats:', error);
+    }
+  };
+
+  const loadRecentActivity = async () => {
+    try {
+      const activityData = await api.getRecentActivity();
+      setRecentActivity(activityData);
+    } catch (error) {
+      console.error('Error loading recent activity:', error);
     }
   };
 
@@ -1568,21 +1579,23 @@ const AuthTab: React.FC = () => {
       <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
         <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Recent Activity</h4>
         <div className="space-y-3">
-          <div className="flex items-center gap-3 text-sm">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span className="text-gray-600 dark:text-gray-400">New user "Trail Explorer" registered</span>
-            <span className="text-gray-500 dark:text-gray-500 ml-auto">2 min ago</span>
-          </div>
-          <div className="flex items-center gap-3 text-sm">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <span className="text-gray-600 dark:text-gray-400">Trail "Gauja National Park" was updated</span>
-            <span className="text-gray-500 dark:text-gray-500 ml-auto">1 hour ago</span>
-          </div>
-          <div className="flex items-center gap-3 text-sm">
-            <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-            <span className="text-gray-600 dark:text-gray-400">5 new community posts created</span>
-            <span className="text-gray-500 dark:text-gray-500 ml-auto">3 hours ago</span>
-          </div>
+          {recentActivity.length > 0 ? (
+            recentActivity.map((activity, index) => (
+              <div key={activity.id || index} className="flex items-center gap-3 text-sm">
+                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <span className="text-gray-600 dark:text-gray-400">
+                  {activity.user_name} posted: "{activity.content.substring(0, 50)}..."
+                </span>
+                <span className="text-gray-500 dark:text-gray-500 ml-auto">
+                  {new Date(activity.created_at).toLocaleDateString()}
+                </span>
+              </div>
+            ))
+          ) : (
+            <div className="text-gray-500 dark:text-gray-400 text-sm">
+              No recent activity
+            </div>
+          )}
         </div>
       </div>
     </div>
