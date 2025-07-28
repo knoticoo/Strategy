@@ -87,58 +87,6 @@ module.exports = {
       }
     },
   },
-  plugins: [
-    require('daisyui'),
-  ],
-  daisyui: {
-    themes: [
-      {
-        adventure: {
-          "primary": "#16a34a",
-          "primary-focus": "#15803d", 
-          "primary-content": "#ffffff",
-          "secondary": "#f59332",
-          "secondary-focus": "#e35d05",
-          "secondary-content": "#ffffff",
-          "accent": "#22c55e",
-          "accent-focus": "#16a34a",
-          "accent-content": "#ffffff",
-          "neutral": "#374151",
-          "neutral-focus": "#1f2937",
-          "neutral-content": "#f3f4f6",
-          "base-100": "#ffffff",
-          "base-200": "#f9fafb",
-          "base-300": "#f3f4f6",
-          "base-content": "#1f2937",
-          "info": "#3b82f6",
-          "success": "#10b981",
-          "warning": "#f59e0b",
-          "error": "#ef4444",
-        },
-        dark: {
-          "primary": "#22c55e",
-          "primary-focus": "#16a34a",
-          "primary-content": "#ffffff",
-          "secondary": "#f59332",
-          "secondary-focus": "#e35d05",
-          "secondary-content": "#ffffff",
-          "accent": "#4ade80",
-          "accent-focus": "#22c55e",
-          "accent-content": "#ffffff",
-          "neutral": "#1f2937",
-          "neutral-focus": "#111827",
-          "neutral-content": "#f3f4f6",
-          "base-100": "#1f2937",
-          "base-200": "#374151",
-          "base-300": "#4b5563",
-          "base-content": "#f3f4f6",
-          "info": "#3b82f6",
-          "success": "#10b981",
-          "warning": "#f59e0b",
-          "error": "#ef4444",
-        }
-      }
-    ],
-  },
+  plugins: [],
 }
 
