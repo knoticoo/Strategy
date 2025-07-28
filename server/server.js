@@ -285,7 +285,10 @@ app.post('/api/upload', (req, res) => {
     }
     
     try {
-      const fileUrl = `http://localhost:${PORT}/uploads/${req.file.filename}`;
+      // Use the request host for the file URL to work with remote servers
+      const host = req.get('host') || `localhost:${PORT}`;
+      const protocol = req.secure ? 'https' : 'http';
+      const fileUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
       console.log('File uploaded successfully:', fileUrl);
       res.json({ url: fileUrl });
     } catch (error) {
