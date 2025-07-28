@@ -14,6 +14,7 @@
     "@types/react-dom": "^19.1.6",
     "autoprefixer": "^10.4.14",
     "axios": "^1.11.0",
+    "daisyui": "^5.0.48",
     "i18next": "^23.7.16",
     "i18next-browser-languagedetector": "^7.2.0",
     "leaflet": "^1.9.4",
