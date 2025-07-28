@@ -2,16 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Map,
-  MapPin,
-  Fish,
-  Snowflake,
-  Heart,
   Sun,
   Moon,
   Menu,
   X,
   Users,
-  Trophy,
   LogIn
 } from 'lucide-react';
 import './i18n/config';
@@ -19,15 +14,10 @@ import { UserProvider } from './contexts/UserContext';
 
 // Import components
 import TrailsTab from './components/TrailsTab';
-import CampingTab from './components/CampingTab';
-import FishingTab from './components/FishingTab';
-import WinterTab from './components/WinterTab';
-import FavoritesTab from './components/FavoritesTab';
 import CommunityTab from './components/CommunityTab';
-import GamificationTab from './components/GamificationTab';
 import AuthTab from './components/AuthTab';
 
-type TabType = 'trails' | 'camping' | 'fishing' | 'winter' | 'favorites' | 'community' | 'gamification' | 'auth';
+type TabType = 'trails' | 'community' | 'auth';
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -76,53 +66,11 @@ function App() {
       bgColor: 'bg-nature-50 dark:bg-nature-900/20'
     },
     {
-      id: 'camping' as TabType,
-      name: t('nav.camping'),
-      icon: MapPin,
-      color: 'text-adventure-600',
-      bgColor: 'bg-adventure-50 dark:bg-adventure-900/20'
-    },
-    {
-      id: 'fishing' as TabType,
-      name: t('nav.fishing'),
-      icon: Fish,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50 dark:bg-blue-900/20'
-    },
-    {
-      id: 'winter' as TabType,
-      name: t('nav.winter'),
-      icon: Snowflake,
-      color: 'text-cyan-600',
-      bgColor: 'bg-cyan-50 dark:bg-cyan-900/20'
-    },
-    {
-      id: 'favorites' as TabType,
-      name: t('nav.favorites'),
-      icon: Heart,
-      color: 'text-pink-600',
-      bgColor: 'bg-pink-50 dark:bg-pink-900/20'
-    },
-    {
       id: 'community' as TabType,
       name: t('nav.community'),
       icon: Users,
       color: 'text-green-600',
       bgColor: 'bg-green-50 dark:bg-green-900/20'
-    },
-    {
-      id: 'gamification' as TabType,
-      name: t('nav.gamification'),
-      icon: Trophy,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-50 dark:bg-yellow-900/20'
-    },
-    {
-      id: 'favorites' as TabType,
-      name: t('nav.favorites'),
-      icon: Heart,
-      color: 'text-pink-600',
-      bgColor: 'bg-pink-50 dark:bg-pink-900/20'
     },
     {
       id: 'auth' as TabType,
@@ -137,18 +85,8 @@ function App() {
     switch (activeTab) {
       case 'trails':
         return <TrailsTab />;
-      case 'camping':
-        return <CampingTab />;
-      case 'fishing':
-        return <FishingTab />;
-      case 'winter':
-        return <WinterTab />;
-      case 'favorites':
-        return <FavoritesTab />;
       case 'community':
         return <CommunityTab />;
-      case 'gamification':
-        return <GamificationTab />;
       case 'auth':
         return <AuthTab />;
       default:
