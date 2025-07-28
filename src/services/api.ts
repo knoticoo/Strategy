@@ -450,6 +450,39 @@ export const updateNotificationSettings = async (userId: string, settings: any):
   }
 };
 
+// PWA API
+export const uploadGPSTrack = async (trackData: any): Promise<void> => {
+  try {
+    await api.post('/pwa/gps-tracks', trackData);
+  } catch (error) {
+    console.log('Upload GPS track API not implemented yet');
+  }
+};
+
+export const uploadVoiceNote = async (voiceData: any): Promise<void> => {
+  try {
+    await api.post('/pwa/voice-notes', voiceData);
+  } catch (error) {
+    console.log('Upload voice note API not implemented yet');
+  }
+};
+
+export const reportEmergency = async (emergencyData: any): Promise<void> => {
+  try {
+    await api.post('/pwa/emergency', emergencyData);
+  } catch (error) {
+    console.log('Report emergency API not implemented yet');
+  }
+};
+
+export const uploadPhoto = async (photoData: any): Promise<void> => {
+  try {
+    await api.post('/pwa/photos', photoData);
+  } catch (error) {
+    console.log('Upload photo API not implemented yet');
+  }
+};
+
 // Statistics API
 export const getStats = async (): Promise<ApiStats> => {
   const response = await api.get('/stats');
