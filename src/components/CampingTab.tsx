@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import InteractiveMap from './InteractiveMap';
-import { realLatvianCamping, RealLocation, calculateDistance } from '../data/realLatvianData';
+import ImageWithFallback from './ImageWithFallback';
+import { realLatvianCamping, RealLocation, calculateDistance, getDirectionsUrl } from '../data/realLatvianData';
 import {
   MapPin,
   Tent,
@@ -212,7 +213,7 @@ const CampingTab: React.FC = () => {
             >
               {/* Campsite Image */}
               <div className="relative h-48 overflow-hidden">
-                <img
+                <ImageWithFallback
                   src={campsite.images[0]}
                   alt={campsite.name}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
@@ -242,13 +243,13 @@ const CampingTab: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center text-sm text-gray-600 mb-3">
-                  <MapPin className="h-4 w-4 mr-1" />
-                  <span>{campsite.region}</span>
+                <div className="flex items-center text-sm text-gray-700 mb-3 bg-gray-50 rounded-lg p-2">
+                  <MapPin className="h-4 w-4 mr-2 text-green-600" />
+                  <span className="font-medium">{campsite.region}</span>
                   {userLocation && (
                     <>
-                      <span className="mx-2">•</span>
-                      <span>{getDistanceFromUser(campsite)}</span>
+                      <span className="mx-2 text-gray-400">•</span>
+                      <span className="text-blue-600 font-medium">{getDistanceFromUser(campsite)}</span>
                     </>
                   )}
                 </div>
@@ -293,26 +294,41 @@ const CampingTab: React.FC = () => {
                 </div>
 
                 {/* Pricing & Actions */}
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center bg-gray-50 rounded-lg p-3">
                   <div className="text-sm">
                     {campsite.pricing?.free ? (
-                      <span className="text-green-600 font-medium">🆓 Free</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">🆓</span>
+                        <div>
+                          <div className="text-green-700 font-bold">Free</div>
+                          <div className="text-xs text-gray-600">No cost</div>
+                        </div>
+                      </div>
                     ) : campsite.pricing?.adult ? (
-                      <div>
-                        <span className="text-orange-600 font-medium">€{campsite.pricing.adult}/adult</span>
-                        {campsite.pricing.child && (
-                          <div className="text-xs text-gray-500">€{campsite.pricing.child}/child</div>
-                        )}
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">🏕️</span>
+                        <div>
+                          <div className="text-orange-700 font-bold">€{campsite.pricing.adult}/adult</div>
+                          {campsite.pricing.child && (
+                            <div className="text-xs text-gray-600">€{campsite.pricing.child}/child</div>
+                          )}
+                        </div>
                       </div>
                     ) : (
                       <span className="text-gray-500">Price varies</span>
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                    <button 
+                      className="p-2 text-gray-400 hover:text-blue-600 transition-colors rounded-full hover:bg-blue-50"
+                      title="Share location"
+                    >
                       <Share className="h-4 w-4" />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                    <button 
+                      className="p-2 text-gray-400 hover:text-green-600 transition-colors rounded-full hover:bg-green-50"
+                      title="More info"
+                    >
                       <Info className="h-4 w-4" />
                     </button>
                   </div>
@@ -328,7 +344,7 @@ const CampingTab: React.FC = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="relative">
-              <img
+              <ImageWithFallback
                 src={selectedCampsite.images[0]}
                 alt={selectedCampsite.name}
                 className="w-full h-64 object-cover"
@@ -421,9 +437,9 @@ const CampingTab: React.FC = () => {
                           href={selectedCampsite.contact.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800"
+                          className="text-blue-600 hover:text-blue-800 font-medium bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-lg transition-colors"
                         >
-                          Visit Website
+                          Visit Official Website
                         </a>
                       </div>
                     )}
@@ -443,20 +459,28 @@ const CampingTab: React.FC = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-4">
-                <button className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a 
+                  href={getDirectionsUrl(selectedCampsite.coordinates[0], selectedCampsite.coordinates[1], selectedCampsite.name)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors text-center font-medium"
+                >
                   <MapPin className="h-5 w-5 inline mr-2" />
                   Get Directions
-                </button>
-                <button className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
+                </a>
+                <button className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium">
                   <Heart className="h-5 w-5 inline mr-2" />
                   Add to Favorites
                 </button>
                 {selectedCampsite.contact?.phone && (
-                  <button className="flex-1 bg-orange-600 text-white py-3 px-6 rounded-lg hover:bg-orange-700 transition-colors">
+                  <a 
+                    href={`tel:${selectedCampsite.contact.phone}`}
+                    className="flex-1 bg-orange-600 text-white py-3 px-6 rounded-lg hover:bg-orange-700 transition-colors text-center font-medium"
+                  >
                     <Phone className="h-5 w-5 inline mr-2" />
                     Call Now
-                  </button>
+                  </a>
                 )}
               </div>
             </div>

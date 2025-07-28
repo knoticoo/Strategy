@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import InteractiveMap from './InteractiveMap';
-import { realLatvianTrails, RealLocation, calculateDistance } from '../data/realLatvianData';
+import ImageWithFallback from './ImageWithFallback';
+import { realLatvianTrails, RealLocation, calculateDistance, getDirectionsUrl } from '../data/realLatvianData';
 import {
   Map,
   List,
@@ -254,7 +255,7 @@ const TrailsTab: React.FC = () => {
             >
               {/* Trail Image */}
               <div className="relative h-48 overflow-hidden">
-                <img
+                <ImageWithFallback
                   src={trail.images[0]}
                   alt={trail.name}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
@@ -283,13 +284,13 @@ const TrailsTab: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center text-sm text-gray-600 mb-3">
-                  <MapPin className="h-4 w-4 mr-1" />
-                  <span>{trail.region}</span>
+                <div className="flex items-center text-sm text-gray-700 mb-3 bg-gray-50 rounded-lg p-2">
+                  <MapPin className="h-4 w-4 mr-2 text-green-600" />
+                  <span className="font-medium">{trail.region}</span>
                   {userLocation && (
                     <>
-                      <span className="mx-2">•</span>
-                      <span>{getDistanceFromUser(trail)}</span>
+                      <span className="mx-2 text-gray-400">•</span>
+                      <span className="text-blue-600 font-medium">{getDistanceFromUser(trail)}</span>
                     </>
                   )}
                 </div>
@@ -299,21 +300,21 @@ const TrailsTab: React.FC = () => {
                 </p>
 
                 {/* Trail Stats */}
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="text-center">
-                    <Route className="h-4 w-4 text-green-600 mx-auto mb-1" />
-                    <div className="text-xs text-gray-500">Distance</div>
-                    <div className="text-sm font-medium">{trail.distance || 'N/A'}</div>
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="text-center bg-green-50 rounded-lg p-3">
+                    <Route className="h-5 w-5 text-green-600 mx-auto mb-1" />
+                    <div className="text-xs text-gray-600 font-medium">Distance</div>
+                    <div className="text-sm font-bold text-gray-900">{trail.distance || 'N/A'}</div>
                   </div>
-                  <div className="text-center">
-                    <Clock className="h-4 w-4 text-green-600 mx-auto mb-1" />
-                    <div className="text-xs text-gray-500">Duration</div>
-                    <div className="text-sm font-medium">{trail.duration}</div>
+                  <div className="text-center bg-blue-50 rounded-lg p-3">
+                    <Clock className="h-5 w-5 text-blue-600 mx-auto mb-1" />
+                    <div className="text-xs text-gray-600 font-medium">Duration</div>
+                    <div className="text-sm font-bold text-gray-900">{trail.duration}</div>
                   </div>
-                  <div className="text-center">
-                    <TrendingUp className="h-4 w-4 text-green-600 mx-auto mb-1" />
-                    <div className="text-xs text-gray-500">Elevation</div>
-                    <div className="text-sm font-medium">{trail.elevation || 'N/A'}</div>
+                  <div className="text-center bg-orange-50 rounded-lg p-3">
+                    <TrendingUp className="h-5 w-5 text-orange-600 mx-auto mb-1" />
+                    <div className="text-xs text-gray-600 font-medium">Elevation</div>
+                    <div className="text-sm font-bold text-gray-900">{trail.elevation || 'N/A'}</div>
                   </div>
                 </div>
 
@@ -335,21 +336,41 @@ const TrailsTab: React.FC = () => {
                 </div>
 
                 {/* Pricing & Actions */}
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center bg-gray-50 rounded-lg p-3">
                   <div className="text-sm">
                     {trail.pricing?.free ? (
-                      <span className="text-green-600 font-medium">🆓 Free</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">🆓</span>
+                        <div>
+                          <div className="text-green-700 font-bold">Free Entry</div>
+                          <div className="text-xs text-gray-600">No cost required</div>
+                        </div>
+                      </div>
                     ) : trail.pricing?.adult ? (
-                      <span className="text-orange-600 font-medium">€{trail.pricing.adult}/person</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">💰</span>
+                        <div>
+                          <div className="text-orange-700 font-bold">€{trail.pricing.adult}/adult</div>
+                          {trail.pricing.child && (
+                            <div className="text-xs text-gray-600">€{trail.pricing.child}/child</div>
+                          )}
+                        </div>
+                      </div>
                     ) : (
                       <span className="text-gray-500">Price varies</span>
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                    <button 
+                      className="p-2 text-gray-400 hover:text-blue-600 transition-colors rounded-full hover:bg-blue-50"
+                      title="Share location"
+                    >
                       <Share className="h-4 w-4" />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                    <button 
+                      className="p-2 text-gray-400 hover:text-green-600 transition-colors rounded-full hover:bg-green-50"
+                      title="More info"
+                    >
                       <Info className="h-4 w-4" />
                     </button>
                   </div>
@@ -365,7 +386,7 @@ const TrailsTab: React.FC = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="relative">
-              <img
+              <ImageWithFallback
                 src={selectedTrail.images[0]}
                 alt={selectedTrail.name}
                 className="w-full h-64 object-cover"
@@ -454,9 +475,9 @@ const TrailsTab: React.FC = () => {
                           href={selectedTrail.contact.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 font-medium"
+                          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg transition-colors"
                         >
-                          🌐 Visit Website
+                          🌐 Visit Official Website
                         </a>
                       </div>
                     )}
@@ -476,17 +497,31 @@ const TrailsTab: React.FC = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-4">
-                <button className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a 
+                  href={getDirectionsUrl(selectedTrail.coordinates[0], selectedTrail.coordinates[1], selectedTrail.name)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors text-center font-medium"
+                >
                   <Navigation className="h-5 w-5 inline mr-2" />
                   Get Directions
-                </button>
-                <button className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
+                </a>
+                <button className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium">
                   <Heart className="h-5 w-5 inline mr-2" />
                   Add to Favorites
                 </button>
-                <button className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                  <Share className="h-5 w-5" />
+                <button 
+                  onClick={() => {
+                    const url = window.location.href;
+                    navigator.clipboard.writeText(url);
+                    alert('Location link copied to clipboard!');
+                  }}
+                  className="px-6 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                  title="Share location"
+                >
+                  <Share className="h-5 w-5 inline mr-2" />
+                  Share
                 </button>
               </div>
             </div>
