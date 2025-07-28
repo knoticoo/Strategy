@@ -72,9 +72,13 @@ const CommunityTab: React.FC = () => {
 
   const handleSubmitPost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPost.content.trim() || !currentUser) return;
+    if (!newPost.content.trim() || !currentUser) {
+      alert('Please enter some content for your post');
+      return;
+    }
 
     try {
+      console.log('Creating post with user:', currentUser);
       await api.createCommunityPost({
         user_id: currentUser.id,
         type: newPost.type,
@@ -93,10 +97,12 @@ const CommunityTab: React.FC = () => {
         location: '',
         image: ''
       });
+      
+      alert('Post created successfully!');
       setShowCreatePost(false);
     } catch (error) {
       console.error('Error creating post:', error);
-      alert('Error creating post');
+      alert('Error creating post. Please try again.');
     }
   };
 

@@ -102,7 +102,15 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     localStorage.setItem('isLoggedIn', 'true');
   };
 
-  const logout = () => {
+  const logout = async () => {
+    if (currentUser?.id) {
+      try {
+        const { logout: apiLogout } = await import('../services/api');
+        await apiLogout(currentUser.id);
+      } catch (error) {
+        console.error('Error during logout:', error);
+      }
+    }
     setCurrentUser(null);
     setIsLoggedIn(false);
     localStorage.removeItem('currentUser');
