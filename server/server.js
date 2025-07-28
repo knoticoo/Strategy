@@ -251,6 +251,7 @@ function insertSampleData() {
 
 // File upload endpoint
 app.post('/api/upload', (req, res) => {
+  console.log('Upload request received');
   upload.single('image')(req, res, (err) => {
     if (err) {
       console.error('Upload error:', err);
@@ -258,6 +259,7 @@ app.post('/api/upload', (req, res) => {
     }
     
     if (!req.file) {
+      console.error('No file in request');
       return res.status(400).json({ error: 'No file uploaded' });
     }
     
@@ -490,6 +492,16 @@ app.get('/api/stats', (req, res) => {
   });
 });
 
+// Logout endpoint
+app.post('/api/auth/logout', (req, res) => {
+  const { userId } = req.body;
+  if (userId) {
+    onlineUsers.delete(userId);
+    console.log('User logged out, online users:', onlineUsers.size);
+  }
+  res.json({ message: 'Logged out successfully' });
+});
+
 // Authentication endpoint (simplified)
 app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
@@ -504,6 +516,7 @@ app.post('/api/auth/login', (req, res) => {
       if (email === 'emalinovskis@me.com' && password === 'Millie1991') {
         // Add user to online users
         onlineUsers.add(user.id);
+        console.log('User logged in, online users:', onlineUsers.size);
         
         res.json({
           user: {
