@@ -40,15 +40,15 @@ interface VoiceNote {
   audioBlob: Blob;
 }
 
-interface OfflineMap {
-  id: string;
-  name: string;
-  bounds: { north: number; south: number; east: number; west: number };
-  zoomLevel: number;
-  size: number;
-  downloadedAt: string;
-  tiles: number;
-}
+// interface OfflineMap {
+//   id: string;
+//   name: string;
+//   bounds: { north: number; south: number; east: number; west: number };
+//   zoomLevel: number;
+//   size: number;
+//   downloadedAt: string;
+//   tiles: number;
+// }
 
 const PWAFeatures: React.FC = () => {
   const { isLoggedIn } = useUser();
