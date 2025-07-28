@@ -163,4 +163,10 @@ export const getRecentActivity = async () => {
   return response.data;
 };
 
+// Health check endpoint
+export const healthCheck = async () => {
+  const response = await api.get('/health');
+  return response.data;
+};
+
 export default api;
