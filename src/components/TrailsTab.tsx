@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import InteractiveMap from './InteractiveMap';
 import ImageWithFallback from './ImageWithFallback';
-import { realLatvianTrails, RealLocation, calculateDistance, getDirectionsUrl } from '../data/realLatvianData';
+import { RealLocation, calculateDistance, getDirectionsUrl } from '../data/realLatvianData';
+import * as api from '../services/api';
 import {
   Map,
   List,
@@ -74,8 +75,35 @@ const TrailsTab: React.FC = () => {
 
   const loadTrails = async () => {
     setLoading(true);
-    // Use real Latvian trails data
-    setTrails(realLatvianTrails);
+    try {
+      const apiTrails = await api.getTrails();
+      // Convert API trails to RealLocation format
+      const convertedTrails: RealLocation[] = apiTrails.map(trail => ({
+        id: trail.id,
+        name: trail.name_en,
+        description: {
+          en: trail.description_en || '',
+          lv: trail.description_lv || '',
+          ru: trail.description_ru || ''
+        },
+        coordinates: [trail.latitude, trail.longitude],
+        region: trail.region,
+        difficulty: trail.difficulty,
+        distance: trail.distance,
+        duration: trail.duration,
+        elevation: trail.elevation_gain,
+        season: trail.best_season?.split(',') || ['all'],
+        features: trail.features ? JSON.parse(trail.features) : [],
+        image: trail.image_url || '/images/default-trail.jpg',
+        rating: 4.5, // Default rating
+        reviews: 0 // Default reviews
+      }));
+      setTrails(convertedTrails);
+    } catch (error) {
+      console.error('Error loading trails:', error);
+      // Fallback to empty array if API fails
+      setTrails([]);
+    }
     setLoading(false);
   };
 
