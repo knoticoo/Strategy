@@ -103,7 +103,8 @@ const CommunityTab: React.FC = () => {
   const handleAddComment = (postId: string) => {
     if (!newComment.trim()) return;
     
-    addComment(postId, newComment);
+    // TODO: Implement comment API
+    console.log('Adding comment to post:', postId, newComment);
     setNewComment('');
   };
 
@@ -416,6 +417,7 @@ const CommunityTab: React.FC = () => {
                     <span>{post.likes_count}</span>
                   </button>
                                    <button 
+                   onClick={() => setShowComments(showComments === post.id ? null : post.id)}
                    className="flex items-center gap-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                  >
                    <MessageCircle className="h-5 w-5" />
@@ -430,30 +432,9 @@ const CommunityTab: React.FC = () => {
                  {/* Comments Section */}
                  {showComments === post.id && (
                    <div className="border-t border-gray-200 dark:border-gray-700 mt-4 pt-4">
-                     {/* Existing Comments */}
-                     <div className="space-y-3 mb-4">
-                       {post.comments.map((comment) => (
-                         <div key={comment.id} className="flex gap-3">
-                           <img
-                             src={comment.userAvatar}
-                             alt={comment.userName}
-                             className="w-8 h-8 rounded-full"
-                           />
-                           <div className="flex-1 bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                             <div className="flex items-center gap-2 mb-1">
-                               <span className="font-medium text-sm text-gray-900 dark:text-white">
-                                 {comment.userName}
-                               </span>
-                               <span className="text-xs text-gray-500 dark:text-gray-400">
-                                 {formatTimestamp(comment.timestamp)}
-                               </span>
-                             </div>
-                             <p className="text-sm text-gray-700 dark:text-gray-300">
-                               {comment.content}
-                             </p>
-                           </div>
-                         </div>
-                       ))}
+                     {/* Comments coming soon */}
+                     <div className="text-center py-4 text-gray-500 dark:text-gray-400 text-sm">
+                       Comments feature coming soon!
                      </div>
 
                      {/* Add Comment */}

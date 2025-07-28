@@ -399,19 +399,6 @@ const AuthTab: React.FC = () => {
     });
   };
 
-  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        // In a real app, you would upload this to a server
-        // For now, we'll just store it as a data URL
-        console.log('Avatar uploaded:', event.target?.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   // Render Functions
   const renderProfileSection = () => (
     <div className="space-y-6">
@@ -882,7 +869,7 @@ const AuthTab: React.FC = () => {
             <div className="flex justify-between items-start gap-4">
               <div className="flex-1">
                 <h4 className="font-semibold text-gray-900 dark:text-white">
-                  {typeof trail.name === 'string' ? trail.name : (trail.name as any).en}
+                  {trail.name_en}
                 </h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                   {trail.region} • {trail.difficulty} • {trail.distance}
@@ -1551,7 +1538,7 @@ const AuthTab: React.FC = () => {
         <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-3xl font-bold">{mockUsers.length}</div>
+              <div className="text-3xl font-bold">{users.length}</div>
               <div className="text-blue-100">Registered Users</div>
             </div>
             <Users className="h-8 w-8 text-blue-200" />
