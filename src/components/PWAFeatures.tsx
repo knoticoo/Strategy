@@ -15,7 +15,8 @@ import {
   Square,
   Shield,
   Map,
-  Clock
+  Clock,
+  Zap
 } from 'lucide-react';
 
 interface GPSTrack {
@@ -164,10 +165,10 @@ const PWAFeatures: React.FC = () => {
       setVoiceNotes(JSON.parse(savedVoiceNotes));
     }
 
-    // Load offline maps
+    // Load offline maps (placeholder for future implementation)
     const savedMaps = localStorage.getItem('pwa-offline-maps');
     if (savedMaps) {
-      setOfflineMaps(JSON.parse(savedMaps));
+      console.log('Offline maps found:', JSON.parse(savedMaps));
     }
 
     // Load sync queue
