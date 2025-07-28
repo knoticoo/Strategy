@@ -18,7 +18,7 @@ import {
   Map
 } from 'lucide-react';
 
-interface LocalAppUser {
+// interface LocalAppUser {
   id: string;
   name: string;
   email: string;
@@ -31,7 +31,7 @@ interface LocalAppUser {
     points: number;
     level: number;
   };
-}
+// }
 
 const AuthTab: React.FC = () => {
   const { t } = useTranslation();
