@@ -7,7 +7,9 @@ import {
   Menu,
   X,
   Users,
-  LogIn
+  LogIn,
+  User,
+  Smartphone
 } from 'lucide-react';
 import './i18n/config';
 import { UserProvider } from './contexts/UserContext';
@@ -16,8 +18,11 @@ import { UserProvider } from './contexts/UserContext';
 import TrailsTab from './components/TrailsTab';
 import CommunityTab from './components/CommunityTab';
 import AuthTab from './components/AuthTab';
+import EnhancedProfileTab from './components/EnhancedProfileTab';
+import NotificationSystem from './components/NotificationSystem';
+import PWAFeatures from './components/PWAFeatures';
 
-type TabType = 'trails' | 'community' | 'auth';
+type TabType = 'trails' | 'community' | 'profile' | 'pwa' | 'auth';
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -73,6 +78,20 @@ function App() {
       bgColor: 'bg-green-50 dark:bg-green-900/20'
     },
     {
+      id: 'profile' as TabType,
+      name: 'Profile',
+      icon: User,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50 dark:bg-purple-900/20'
+    },
+    {
+      id: 'pwa' as TabType,
+      name: 'PWA Features',
+      icon: Smartphone,
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-50 dark:bg-orange-900/20'
+    },
+    {
       id: 'auth' as TabType,
       name: t('nav.auth'),
       icon: LogIn,
@@ -87,6 +106,10 @@ function App() {
         return <TrailsTab />;
       case 'community':
         return <CommunityTab />;
+      case 'profile':
+        return <EnhancedProfileTab />;
+      case 'pwa':
+        return <PWAFeatures />;
       case 'auth':
         return <AuthTab />;
       default:
@@ -139,6 +162,8 @@ function App() {
 
             {/* Controls */}
             <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
+              {/* Notification System */}
+              <NotificationSystem />
               {/* Language Switcher */}
               <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
                 {['en', 'lv', 'ru'].map((lang) => (

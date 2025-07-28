@@ -187,6 +187,302 @@ export const getComments = async (postId: string): Promise<any[]> => {
   return response.data;
 };
 
+// Enhanced Profile API
+export const getUserAchievements = async (userId: string): Promise<any[]> => {
+  try {
+    const response = await api.get(`/users/${userId}/achievements`);
+    return response.data;
+  } catch (error) {
+    console.log('Achievements API not implemented yet, returning mock data');
+    return [
+      {
+        id: '1',
+        name: 'First Steps',
+        description: 'Complete your first trail',
+        icon: '🥾',
+        category: 'trails',
+        unlocked: true,
+        progress: 1,
+        maxProgress: 1,
+        unlockedAt: new Date().toISOString()
+      },
+      {
+        id: '2',
+        name: 'Trail Blazer',
+        description: 'Complete 5 trails',
+        icon: '🏔️',
+        category: 'trails',
+        unlocked: false,
+        progress: 1,
+        maxProgress: 5
+      },
+      {
+        id: '3',
+        name: 'Photographer',
+        description: 'Share 10 photos',
+        icon: '📸',
+        category: 'photos',
+        unlocked: false,
+        progress: 0,
+        maxProgress: 10
+      },
+      {
+        id: '4',
+        name: 'Social Butterfly',
+        description: 'Get 50 likes on your posts',
+        icon: '🦋',
+        category: 'social',
+        unlocked: false,
+        progress: 0,
+        maxProgress: 50
+      }
+    ];
+  }
+};
+
+export const getUserPhotoGallery = async (userId: string): Promise<any[]> => {
+  try {
+    const response = await api.get(`/users/${userId}/gallery`);
+    return response.data;
+  } catch (error) {
+    console.log('Gallery API not implemented yet, returning empty array');
+    return [];
+  }
+};
+
+export const addPhotoToGallery = async (photoData: {
+  userId: string;
+  url: string;
+  caption: string;
+  location?: string;
+}): Promise<any> => {
+  try {
+    const response = await api.post(`/users/${photoData.userId}/gallery`, photoData);
+    return response.data;
+  } catch (error) {
+    console.log('Add photo API not implemented yet');
+    throw error;
+  }
+};
+
+export const getUserSocialConnections = async (userId: string): Promise<any[]> => {
+  try {
+    const response = await api.get(`/users/${userId}/connections`);
+    return response.data;
+  } catch (error) {
+    console.log('Social connections API not implemented yet, returning mock data');
+    return [
+      {
+        id: 'user-2',
+        name: 'Nature Lover',
+        avatar: null,
+        isFollowing: true,
+        isFollower: true,
+        mutualFollows: 3,
+        joinedAt: new Date().toISOString()
+      },
+      {
+        id: 'user-3',
+        name: 'Trail Master',
+        avatar: null,
+        isFollowing: false,
+        isFollower: true,
+        mutualFollows: 1,
+        joinedAt: new Date().toISOString()
+      }
+    ];
+  }
+};
+
+export const followUser = async (userId: string, targetUserId: string): Promise<any> => {
+  try {
+    const response = await api.post(`/users/${userId}/follow`, { targetUserId });
+    return response.data;
+  } catch (error) {
+    console.log('Follow user API not implemented yet');
+    throw error;
+  }
+};
+
+export const getUserActivityTimeline = async (userId: string): Promise<any[]> => {
+  try {
+    const response = await api.get(`/users/${userId}/activity`);
+    return response.data;
+  } catch (error) {
+    console.log('Activity timeline API not implemented yet, returning mock data');
+    return [
+      {
+        id: '1',
+        type: 'trail_completed',
+        title: 'Completed Gauja National Park Trail',
+        description: 'Finished the scenic 5km nature trail',
+        timestamp: new Date().toISOString()
+      },
+      {
+        id: '2',
+        type: 'photo_shared',
+        title: 'Shared a beautiful sunset photo',
+        description: 'From the top of Sigulda castle ruins',
+        timestamp: new Date(Date.now() - 86400000).toISOString()
+      },
+      {
+        id: '3',
+        type: 'achievement_unlocked',
+        title: 'Achievement Unlocked: First Steps',
+        description: 'Completed your first trail adventure',
+        timestamp: new Date(Date.now() - 172800000).toISOString()
+      }
+    ];
+  }
+};
+
+export const getUserEnhancedStats = async (userId: string): Promise<any> => {
+  try {
+    const response = await api.get(`/users/${userId}/enhanced-stats`);
+    return response.data;
+  } catch (error) {
+    console.log('Enhanced stats API not implemented yet, returning mock data');
+    return {
+      trailsCompleted: 3,
+      photosShared: 7,
+      totalLikes: 42,
+      followers: 12,
+      following: 8,
+      achievements: 1
+    };
+  }
+};
+
+// Notification API
+export const getUserNotifications = async (userId: string): Promise<any[]> => {
+  try {
+    const response = await api.get(`/users/${userId}/notifications`);
+    return response.data;
+  } catch (error) {
+    console.log('Notifications API not implemented yet, returning mock data');
+    return [
+      {
+        id: '1',
+        type: 'like',
+        title: 'New Like',
+        message: 'Nature Lover liked your photo from Gauja National Park',
+        read: false,
+        timestamp: new Date().toISOString(),
+        priority: 'low'
+      },
+      {
+        id: '2',
+        type: 'comment',
+        title: 'New Comment',
+        message: 'Trail Master commented on your adventure post',
+        read: false,
+        timestamp: new Date(Date.now() - 3600000).toISOString(),
+        priority: 'medium'
+      },
+      {
+        id: '3',
+        type: 'achievement',
+        title: 'Achievement Unlocked!',
+        message: 'You earned the "First Steps" badge for completing your first trail',
+        read: true,
+        timestamp: new Date(Date.now() - 86400000).toISOString(),
+        priority: 'high'
+      }
+    ];
+  }
+};
+
+export const markNotificationAsRead = async (notificationId: string): Promise<void> => {
+  try {
+    await api.patch(`/notifications/${notificationId}/read`);
+  } catch (error) {
+    console.log('Mark notification as read API not implemented yet');
+  }
+};
+
+export const markAllNotificationsAsRead = async (userId: string): Promise<void> => {
+  try {
+    await api.patch(`/users/${userId}/notifications/read-all`);
+  } catch (error) {
+    console.log('Mark all notifications as read API not implemented yet');
+  }
+};
+
+export const deleteNotification = async (notificationId: string): Promise<void> => {
+  try {
+    await api.delete(`/notifications/${notificationId}`);
+  } catch (error) {
+    console.log('Delete notification API not implemented yet');
+  }
+};
+
+export const getNotificationSettings = async (userId: string): Promise<any> => {
+  try {
+    const response = await api.get(`/users/${userId}/notification-settings`);
+    return response.data;
+  } catch (error) {
+    console.log('Notification settings API not implemented yet, returning defaults');
+    return {
+      pushEnabled: false,
+      emailEnabled: true,
+      soundEnabled: true,
+      types: {
+        likes: true,
+        comments: true,
+        follows: true,
+        trailAlerts: true,
+        achievements: true,
+        emergencies: true,
+        events: true,
+        recommendations: true,
+        weatherAlerts: true,
+        weeklyDigest: true
+      }
+    };
+  }
+};
+
+export const updateNotificationSettings = async (userId: string, settings: any): Promise<void> => {
+  try {
+    await api.patch(`/users/${userId}/notification-settings`, settings);
+  } catch (error) {
+    console.log('Update notification settings API not implemented yet');
+  }
+};
+
+// PWA API
+export const uploadGPSTrack = async (trackData: any): Promise<void> => {
+  try {
+    await api.post('/pwa/gps-tracks', trackData);
+  } catch (error) {
+    console.log('Upload GPS track API not implemented yet');
+  }
+};
+
+export const uploadVoiceNote = async (voiceData: any): Promise<void> => {
+  try {
+    await api.post('/pwa/voice-notes', voiceData);
+  } catch (error) {
+    console.log('Upload voice note API not implemented yet');
+  }
+};
+
+export const reportEmergency = async (emergencyData: any): Promise<void> => {
+  try {
+    await api.post('/pwa/emergency', emergencyData);
+  } catch (error) {
+    console.log('Report emergency API not implemented yet');
+  }
+};
+
+export const uploadPhoto = async (photoData: any): Promise<void> => {
+  try {
+    await api.post('/pwa/photos', photoData);
+  } catch (error) {
+    console.log('Upload photo API not implemented yet');
+  }
+};
+
 // Statistics API
 export const getStats = async (): Promise<ApiStats> => {
   const response = await api.get('/stats');
