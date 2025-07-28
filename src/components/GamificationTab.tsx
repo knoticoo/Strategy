@@ -7,7 +7,7 @@ import {
   Target,
   Crown,
   Star,
-  Fire,
+  Flame,
   Gift,
   Users,
   Calendar,
@@ -468,7 +468,7 @@ const GamificationTab: React.FC = () => {
             {/* Streak Progress */}
             <div className="glass-morphism rounded-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                <Fire className="h-5 w-5 mr-2 text-orange-600" />
+                <Flame className="h-5 w-5 mr-2 text-orange-600" />
                 Activity Streak
               </h3>
               
@@ -744,7 +744,7 @@ const GamificationTab: React.FC = () => {
                       </div>
                       <div className="text-center">
                         <p className="font-semibold text-gray-900 dark:text-white flex items-center">
-                          <Fire className="h-3 w-3 text-orange-500 mr-1" />
+                          <Flame className="h-3 w-3 text-orange-500 mr-1" />
                           {user.streak}
                         </p>
                         <p className="text-gray-600 dark:text-gray-400">Streak</p>
@@ -761,7 +761,7 @@ const GamificationTab: React.FC = () => {
             {[
               { title: 'Top Explorers', description: 'Most trails completed', icon: Mountain },
               { title: 'Distance Kings', description: 'Highest monthly distance', icon: Route },
-              { title: 'Streak Masters', description: 'Longest active streaks', icon: Fire }
+              { title: 'Streak Masters', description: 'Longest active streaks', icon: Flame }
             ].map((category, index) => (
               <div key={index} className="glass-morphism rounded-lg p-4 text-center">
                 <category.icon className="h-8 w-8 mx-auto text-nature-600 mb-2" />
