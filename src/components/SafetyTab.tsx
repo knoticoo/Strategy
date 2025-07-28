@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Shield,
-  MapPin,
   Navigation,
   Phone,
   AlertTriangle,
@@ -21,9 +20,6 @@ import {
   CloudRain,
   Wind,
   Sun,
-  Moon,
-  Zap,
-  Radio,
   Map as MapIcon
 } from 'lucide-react';
 
@@ -57,14 +53,13 @@ interface OfflineMap {
 }
 
 const SafetyTab: React.FC = () => {
-  const { t } = useTranslation();
   const [isSOSActive, setIsSOSActive] = useState(false);
   const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContact[]>([]);
   const [weatherAlerts, setWeatherAlerts] = useState<WeatherAlert[]>([]);
   const [offlineMaps, setOfflineMaps] = useState<OfflineMap[]>([]);
   const [gpsStatus, setGpsStatus] = useState<'active' | 'searching' | 'inactive'>('inactive');
   const [batteryLevel, setBatteryLevel] = useState(85);
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline] = useState(true);
   const [currentLocation, setCurrentLocation] = useState({ lat: 56.9496, lng: 24.1052 });
   const [activeTracking, setActiveTracking] = useState(false);
 

@@ -80,136 +80,138 @@ const GamificationTab: React.FC = () => {
   ];
 
   useEffect(() => {
-    loadGamificationData();
-  }, [userXP]);
+    const loadData = async () => {
+      setLoading(true);
+      
+      // Determine user level
+      const currentLevel = levels.find(level => userXP >= level.minXP && userXP < level.maxXP) || levels[levels.length - 1];
+      setUserLevel(currentLevel);
 
-  const loadGamificationData = async () => {
-    setLoading(true);
-    
-    // Determine user level
-    const currentLevel = levels.find(level => userXP >= level.minXP && userXP < level.maxXP) || levels[levels.length - 1];
-    setUserLevel(currentLevel);
+      // Mock achievements
+      const mockAchievements: Achievement[] = [
+        {
+          id: '1',
+          title: 'First Steps',
+          description: 'Complete your first trail',
+          icon: Target,
+          unlockedAt: '2024-01-10',
+          category: 'trails',
+          rarity: 'common',
+          points: 50
+        },
+        {
+          id: '2',
+          title: 'Distance Runner',
+          description: 'Walk 50km in total',
+          icon: Route,
+          unlockedAt: '2024-01-15',
+          category: 'distance',
+          rarity: 'rare',
+          points: 100
+        },
+        {
+          id: '3',
+          title: 'Peak Climber',
+          description: 'Reach 10 mountain peaks',
+          icon: Mountain,
+          unlockedAt: '2024-01-20',
+          category: 'trails',
+          rarity: 'epic',
+          points: 200
+        },
+        {
+          id: '4',
+          title: 'Streak Master',
+          description: 'Maintain 7-day activity streak',
+          icon: Flame,
+          unlockedAt: '2024-01-25',
+          category: 'time',
+          rarity: 'legendary',
+          points: 500
+        }
+      ];
 
-    // Mock achievements
-    const mockAchievements: Achievement[] = [
-      {
-        id: '1',
-        title: 'First Steps',
-        description: 'Complete your first trail',
-        icon: Target,
-        unlockedAt: '2024-01-10',
-        category: 'trails',
-        rarity: 'common',
-        points: 50
-      },
-      {
-        id: '2',
-        title: 'Distance Runner',
-        description: 'Walk 50km in total',
-        icon: Route,
-        unlockedAt: '2024-01-15',
-        category: 'distance',
-        rarity: 'rare',
-        points: 100
-      },
-      {
-        id: '3',
-        title: 'Peak Climber',
-        description: 'Reach 10 mountain peaks',
-        icon: Mountain,
-        unlockedAt: '2024-01-20',
-        category: 'trails',
-        rarity: 'epic',
-        points: 200
-      },
-      {
-        id: '4',
-        title: 'Streak Master',
-        description: 'Maintain 7-day activity streak',
-        icon: Flame,
-        unlockedAt: '2024-01-25',
-        category: 'time',
-        rarity: 'legendary',
-        points: 500
-      }
-    ];
+      // Mock challenges
+      const mockChallenges: Challenge[] = [
+        {
+          id: '1',
+          title: 'Daily Hiker',
+          description: 'Complete 1 trail today',
+          type: 'daily',
+          progress: 0,
+          target: 1,
+          reward: { xp: 50, points: 25 },
+          icon: Target,
+          expiresAt: '2024-01-28 23:59'
+        },
+        {
+          id: '2',
+          title: 'Weekend Warrior',
+          description: 'Complete 5 trails this week',
+          type: 'weekly',
+          progress: 3,
+          target: 5,
+          reward: { xp: 200, points: 100 },
+          icon: Trophy,
+          expiresAt: '2024-01-31 23:59'
+        },
+        {
+          id: '3',
+          title: 'Monthly Explorer',
+          description: 'Visit 15 different locations',
+          type: 'monthly',
+          progress: 8,
+          target: 15,
+          reward: { xp: 500, points: 250 },
+          icon: Mountain,
+          expiresAt: '2024-02-01 23:59'
+        }
+      ];
 
-    // Mock challenges
-    const mockChallenges: Challenge[] = [
-      {
-        id: '1',
-        title: 'Daily Hiker',
-        description: 'Complete 1 trail today',
-        type: 'daily',
-        progress: 0,
-        target: 1,
-        reward: { xp: 50, points: 25 },
-        icon: Target,
-        expiresAt: '2024-01-28 23:59'
-      },
-      {
-        id: '2',
-        title: 'Weekend Warrior',
-        description: 'Complete 5 trails this week',
-        type: 'weekly',
-        progress: 3,
-        target: 5,
-        reward: { xp: 200, points: 100 },
-        icon: Trophy,
-        expiresAt: '2024-01-31 23:59'
-      },
-      {
-        id: '3',
-        title: 'Monthly Explorer',
-        description: 'Visit 15 different locations',
-        type: 'monthly',
-        progress: 8,
-        target: 15,
-        reward: { xp: 500, points: 250 },
-        icon: Mountain,
-        expiresAt: '2024-02-01 23:59'
-      }
-    ];
+      // Mock leaderboard
+      const mockLeaderboard: LeaderboardUser[] = [
+        {
+          id: '1',
+          name: 'Anna Liepiņa',
+          avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b647?w=100&h=100&fit=crop&crop=face',
+          level: 7,
+          xp: 8500,
+          streak: 45,
+          badges: 24,
+          rank: 1
+        },
+        {
+          id: '2',
+          name: 'Jānis Bērziņš',
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
+          level: 6,
+          xp: 3200,
+          streak: 23,
+          badges: 18,
+          rank: 2
+        },
+        {
+          id: '3',
+          name: 'You',
+          avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
+          level: currentLevel?.level || 1,
+          xp: userXP,
+          streak: streak,
+          badges: mockAchievements.length,
+          rank: 3
+        }
+      ];
 
-    // Mock leaderboard
-    const mockLeaderboard: LeaderboardUser[] = [
-      {
-        id: '1',
-        name: 'Anna Liepiņa',
-        avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b647?w=100&h=100&fit=crop&crop=face',
-        level: 7,
-        xp: 8500,
-        streak: 45,
-        badges: 24,
-        rank: 1
-      },
-      {
-        id: '2',
-        name: 'Jānis Bērziņš',
-        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-        level: 6,
-        xp: 3200,
-        streak: 23,
-        badges: 18,
-        rank: 2
-      },
-      {
-        id: '3',
-        name: 'You',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
-        level: currentLevel?.level || 1,
-        xp: userXP,
-        streak: streak,
-        badges: mockAchievements.length,
-        rank: 3
-      }
-    ];
+      setAchievements(mockAchievements);
+      setChallenges(mockChallenges);
+      setLeaderboard(mockLeaderboard);
+      setLoading(false);
+    };
 
-    setAchievements(mockAchievements);
-    setChallenges(mockChallenges);
-    setLeaderboard(mockLeaderboard);
-    setLoading(false);
-  };
+    loadData();
+  }, [userXP, streak]);
+
+
 
   const getRarityColor = (rarity: string) => {
     switch (rarity) {
@@ -458,10 +460,9 @@ const GamificationTab: React.FC = () => {
 
         {activeTab === 'challenges' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {challenges.map((challenge, index) => {
-              const Icon = challenge.icon;
-              const progressPercentage = (challenge.progress / challenge.target) * 100;
-              const isCompleted = progressPercentage >= 100;
+                         {challenges.map((challenge, index) => {
+               const Icon = challenge.icon;
+               const isCompleted = (challenge.progress / challenge.target) >= 1;
               
               return (
                 <div 
@@ -493,9 +494,9 @@ const GamificationTab: React.FC = () => {
                         value={challenge.progress} 
                         max={challenge.target}
                       ></progress>
-                      <div className="text-xs text-base-content/50">
-                        {Math.round(progressPercentage)}% complete
-                      </div>
+                                             <div className="text-xs text-base-content/50">
+                         {Math.round((challenge.progress / challenge.target) * 100)}% complete
+                       </div>
                     </div>
 
                     <div className="card-actions justify-between items-center mt-4">
