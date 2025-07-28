@@ -7,6 +7,7 @@ export interface AppUser {
   email: string;
   avatar?: string;
   location?: string;
+  bio?: string;
   joinDate: string;
   stats: {
     trailsCompleted: number;

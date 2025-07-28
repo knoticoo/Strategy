@@ -78,7 +78,7 @@ const AuthTab: React.FC = () => {
       loadStats();
       loadRecentActivity();
     }
-  }, [isAdmin]);
+  }, [isAdmin, currentUser]);
 
   const loadTrails = async () => {
     try {

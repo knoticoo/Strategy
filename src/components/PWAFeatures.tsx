@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useUser } from '../contexts/UserContext';
 import * as api from '../services/api';
 import {
   Navigation,
-  MapPin,
   Camera,
   Mic,
   Compass,
@@ -11,20 +10,11 @@ import {
   Battery,
   Wifi,
   WifiOff,
-  Download,
   Upload,
   Play,
-  Pause,
   Square,
-  RotateCcw,
-  Zap,
-  Phone,
   Shield,
   Map,
-  Layers,
-  Settings,
-  X,
-  CheckCircle,
   Clock
 } from 'lucide-react';
 
@@ -60,7 +50,7 @@ interface OfflineMap {
 }
 
 const PWAFeatures: React.FC = () => {
-  const { currentUser, isLoggedIn } = useUser();
+  const { isLoggedIn } = useUser();
   const [activeTab, setActiveTab] = useState<'gps' | 'maps' | 'camera' | 'voice' | 'compass' | 'emergency' | 'sync'>('gps');
   
   // GPS Tracking
@@ -80,13 +70,7 @@ const PWAFeatures: React.FC = () => {
   const [heading, setHeading] = useState<number>(0);
   const [compassCalibrated, setCompassCalibrated] = useState(false);
   
-  // Offline Maps
-  const [offlineMaps, setOfflineMaps] = useState<OfflineMap[]>([]);
-  const [isDownloadingMap, setIsDownloadingMap] = useState(false);
-  const [downloadProgress, setDownloadProgress] = useState(0);
-  
   // Emergency
-  const [emergencyContacts, setEmergencyContacts] = useState<string[]>([]);
   const [sosActive, setSosActive] = useState(false);
   
   // PWA State
@@ -95,35 +79,7 @@ const PWAFeatures: React.FC = () => {
   const [syncQueue, setSyncQueue] = useState<any[]>([]);
   
   const watchIdRef = useRef<number | null>(null);
-  const trackingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    // Initialize PWA features
-    initializePWA();
-    
-    // Setup event listeners
-    window.addEventListener('online', () => setIsOnline(true));
-    window.addEventListener('offline', () => setIsOnline(false));
-    
-    // Load saved data
-    loadOfflineData();
-    
-    return () => {
-      // Cleanup
-      if (watchIdRef.current) {
-        navigator.geolocation.clearWatch(watchIdRef.current);
-      }
-      if (trackingIntervalRef.current) {
-        clearInterval(trackingIntervalRef.current);
-      }
-      if (recordingIntervalRef.current) {
-        clearInterval(recordingIntervalRef.current);
-      }
-      window.removeEventListener('online', () => setIsOnline(true));
-      window.removeEventListener('offline', () => setIsOnline(false));
-    };
-  }, []);
 
   const initializePWA = async () => {
     // Initialize battery API
@@ -147,6 +103,30 @@ const PWAFeatures: React.FC = () => {
     // Request permissions
     await requestPermissions();
   };
+
+  useEffect(() => {
+    // Initialize PWA features
+    initializePWA();
+    
+    // Setup event listeners
+    window.addEventListener('online', () => setIsOnline(true));
+    window.addEventListener('offline', () => setIsOnline(false));
+    
+    // Load saved data
+    loadOfflineData();
+    
+    return () => {
+      // Cleanup
+      if (watchIdRef.current) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current);
+      }
+      window.removeEventListener('online', () => setIsOnline(true));
+      window.removeEventListener('offline', () => setIsOnline(false));
+    };
+  }, []);
 
   const requestPermissions = async () => {
     // Location permission
@@ -375,49 +355,7 @@ const PWAFeatures: React.FC = () => {
     }
   };
 
-  const downloadOfflineMap = async (bounds: any, zoomLevel: number) => {
-    setIsDownloadingMap(true);
-    setDownloadProgress(0);
 
-    try {
-      // Simulate map tile downloading
-      const totalTiles = Math.pow(4, zoomLevel - 10); // Rough estimate
-      let downloadedTiles = 0;
-
-      const downloadInterval = setInterval(() => {
-        downloadedTiles += Math.floor(Math.random() * 10) + 1;
-        const progress = Math.min((downloadedTiles / totalTiles) * 100, 100);
-        setDownloadProgress(progress);
-
-        if (progress >= 100) {
-          clearInterval(downloadInterval);
-          
-          const newMap: OfflineMap = {
-            id: Date.now().toString(),
-            name: `Map ${new Date().toLocaleString()}`,
-            bounds,
-            zoomLevel,
-            size: Math.floor(Math.random() * 100) + 50, // MB
-            downloadedAt: new Date().toISOString(),
-            tiles: totalTiles
-          };
-
-          setOfflineMaps(prev => {
-            const updated = [...prev, newMap];
-            localStorage.setItem('pwa-offline-maps', JSON.stringify(updated));
-            return updated;
-          });
-
-          setIsDownloadingMap(false);
-          setDownloadProgress(0);
-        }
-      }, 100);
-
-    } catch (error) {
-      console.error('Error downloading map:', error);
-      setIsDownloadingMap(false);
-    }
-  };
 
   const triggerSOS = () => {
     if (!currentLocation) {
