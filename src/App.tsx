@@ -9,7 +9,6 @@ import {
   Heart,
   Sun,
   Moon,
-  Globe,
   Menu,
   X,
   Users,

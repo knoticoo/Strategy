@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Users,
   Camera,
@@ -10,11 +9,7 @@ import {
   Share,
   AlertTriangle,
   CheckCircle,
-  User,
   Plus,
-  Filter,
-  Search,
-  Star,
   Calendar,
   Trophy,
   Target
@@ -61,7 +56,6 @@ interface AdventureGroup {
 }
 
 const CommunityTab: React.FC = () => {
-  const { t } = useTranslation();
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [groups, setGroups] = useState<AdventureGroup[]>([]);
   const [activeTab, setActiveTab] = useState<'feed' | 'groups' | 'live'>('feed');
