@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
+import * as api from '../services/api';
 
 export interface AppUser {
   id: string;
@@ -75,6 +76,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     return localStorage.getItem('isLoggedIn') === 'true';
   });
 
+  const heartbeatInterval = useRef<NodeJS.Timeout | null>(null);
+
   const [communityPosts, setCommunityPosts] = useState<CommunityPost[]>(() => {
     const savedPosts = localStorage.getItem('communityPosts');
     return savedPosts ? JSON.parse(savedPosts) : [];
@@ -95,14 +98,37 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     localStorage.setItem('communityPosts', JSON.stringify(communityPosts));
   }, [communityPosts]);
 
+  const startHeartbeat = (userId: string) => {
+    if (heartbeatInterval.current) {
+      clearInterval(heartbeatInterval.current);
+    }
+    
+    heartbeatInterval.current = setInterval(async () => {
+      try {
+        await api.sendHeartbeat(userId);
+      } catch (error) {
+        console.error('Heartbeat failed:', error);
+      }
+    }, 60000); // Send heartbeat every minute
+  };
+
+  const stopHeartbeat = () => {
+    if (heartbeatInterval.current) {
+      clearInterval(heartbeatInterval.current);
+      heartbeatInterval.current = null;
+    }
+  };
+
   const login = (user: AppUser) => {
     setCurrentUser(user);
     setIsLoggedIn(true);
     localStorage.setItem('currentUser', JSON.stringify(user));
     localStorage.setItem('isLoggedIn', 'true');
+    startHeartbeat(user.id);
   };
 
   const logout = async () => {
+    stopHeartbeat();
     if (currentUser?.id) {
       try {
         const { logout: apiLogout } = await import('../services/api');
@@ -193,6 +219,20 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       return post;
     }));
   };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      stopHeartbeat();
+    };
+  }, []);
+
+  // Start heartbeat if user is already logged in
+  useEffect(() => {
+    if (currentUser?.id && isLoggedIn) {
+      startHeartbeat(currentUser.id);
+    }
+  }, []);
 
   const value: UserContextType = {
     currentUser,
