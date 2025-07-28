@@ -145,7 +145,7 @@ const AuthTab: React.FC = () => {
           difficulty: editingTrail.difficulty,
           distance: editingTrail.distance,
           duration: editingTrail.duration,
-          elevation: editingTrail.elevation,
+          elevation_gain: editingTrail.elevation,
           latitude: editingTrail.latitude,
           longitude: editingTrail.longitude,
           image_url: editingTrail.image_url,
@@ -176,7 +176,7 @@ const AuthTab: React.FC = () => {
           difficulty: editingTrail.difficulty,
           distance: editingTrail.distance,
           duration: editingTrail.duration,
-          elevation: editingTrail.elevation,
+          elevation_gain: editingTrail.elevation,
           latitude: editingTrail.latitude,
           longitude: editingTrail.longitude,
           image_url: editingTrail.image_url,
@@ -886,7 +886,7 @@ const AuthTab: React.FC = () => {
                   {trail.region} • {trail.difficulty} • {trail.distance}
                 </p>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {trail.features.slice(0, 3).map((feature, index) => (
+                  {(trail.features ? JSON.parse(trail.features) : []).slice(0, 3).map((feature: string, index: number) => (
                     <span
                       key={index}
                       className="px-2 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs rounded-full"
