@@ -53,10 +53,10 @@ const AuthTab: React.FC = () => {
         location: 'Riga, Latvia',
         joinDate: '2024-01-15',
         stats: {
-          trailsCompleted: 12,
-          photosShared: 45,
-          points: 1250,
-          level: 5
+          trailsCompleted: 0,
+          photosShared: 0,
+          points: 0,
+          level: 1
         }
       };
       login(mockUser);
@@ -230,49 +230,50 @@ const AuthTab: React.FC = () => {
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             Recent Activity
           </h3>
-          <div className="space-y-4">
-            <div className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                <Map className="h-5 w-5 text-green-600" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-gray-900 dark:text-white">
-                  Completed Gauja National Park Trail
+          {currentUser.stats.points > 0 ? (
+            <div className="space-y-4">
+              {currentUser.stats.photosShared > 0 && (
+                <div className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                    <Camera className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900 dark:text-white">
+                      Shared {currentUser.stats.photosShared} adventure photo{currentUser.stats.photosShared > 1 ? 's' : ''}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      +{currentUser.stats.photosShared * 10} points earned
+                    </div>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  2 days ago • +150 points
+              )}
+              
+              {currentUser.stats.level > 1 && (
+                <div className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
+                    <Trophy className="h-5 w-5 text-yellow-600" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900 dark:text-white">
+                      Reached Level {currentUser.stats.level}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      Milestone achieved!
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
-
-            <div className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-                <Camera className="h-5 w-5 text-blue-600" />
+          ) : (
+            <div className="text-center py-8">
+              <div className="text-gray-400 mb-2">
+                <Trophy className="h-12 w-12 mx-auto" />
               </div>
-              <div className="flex-1">
-                <div className="font-medium text-gray-900 dark:text-white">
-                  Shared 5 photos from Turaida Castle
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  1 week ago • +50 points
-                </div>
-              </div>
+              <p className="text-gray-600 dark:text-gray-400">
+                Start your adventure journey! Share photos and complete activities to see your progress here.
+              </p>
             </div>
-
-            <div className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-              <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
-                <Trophy className="h-5 w-5 text-yellow-600" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-gray-900 dark:text-white">
-                  Reached Level 5 - Trail Master
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  2 weeks ago • Achievement unlocked
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     );

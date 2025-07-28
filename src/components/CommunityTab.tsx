@@ -9,7 +9,8 @@ import {
   MessageCircle,
   Share,
   Trophy,
-  Send
+  Send,
+  X
 } from 'lucide-react';
 
 const CommunityTab: React.FC = () => {
@@ -102,128 +103,148 @@ const CommunityTab: React.FC = () => {
       </div>
 
       {/* Create Post Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-        <div className="flex items-center gap-4 mb-4">
-          <img
-            src={currentUser?.avatar || 'https://picsum.photos/40/40?random=300'}
-            alt={currentUser?.name}
-            className="w-10 h-10 rounded-full"
-          />
+      <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl shadow-lg p-6 border border-green-100 dark:border-green-800">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="relative">
+            <img
+              src={currentUser?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face'}
+              alt={currentUser?.name}
+              className="w-12 h-12 rounded-full border-2 border-green-500 object-cover"
+            />
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
+          </div>
           <div className="flex-1">
             <button
               onClick={() => setShowCreatePost(true)}
-              className="w-full text-left px-4 py-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+              className="w-full text-left px-6 py-4 bg-white dark:bg-gray-800 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700"
             >
-              <span className="text-gray-500 dark:text-gray-400">
-                Share your adventure, {currentUser?.name}...
+              <span className="text-gray-500 dark:text-gray-400 text-lg">
+                ✨ Share your adventure, {currentUser?.name}...
               </span>
             </button>
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="grid grid-cols-3 gap-3">
           <button
             onClick={() => {
               setNewPost(prev => ({ ...prev, type: 'photo' }));
               setShowCreatePost(true);
             }}
-            className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+            className="group flex flex-col items-center gap-2 px-6 py-4 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
           >
-            <Camera className="h-5 w-5" />
-            <span>Photo</span>
+            <Camera className="h-6 w-6 group-hover:scale-110 transition-transform" />
+            <span className="font-medium">Photo</span>
           </button>
           <button
             onClick={() => {
               setNewPost(prev => ({ ...prev, type: 'check-in' }));
               setShowCreatePost(true);
             }}
-            className="flex items-center gap-2 px-4 py-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+            className="group flex flex-col items-center gap-2 px-6 py-4 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
           >
-            <MapPin className="h-5 w-5" />
-            <span>Check-in</span>
+            <MapPin className="h-6 w-6 group-hover:scale-110 transition-transform" />
+            <span className="font-medium">Check-in</span>
           </button>
           <button
             onClick={() => {
               setNewPost(prev => ({ ...prev, type: 'achievement' }));
               setShowCreatePost(true);
             }}
-            className="flex items-center gap-2 px-4 py-2 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors"
+            className="group flex flex-col items-center gap-2 px-6 py-4 bg-gradient-to-br from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
           >
-            <Trophy className="h-5 w-5" />
-            <span>Achievement</span>
+            <Trophy className="h-6 w-6 group-hover:scale-110 transition-transform" />
+            <span className="font-medium">Achievement</span>
           </button>
         </div>
       </div>
 
       {/* Create Post Modal */}
       {showCreatePost && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-lg w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Create Post
-              </h3>
-              <button
-                onClick={() => setShowCreatePost(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              >
-                ✕
-              </button>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="bg-gradient-to-r from-green-500 to-blue-500 p-6">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className={`p-3 rounded-xl bg-white/20 ${getPostTypeColor(newPost.type)} backdrop-blur-sm`}>
+                    {getPostTypeIcon(newPost.type)}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">
+                      Create {newPost.type.charAt(0).toUpperCase() + newPost.type.slice(1)}
+                    </h3>
+                    <p className="text-white/80 text-sm">Share your adventure with the community</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowCreatePost(false)}
+                  className="p-2 text-white/80 hover:text-white hover:bg-white/20 rounded-lg transition-colors"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
             </div>
 
-            <form onSubmit={handleSubmitPost} className="space-y-4">
-              <div className="flex items-center gap-2 mb-4">
-                <div className={`p-2 rounded-lg ${getPostTypeColor(newPost.type)}`}>
-                  {getPostTypeIcon(newPost.type)}
-                </div>
-                <span className="font-medium text-gray-900 dark:text-white capitalize">
-                  {newPost.type}
-                </span>
+            <form onSubmit={handleSubmitPost} className="p-6 space-y-6">
+
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  What's on your mind?
+                </label>
+                <textarea
+                  value={newPost.content}
+                  onChange={(e) => setNewPost(prev => ({ ...prev, content: e.target.value }))}
+                  placeholder="Share your adventure story, tips, or experience..."
+                  className="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none transition-all duration-200"
+                  rows={4}
+                  required
+                />
               </div>
 
-              <textarea
-                value={newPost.content}
-                onChange={(e) => setNewPost(prev => ({ ...prev, content: e.target.value }))}
-                placeholder="Share your adventure..."
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none"
-                rows={4}
-                required
-              />
-
               {newPost.type === 'check-in' && (
-                <input
-                  type="text"
-                  value={newPost.location}
-                  onChange={(e) => setNewPost(prev => ({ ...prev, location: e.target.value }))}
-                  placeholder="Where are you?"
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    📍 Location
+                  </label>
+                  <input
+                    type="text"
+                    value={newPost.location}
+                    onChange={(e) => setNewPost(prev => ({ ...prev, location: e.target.value }))}
+                    placeholder="Where are you adventuring?"
+                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-200"
+                  />
+                </div>
               )}
 
               {newPost.type === 'photo' && (
-                <input
-                  type="url"
-                  value={newPost.image}
-                  onChange={(e) => setNewPost(prev => ({ ...prev, image: e.target.value }))}
-                  placeholder="Image URL (optional)"
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    📸 Image URL
+                  </label>
+                  <input
+                    type="url"
+                    value={newPost.image}
+                    onChange={(e) => setNewPost(prev => ({ ...prev, image: e.target.value }))}
+                    placeholder="Paste your image URL here (optional)"
+                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-200"
+                  />
+                </div>
               )}
 
-              <div className="flex gap-3">
+              <div className="flex gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                   type="button"
                   onClick={() => setShowCreatePost(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white rounded-xl transition-all duration-200 flex items-center justify-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
-                  <Send className="h-4 w-4" />
-                  Post
+                  <Send className="h-5 w-5" />
+                  Share Adventure
                 </button>
               </div>
             </form>
