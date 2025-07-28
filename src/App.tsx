@@ -15,6 +15,7 @@ import {
   LogIn
 } from 'lucide-react';
 import './i18n/config';
+import { UserProvider } from './contexts/UserContext';
 
 // Import components
 import TrailsTab from './components/TrailsTab';
@@ -156,7 +157,8 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-nature-50 via-white to-adventure-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <UserProvider>
+      <div className="min-h-screen bg-gradient-to-br from-nature-50 via-white to-adventure-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
       <header className="glass-morphism sticky top-0 z-50 shadow-lg">
         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
@@ -282,7 +284,8 @@ function App() {
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    </UserProvider>
   );
 }
 
