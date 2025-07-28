@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useUser } from '../contexts/UserContext';
 import {
   LogIn,
   UserPlus,
@@ -17,7 +18,7 @@ import {
   Map
 } from 'lucide-react';
 
-interface AppUser {
+interface LocalAppUser {
   id: string;
   name: string;
   email: string;
@@ -34,21 +35,15 @@ interface AppUser {
 
 const AuthTab: React.FC = () => {
   const { t } = useTranslation();
+  const { currentUser, isLoggedIn, login, logout } = useUser();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem('isLoggedIn') === 'true';
-  });
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
     location: ''
-  });
-  const [currentUser, setCurrentUser] = useState<AppUser | null>(() => {
-    const savedUser = localStorage.getItem('currentUser');
-    return savedUser ? JSON.parse(savedUser) : null;
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,11 +58,11 @@ const AuthTab: React.FC = () => {
     
     if (isLogin) {
       // Mock login
-      const mockUser: AppUser = {
+      const mockUser = {
         id: '1',
         name: formData.name || 'Adventure Explorer',
         email: formData.email,
-        avatar: 'https://placehold.co/120x120/22c55e/ffffff/png?text=AE',
+        avatar: 'https://picsum.photos/120/120?random=100',
         location: 'Riga, Latvia',
         joinDate: '2024-01-15',
         stats: {
@@ -77,17 +72,14 @@ const AuthTab: React.FC = () => {
           level: 5
         }
       };
-      setCurrentUser(mockUser);
-      setIsLoggedIn(true);
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('currentUser', JSON.stringify(mockUser));
+      login(mockUser);
     } else {
       // Mock registration
       if (formData.password !== formData.confirmPassword) {
         alert('Passwords do not match!');
         return;
       }
-      const newUser: AppUser = {
+      const newUser = {
         id: Date.now().toString(),
         name: formData.name,
         email: formData.email,
@@ -100,18 +92,12 @@ const AuthTab: React.FC = () => {
           level: 1
         }
       };
-      setCurrentUser(newUser);
-      setIsLoggedIn(true);
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('currentUser', JSON.stringify(newUser));
+      login(newUser);
     }
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    setCurrentUser(null);
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('currentUser');
+    logout();
     setFormData({
       name: '',
       email: '',
@@ -140,7 +126,7 @@ const AuthTab: React.FC = () => {
             {/* Avatar */}
             <div className="relative">
               <img
-                src={currentUser.avatar || 'https://placehold.co/120x120/22c55e/ffffff/png?text=User'}
+                src={currentUser.avatar || 'https://picsum.photos/120/120?random=101'}
                 alt={currentUser.name}
                 className="w-24 h-24 rounded-full border-4 border-green-500"
               />

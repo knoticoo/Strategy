@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useUser } from '../contexts/UserContext';
 import {
   Trophy,
   Medal,
@@ -60,9 +61,8 @@ interface LeaderboardUser {
 }
 
 const GamificationTab: React.FC = () => {
+  const { currentUser, isLoggedIn } = useUser();
   const [userLevel, setUserLevel] = useState<UserLevel | null>(null);
-  const [userXP] = useState(2350);
-  const [streak] = useState(12);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
@@ -83,7 +83,13 @@ const GamificationTab: React.FC = () => {
     const loadData = async () => {
       setLoading(true);
       
+      if (!currentUser) {
+        setLoading(false);
+        return;
+      }
+      
       // Determine user level
+      const userXP = currentUser.stats.points;
       const currentLevel = levels.find(level => userXP >= level.minXP && userXP < level.maxXP) || levels[levels.length - 1];
       setUserLevel(currentLevel);
 
@@ -195,8 +201,8 @@ const GamificationTab: React.FC = () => {
           name: 'You',
           avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
           level: currentLevel?.level || 1,
-          xp: userXP,
-          streak: streak,
+          xp: currentUser.stats.points,
+                      streak: 12, // Mock streak for now
           badges: mockAchievements.length,
           rank: 3
         }
@@ -209,7 +215,7 @@ const GamificationTab: React.FC = () => {
     };
 
     loadData();
-  }, [userXP, streak, levels]);
+  }, [currentUser, levels]);
 
 
 
@@ -230,6 +236,23 @@ const GamificationTab: React.FC = () => {
     if (percentage >= 50) return 'progress-info';
     return 'progress-primary';
   };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="text-center py-12">
+        <Trophy className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          Start Your Adventure Journey
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          Track your progress, earn achievements, and compete with fellow adventurers.
+        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Please log in to access gamification features.
+        </p>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -279,11 +302,11 @@ const GamificationTab: React.FC = () => {
             <div className="flex-1 w-full">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-medium text-base-content/70">Experience Points</span>
-                <span className="text-sm font-bold text-primary">{userXP} XP</span>
+                <span className="text-sm font-bold text-primary">{currentUser?.stats.points} XP</span>
               </div>
               <progress 
                 className="progress progress-primary w-full h-3" 
-                value={userXP - (userLevel?.minXP || 0)} 
+                                  value={(currentUser?.stats.points || 0) - (userLevel?.minXP || 0)} 
                 max={(userLevel?.maxXP || 1000) - (userLevel?.minXP || 0)}
               ></progress>
               <div className="flex justify-between text-xs text-base-content/50 mt-1">
@@ -299,7 +322,7 @@ const GamificationTab: React.FC = () => {
                   <Flame className="h-8 w-8 animate-pulse-slow" />
                 </div>
                 <div className="stat-title">Streak</div>
-                <div className="stat-value text-secondary">{streak}</div>
+                <div className="stat-value text-secondary">12</div>
                 <div className="stat-desc">days active</div>
               </div>
             </div>
