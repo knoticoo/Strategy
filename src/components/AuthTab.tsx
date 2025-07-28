@@ -355,27 +355,28 @@ const AuthTab: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (isLogin) {
-      // Mock login - check for admin credentials
-      const isAdminLogin = (formData.email === 'emalinovskis@me.com' && formData.password === 'Millie1991') || formData.name === 'Admin';
-      const mockUser = {
-        id: isAdminLogin ? 'admin' : '1',
-        name: isAdminLogin ? 'Admin' : (formData.name || 'Adventure Explorer'),
-        email: isAdminLogin ? 'emalinovskis@me.com' : formData.email,
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face',
-        location: 'Riga, Latvia',
-        joinDate: '2024-01-15',
-        stats: {
-          trailsCompleted: 0,
-          photosShared: 0,
-          points: 0,
-          level: 1
-        }
-      };
-      login(mockUser);
+      try {
+        // Use real API login
+        const response = await api.login(formData.email, formData.password);
+        login(response.user);
+        
+        // Clear form
+        setFormData({
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+          location: ''
+        });
+      } catch (error) {
+        console.error('Login error:', error);
+        alert('Login failed. Please check your credentials.');
+        return;
+      }
     } else {
       // Mock registration
       if (formData.password !== formData.confirmPassword) {

@@ -112,6 +112,10 @@ export const login = async (email: string, password: string): Promise<{ user: an
   return response.data;
 };
 
+export const logout = async (userId: string): Promise<void> => {
+  await api.post('/auth/logout', { userId });
+};
+
 // Trail API
 export const getTrails = async (): Promise<ApiTrail[]> => {
   const response = await api.get('/trails');
