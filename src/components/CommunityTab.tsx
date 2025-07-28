@@ -21,6 +21,8 @@ const CommunityTab: React.FC = () => {
   const [showComments, setShowComments] = useState<string | null>(null);
   const [newComment, setNewComment] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>('');
   const [newPost, setNewPost] = useState({
     content: '',
     type: 'photo' as 'photo' | 'check-in' | 'review' | 'achievement',
@@ -35,7 +37,7 @@ const CommunityTab: React.FC = () => {
 
   const loadCommunityPosts = async () => {
     try {
-      const posts = await api.getCommunityPosts();
+      const posts = await api.getCommunityPosts(currentUser?.id);
       console.log('Loaded community posts:', posts);
       setCommunityPosts(posts);
     } catch (error) {
@@ -65,6 +67,7 @@ const CommunityTab: React.FC = () => {
       const imageUrl = await handleFileUpload(file);
       console.log('Community image upload result:', imageUrl);
       if (imageUrl) {
+        setUploadedImageUrl(imageUrl);
         setNewPost({
           ...newPost,
           image: imageUrl
@@ -81,6 +84,13 @@ const CommunityTab: React.FC = () => {
       return;
     }
 
+    // Prevent submission while uploading
+    if (isUploading) {
+      alert('Please wait for image upload to complete');
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
       console.log('Creating post with user:', currentUser);
       const postData = {
@@ -88,7 +98,7 @@ const CommunityTab: React.FC = () => {
         type: newPost.type,
         content: newPost.content,
         location: newPost.location || undefined,
-        image_url: newPost.image || undefined
+        image_url: uploadedImageUrl || newPost.image || undefined
       };
       
       console.log('Post data:', postData);
@@ -107,6 +117,8 @@ const CommunityTab: React.FC = () => {
         location: '',
         image: ''
       });
+      setUploadedImageUrl('');
+      setShowCreatePost(false);
       
       alert('Post created successfully!');
       setShowCreatePost(false);
@@ -114,15 +126,34 @@ const CommunityTab: React.FC = () => {
       console.error('Error creating post:', error);
       const errorMessage = error.response?.data?.error || error.message || 'Unknown error';
       alert(`Error creating post: ${errorMessage}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleAddComment = (postId: string) => {
-    if (!newComment.trim()) return;
+  const handleLikePost = async (postId: string) => {
+    if (!currentUser) return;
     
-    // TODO: Implement comment API
-    console.log('Adding comment to post:', postId, newComment);
-    setNewComment('');
+    try {
+      await api.likePost(postId, currentUser.id);
+      // Reload posts to get updated like status
+      await loadCommunityPosts();
+    } catch (error) {
+      console.error('Error liking post:', error);
+    }
+  };
+
+  const handleAddComment = async (postId: string) => {
+    if (!newComment.trim() || !currentUser) return;
+    
+    try {
+      await api.addComment(postId, currentUser.id, newComment);
+      setNewComment('');
+      // Reload posts to get updated comment count
+      await loadCommunityPosts();
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
   };
 
   const formatTimestamp = (timestamp: string) => {
@@ -346,10 +377,29 @@ const CommunityTab: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white rounded-xl transition-all duration-200 flex items-center justify-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+                  disabled={isUploading || isSubmitting}
+                  className={`flex-1 px-6 py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 ${
+                    isUploading || isSubmitting 
+                      ? 'bg-gray-400 cursor-not-allowed' 
+                      : 'bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white'
+                  }`}
                 >
-                  <Send className="h-5 w-5" />
-                  Share Adventure
+                  {isUploading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Uploading Image...
+                    </>
+                  ) : isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Posting...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-5 w-5" />
+                      Share Adventure
+                    </>
+                  )}
                 </button>
               </div>
             </form>
@@ -428,18 +478,23 @@ const CommunityTab: React.FC = () => {
                 {/* Post Actions */}
                 <div className="flex items-center gap-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                   <button
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    onClick={() => handleLikePost(post.id)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                      post.user_liked 
+                        ? 'text-red-500 bg-red-50 dark:bg-red-900/20' 
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    }`}
                   >
-                    <Heart className="h-5 w-5" />
+                    <Heart className={`h-5 w-5 ${post.user_liked ? 'fill-current' : ''}`} />
                     <span>{post.likes_count}</span>
                   </button>
-                                   <button 
-                   onClick={() => setShowComments(showComments === post.id ? null : post.id)}
-                   className="flex items-center gap-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                 >
-                   <MessageCircle className="h-5 w-5" />
-                   <span>0</span>
-                 </button>
+                  <button 
+                    onClick={() => setShowComments(showComments === post.id ? null : post.id)}
+                    className="flex items-center gap-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    <span>{post.comments_count || 0}</span>
+                  </button>
                   <button className="flex items-center gap-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
                     <Share className="h-5 w-5" />
                     <span>Share</span>

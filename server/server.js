@@ -10,7 +10,20 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Simple session tracking
-let onlineUsers = new Set();
+let onlineUsers = new Map(); // userId -> timestamp
+
+// Clean up offline users every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  const timeout = 5 * 60 * 1000; // 5 minutes
+  
+  for (const [userId, timestamp] of onlineUsers.entries()) {
+    if (now - timestamp > timeout) {
+      onlineUsers.delete(userId);
+      console.log(`User ${userId} marked as offline due to inactivity`);
+    }
+  }
+}, 60 * 1000); // Check every minute
 
 // Middleware
 app.use(cors({
@@ -424,11 +437,15 @@ app.delete('/api/trails/:id', (req, res) => {
 
 // Community posts routes
 app.get('/api/community-posts', (req, res) => {
+  const { user_id } = req.query;
+  
   db.all(`
     SELECT cp.*, 
            COALESCE(u.name, 'Unknown User') as user_name, 
            u.avatar_url as user_avatar,
-           (SELECT COUNT(*) FROM post_likes WHERE post_id = cp.id) as likes_count
+           (SELECT COUNT(*) FROM post_likes WHERE post_id = cp.id) as likes_count,
+           (SELECT COUNT(*) FROM comments WHERE post_id = cp.id) as comments_count,
+           ${user_id ? `(SELECT COUNT(*) FROM post_likes WHERE post_id = cp.id AND user_id = '${user_id}') > 0 as user_liked` : 'false as user_liked'}
     FROM community_posts cp
     LEFT JOIN users u ON cp.user_id = u.id
     ORDER BY cp.created_at DESC
@@ -454,6 +471,100 @@ app.post('/api/community-posts', (req, res) => {
       res.status(500).json({ error: err.message });
     } else {
       res.json({ id, message: 'Post created successfully' });
+    }
+  });
+});
+
+// Delete community post (admin only)
+app.delete('/api/community-posts/:id', (req, res) => {
+  const { id } = req.params;
+  
+  db.run('DELETE FROM community_posts WHERE id = ?', [id], function(err) {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json({ message: 'Post deleted successfully' });
+    }
+  });
+});
+
+// Like/unlike post
+app.post('/api/community-posts/:id/like', (req, res) => {
+  const { id } = req.params;
+  const { user_id } = req.body;
+  
+  // Check if already liked
+  db.get('SELECT * FROM post_likes WHERE post_id = ? AND user_id = ?', [id, user_id], (err, row) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else if (row) {
+      // Unlike
+      db.run('DELETE FROM post_likes WHERE post_id = ? AND user_id = ?', [id, user_id], (err) => {
+        if (err) {
+          res.status(500).json({ error: err.message });
+        } else {
+          res.json({ liked: false });
+        }
+      });
+    } else {
+      // Like
+      const likeId = uuidv4();
+      db.run('INSERT INTO post_likes (id, post_id, user_id) VALUES (?, ?, ?)', [likeId, id, user_id], (err) => {
+        if (err) {
+          res.status(500).json({ error: err.message });
+        } else {
+          res.json({ liked: true });
+        }
+      });
+    }
+  });
+});
+
+// Add comment
+app.post('/api/community-posts/:id/comments', (req, res) => {
+  const { id } = req.params;
+  const { user_id, content } = req.body;
+  const commentId = uuidv4();
+  
+  db.run(`
+    INSERT INTO comments (id, post_id, user_id, content)
+    VALUES (?, ?, ?, ?)
+  `, [commentId, id, user_id, content], function(err) {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else {
+      // Get comment with user info
+      db.get(`
+        SELECT c.*, u.name as user_name, u.avatar_url as user_avatar
+        FROM comments c
+        LEFT JOIN users u ON c.user_id = u.id
+        WHERE c.id = ?
+      `, [commentId], (err, row) => {
+        if (err) {
+          res.status(500).json({ error: err.message });
+        } else {
+          res.json(row);
+        }
+      });
+    }
+  });
+});
+
+// Get comments for a post
+app.get('/api/community-posts/:id/comments', (req, res) => {
+  const { id } = req.params;
+  
+  db.all(`
+    SELECT c.*, u.name as user_name, u.avatar_url as user_avatar
+    FROM comments c
+    LEFT JOIN users u ON c.user_id = u.id
+    WHERE c.post_id = ?
+    ORDER BY c.created_at ASC
+  `, [id], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json(rows);
     }
   });
 });
@@ -533,6 +644,15 @@ app.post('/api/auth/logout', (req, res) => {
   res.json({ message: 'Logged out successfully' });
 });
 
+// Heartbeat endpoint to keep users online
+app.post('/api/heartbeat', (req, res) => {
+  const { user_id } = req.body;
+  if (user_id && onlineUsers.has(user_id)) {
+    onlineUsers.set(user_id, Date.now());
+  }
+  res.json({ success: true });
+});
+
 // Authentication endpoint (simplified)
 app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
@@ -551,8 +671,8 @@ app.post('/api/auth/login', (req, res) => {
       );
       
       if (isValidLogin) {
-        // Add user to online users
-        onlineUsers.add(user.id);
+        // Add user to online users with current timestamp
+        onlineUsers.set(user.id, Date.now());
         console.log(`User ${user.name} logged in, online users:`, onlineUsers.size);
         
         res.json({

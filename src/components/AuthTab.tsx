@@ -120,6 +120,19 @@ const AuthTab: React.FC = () => {
     }
   };
 
+  const handleDeletePost = async (postId: string) => {
+    if (!confirm('Are you sure you want to delete this post?')) return;
+    
+    try {
+      await api.deleteCommunityPost(postId);
+      await loadRecentActivity(); // Reload the posts
+      alert('Post deleted successfully');
+    } catch (error: any) {
+      console.error('Error deleting post:', error);
+      alert('Error deleting post: ' + (error.message || 'Unknown error'));
+    }
+  };
+
   // Admin Functions
   const handleDeleteTrail = async (trailId: string) => {
     if (window.confirm('Are you sure you want to delete this trail?')) {
@@ -1626,6 +1639,45 @@ const AuthTab: React.FC = () => {
             </div>
             <Star className="h-8 w-8 text-orange-200" />
           </div>
+        </div>
+      </div>
+
+      {/* Community Posts Management */}
+      <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
+        <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Community Posts</h4>
+        <div className="space-y-3">
+          {recentActivity.length > 0 ? (
+            recentActivity.map((post, index) => (
+              <div key={post.id || index} className="flex items-center justify-between p-3 bg-white dark:bg-gray-600 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={post.user_avatar || '/default-avatar.png'}
+                    alt={post.user_name}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">{post.user_name}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {post.content.substring(0, 100)}...
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(post.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleDeletePost(post.id)}
+                  className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            ))
+          ) : (
+            <div className="text-gray-500 dark:text-gray-400 text-sm">
+              No posts found
+            </div>
+          )}
         </div>
       </div>
 
