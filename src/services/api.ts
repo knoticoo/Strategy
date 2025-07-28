@@ -1,6 +1,12 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+// Dynamic API URL - works for both local development and remote servers
+const API_BASE_URL = process.env.REACT_APP_API_URL || 
+  (window.location.hostname === 'localhost' ? 
+    'http://localhost:5000/api' : 
+    `http://${window.location.hostname}:5000/api`);
+
+console.log('API_BASE_URL:', API_BASE_URL);
 
 const api = axios.create({
   baseURL: API_BASE_URL,
