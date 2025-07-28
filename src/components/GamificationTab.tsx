@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Trophy,
   Medal,
@@ -7,15 +6,9 @@ import {
   Target,
   Crown,
   Flame,
-  Gift,
-  Users,
-  Calendar,
-  Clock,
   Award,
   Mountain,
   Route,
-  CheckCircle,
-  Lock,
   Sparkles
 } from 'lucide-react';
 
@@ -68,8 +61,8 @@ interface LeaderboardUser {
 
 const GamificationTab: React.FC = () => {
   const [userLevel, setUserLevel] = useState<UserLevel | null>(null);
-  const [userXP, setUserXP] = useState(2350);
-  const [streak, setStreak] = useState(12);
+  const [userXP] = useState(2350);
+  const [streak] = useState(12);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
@@ -88,7 +81,7 @@ const GamificationTab: React.FC = () => {
 
   useEffect(() => {
     loadGamificationData();
-  }, []);
+  }, [userXP]);
 
   const loadGamificationData = async () => {
     setLoading(true);
