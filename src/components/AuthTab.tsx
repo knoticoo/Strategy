@@ -69,7 +69,10 @@ const AuthTab: React.FC = () => {
 
   // Load data from database
   useEffect(() => {
+    console.log('Admin check - currentUser:', currentUser);
+    console.log('Admin check - isAdmin:', isAdmin);
     if (isAdmin) {
+      console.log('Loading admin data...');
       loadTrails();
       loadUsers();
       loadStats();
@@ -88,7 +91,9 @@ const AuthTab: React.FC = () => {
 
   const loadUsers = async () => {
     try {
+      console.log('Loading users from API...');
       const usersData = await api.getUsers();
+      console.log('Loaded users:', usersData);
       setUsers(usersData);
     } catch (error) {
       console.error('Error loading users:', error);
@@ -97,7 +102,9 @@ const AuthTab: React.FC = () => {
 
   const loadStats = async () => {
     try {
+      console.log('Loading stats from API...');
       const statsData = await api.getStats();
+      console.log('Loaded stats:', statsData);
       setStats(statsData);
     } catch (error) {
       console.error('Error loading stats:', error);
@@ -263,6 +270,7 @@ const AuthTab: React.FC = () => {
           console.log('Updating user avatar with URL:', avatarUrl);
           await api.updateUser(currentUser.id, { 
             name: currentUser.name, // Required field
+            email: currentUser.email, // Required field
             avatar_url: avatarUrl 
           });
           // Update current user context
