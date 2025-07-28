@@ -261,7 +261,10 @@ const AuthTab: React.FC = () => {
       if (avatarUrl) {
         try {
           console.log('Updating user avatar with URL:', avatarUrl);
-          await api.updateUser(currentUser.id, { avatar_url: avatarUrl });
+          await api.updateUser(currentUser.id, { 
+            name: currentUser.name, // Required field
+            avatar_url: avatarUrl 
+          });
           // Update current user context
           const updatedUser = { ...currentUser, avatar: avatarUrl };
           login(updatedUser);
@@ -1518,9 +1521,9 @@ const AuthTab: React.FC = () => {
             </div>
             <div>
               <div className="text-2xl font-bold text-yellow-600">
-                {Math.floor((stats?.onlineUsers || 0) * 1.5)}
+                {stats?.onlineUsers || 0}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Active Users</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Online Users</div>
             </div>
           </div>
         </div>

@@ -36,6 +36,7 @@ const CommunityTab: React.FC = () => {
   const loadCommunityPosts = async () => {
     try {
       const posts = await api.getCommunityPosts();
+      console.log('Loaded community posts:', posts);
       setCommunityPosts(posts);
     } catch (error) {
       console.error('Error loading community posts:', error);
@@ -60,12 +61,15 @@ const CommunityTab: React.FC = () => {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      console.log('Uploading community post image:', file.name);
       const imageUrl = await handleFileUpload(file);
+      console.log('Community image upload result:', imageUrl);
       if (imageUrl) {
         setNewPost({
           ...newPost,
           image: imageUrl
         });
+        console.log('Updated newPost with image:', imageUrl);
       }
     }
   };
@@ -79,21 +83,17 @@ const CommunityTab: React.FC = () => {
 
     try {
       console.log('Creating post with user:', currentUser);
-      console.log('Post data:', {
+      const postData = {
         user_id: currentUser.id,
         type: newPost.type,
         content: newPost.content,
         location: newPost.location || undefined,
         image_url: newPost.image || undefined
-      });
+      };
       
-      await api.createCommunityPost({
-        user_id: currentUser.id,
-        type: newPost.type,
-        content: newPost.content,
-        location: newPost.location || undefined,
-        image_url: newPost.image || undefined
-      });
+      console.log('Post data:', postData);
+      
+      await api.createCommunityPost(postData);
 
       console.log('Post created successfully');
       
