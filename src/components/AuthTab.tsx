@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../contexts/UserContext';
 import { realLatvianTrails } from '../data/realLatvianData';
@@ -14,7 +14,6 @@ import {
   Camera,
   Trophy,
   Heart,
-  Settings,
   LogOut,
   Map,
   Shield,
@@ -26,15 +25,9 @@ import {
   Save,
   X,
   Star,
-  Clock,
-  MapPin as MapPinIcon,
-  Phone,
-  Globe,
-  DollarSign,
   Activity,
   TrendingUp,
-  UserCheck,
-  AlertCircle
+  UserCheck
 } from 'lucide-react';
 
 
@@ -488,7 +481,7 @@ const AuthTab: React.FC = () => {
             <div className="flex justify-between items-start gap-4">
               <div className="flex-1">
                 <h4 className="font-semibold text-gray-900 dark:text-white">
-                  {trail.name.en}
+                  {typeof trail.name === 'string' ? trail.name : trail.name.en}
                 </h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                   {trail.region} • {trail.difficulty} • {trail.distance}
@@ -550,10 +543,12 @@ const AuthTab: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    value={editingTrail?.name?.en || ''}
+                    value={typeof editingTrail?.name === 'string' ? editingTrail.name : (editingTrail?.name?.en || '')}
                     onChange={(e) => setEditingTrail({
                       ...editingTrail,
-                      name: { ...editingTrail.name, en: e.target.value }
+                      name: typeof editingTrail?.name === 'string' 
+                        ? e.target.value 
+                        : { ...editingTrail.name, en: e.target.value }
                     })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
