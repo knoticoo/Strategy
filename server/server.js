@@ -425,15 +425,18 @@ app.delete('/api/trails/:id', (req, res) => {
 // Community posts routes
 app.get('/api/community-posts', (req, res) => {
   db.all(`
-    SELECT cp.*, u.name as user_name, u.avatar_url as user_avatar,
+    SELECT cp.*, 
+           COALESCE(u.name, 'Unknown User') as user_name, 
+           u.avatar_url as user_avatar,
            (SELECT COUNT(*) FROM post_likes WHERE post_id = cp.id) as likes_count
     FROM community_posts cp
-    JOIN users u ON cp.user_id = u.id
+    LEFT JOIN users u ON cp.user_id = u.id
     ORDER BY cp.created_at DESC
   `, (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message });
     } else {
+      console.log('Community posts query result:', rows);
       res.json(rows);
     }
   });
