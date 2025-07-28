@@ -5,16 +5,14 @@ import {
   MapPin,
   Fish,
   Snowflake,
-  Car,
   Heart,
   Sun,
   Moon,
   Menu,
   X,
   Users,
-  Shield,
-  Brain,
-  Trophy
+  Trophy,
+  LogIn
 } from 'lucide-react';
 import './i18n/config';
 
@@ -23,14 +21,12 @@ import TrailsTab from './components/TrailsTab';
 import CampingTab from './components/CampingTab';
 import FishingTab from './components/FishingTab';
 import WinterTab from './components/WinterTab';
-import TransportTab from './components/TransportTab';
 import FavoritesTab from './components/FavoritesTab';
 import CommunityTab from './components/CommunityTab';
-import SafetyTab from './components/SafetyTab';
-import PersonalizationTab from './components/PersonalizationTab';
 import GamificationTab from './components/GamificationTab';
+import AuthTab from './components/AuthTab';
 
-type TabType = 'trails' | 'camping' | 'fishing' | 'winter' | 'transport' | 'favorites' | 'community' | 'safety' | 'personalization' | 'gamification';
+type TabType = 'trails' | 'camping' | 'fishing' | 'winter' | 'favorites' | 'community' | 'gamification' | 'auth';
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -100,36 +96,22 @@ function App() {
       bgColor: 'bg-cyan-50 dark:bg-cyan-900/20'
     },
     {
-      id: 'transport' as TabType,
-      name: t('nav.transport'),
-      icon: Car,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50 dark:bg-purple-900/20'
+      id: 'favorites' as TabType,
+      name: t('nav.favorites'),
+      icon: Heart,
+      color: 'text-pink-600',
+      bgColor: 'bg-pink-50 dark:bg-pink-900/20'
     },
     {
       id: 'community' as TabType,
-      name: 'Community',
+      name: t('nav.community'),
       icon: Users,
       color: 'text-green-600',
       bgColor: 'bg-green-50 dark:bg-green-900/20'
     },
     {
-      id: 'safety' as TabType,
-      name: 'Safety',
-      icon: Shield,
-      color: 'text-red-600',
-      bgColor: 'bg-red-50 dark:bg-red-900/20'
-    },
-    {
-      id: 'personalization' as TabType,
-      name: 'AI Personal',
-      icon: Brain,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50 dark:bg-orange-900/20'
-    },
-    {
       id: 'gamification' as TabType,
-      name: 'Gamification',
+      name: t('nav.gamification'),
       icon: Trophy,
       color: 'text-yellow-600',
       bgColor: 'bg-yellow-50 dark:bg-yellow-900/20'
@@ -140,6 +122,13 @@ function App() {
       icon: Heart,
       color: 'text-pink-600',
       bgColor: 'bg-pink-50 dark:bg-pink-900/20'
+    },
+    {
+      id: 'auth' as TabType,
+      name: t('nav.auth'),
+      icon: LogIn,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50 dark:bg-blue-900/20'
     }
   ];
 
@@ -153,18 +142,14 @@ function App() {
         return <FishingTab />;
       case 'winter':
         return <WinterTab />;
-      case 'transport':
-        return <TransportTab />;
-      case 'community':
-        return <CommunityTab />;
-      case 'safety':
-        return <SafetyTab />;
-      case 'personalization':
-        return <PersonalizationTab />;
-      case 'gamification':
-        return <GamificationTab />;
       case 'favorites':
         return <FavoritesTab />;
+      case 'community':
+        return <CommunityTab />;
+      case 'gamification':
+        return <GamificationTab />;
+      case 'auth':
+        return <AuthTab />;
       default:
         return <TrailsTab />;
     }

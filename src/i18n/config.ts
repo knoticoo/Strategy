@@ -17,8 +17,10 @@ const resources = {
         camping: 'Camping',
         fishing: 'Fishing',
         winter: 'Winter Sports',
-        transport: 'Transport',
-        favorites: 'Favorites'
+        favorites: 'Favorites',
+        community: 'Community',
+        gamification: 'Gamification',
+        auth: 'Account'
       },
       
       // Common
@@ -217,6 +219,27 @@ const resources = {
         },
         buyNow: 'Buy Now',
         rentNear: 'Rent Nearby'
+      },
+
+      // Auth
+      auth: {
+        login: 'Login',
+        register: 'Register',
+        profile: 'Profile',
+        loginSubtitle: 'Sign in to track your adventures',
+        registerSubtitle: 'Create an account to get started',
+        name: 'Full Name',
+        email: 'Email Address',
+        password: 'Password',
+        confirmPassword: 'Confirm Password',
+        location: 'Location',
+        loginButton: 'Sign In',
+        registerButton: 'Create Account',
+        noAccount: "Don't have an account?",
+        hasAccount: 'Already have an account?',
+        registerLink: 'Sign up here',
+        loginLink: 'Sign in here',
+        features: 'Why Join?'
       }
     }
   },
@@ -235,8 +258,10 @@ const resources = {
         camping: 'Kempings',
         fishing: 'Makšķerēšana',
         winter: 'Ziemas Sports',
-        transport: 'Transports',
-        favorites: 'Favorīti'
+        favorites: 'Favorīti',
+        community: 'Kopiena',
+        gamification: 'Spēle',
+        auth: 'Konts'
       },
       
       // Common
@@ -435,6 +460,27 @@ const resources = {
         },
         buyNow: 'Pirkt Tagad',
         rentNear: 'Īrēt Tuvumā'
+      },
+
+      // Auth
+      auth: {
+        login: 'Pieteikšanās',
+        register: 'Reģistrācija',
+        profile: 'Profils',
+        loginSubtitle: 'Piesakieties, lai izsekotu savus piedzīvojumus',
+        registerSubtitle: 'Izveidojiet kontu, lai sāktu',
+        name: 'Pilns Vārds',
+        email: 'E-pasta Adrese',
+        password: 'Parole',
+        confirmPassword: 'Apstiprināt Paroli',
+        location: 'Atrašanās Vieta',
+        loginButton: 'Pieteikties',
+        registerButton: 'Izveidot Kontu',
+        noAccount: 'Nav konta?',
+        hasAccount: 'Jau ir konts?',
+        registerLink: 'Reģistrējieties šeit',
+        loginLink: 'Pieteikšanās šeit',
+        features: 'Kāpēc Pievienoties?'
       }
     }
   },
@@ -453,8 +499,10 @@ const resources = {
         camping: 'Кемпинг',
         fishing: 'Рыбалка',
         winter: 'Зимний Спорт',
-        transport: 'Транспорт',
-        favorites: 'Избранное'
+        favorites: 'Избранное',
+        community: 'Сообщество',
+        gamification: 'Игра',
+        auth: 'Аккаунт'
       },
       
       // Common
@@ -653,6 +701,27 @@ const resources = {
         },
         buyNow: 'Купить Сейчас',
         rentNear: 'Арендовать Рядом'
+      },
+
+      // Auth
+      auth: {
+        login: 'Вход',
+        register: 'Регистрация',
+        profile: 'Профиль',
+        loginSubtitle: 'Войдите, чтобы отслеживать свои приключения',
+        registerSubtitle: 'Создайте аккаунт, чтобы начать',
+        name: 'Полное Имя',
+        email: 'Адрес Электронной Почты',
+        password: 'Пароль',
+        confirmPassword: 'Подтвердить Пароль',
+        location: 'Местоположение',
+        loginButton: 'Войти',
+        registerButton: 'Создать Аккаунт',
+        noAccount: 'Нет аккаунта?',
+        hasAccount: 'Уже есть аккаунт?',
+        registerLink: 'Зарегистрируйтесь здесь',
+        loginLink: 'Войдите здесь',
+        features: 'Зачем Присоединяться?'
       }
     }
   }

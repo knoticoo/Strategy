@@ -12,12 +12,19 @@
   body {
     font-family: 'Inter', system-ui, sans-serif;
     min-height: 100vh;
+    @apply bg-gradient-to-br from-nature-50 to-adventure-50 dark:from-gray-900 dark:to-gray-800;
+  }
+
+  /* Dark mode improvements */
+  .dark {
+    color-scheme: dark;
   }
 }
 
 @layer components {
   .glass-morphism {
     @apply bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg rounded-lg;
+    @apply dark:bg-gray-800/90 dark:border-gray-700/50 dark:shadow-xl;
   }
 
   .adventure-gradient {
@@ -26,6 +33,25 @@
 
   .trail-card {
     @apply bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02];
+    @apply dark:bg-gray-800/95 dark:border-gray-700/50 dark:shadow-2xl;
+  }
+
+  /* Better text contrast in dark mode */
+  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+    @apply text-gray-100;
+  }
+
+  .dark p {
+    @apply text-gray-300;
+  }
+
+  /* Input improvements for dark mode */
+  .dark input, .dark textarea, .dark select {
+    @apply bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400;
+  }
+
+  .dark input:focus, .dark textarea:focus, .dark select:focus {
+    @apply ring-green-500 border-green-500;
   }
 }
 
