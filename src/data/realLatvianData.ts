@@ -56,8 +56,8 @@ export const realLatvianTrails: RealLocation[] = [
     },
     features: ['River views', 'Medieval castles', 'Sandstone cliffs', 'Wildlife watching', 'Photography spots'],
     images: [
-      'https://picsum.photos/800/600?random=1&blur=0',
-      'https://picsum.photos/800/600?random=2&blur=0'
+      'https://via.placeholder.com/800x600/4ade80/ffffff?text=Gauja+National+Park',
+      'https://via.placeholder.com/800x600/22c55e/ffffff?text=Trail+View'
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Parking', 'Restrooms', 'Information center', 'Marked trails'],
@@ -89,8 +89,8 @@ export const realLatvianTrails: RealLocation[] = [
     },
     features: ['Historic castle', 'Gutman\'s Cave', 'Ancient oaks', 'Valley views', 'Folk legends'],
     images: [
-      'https://picsum.photos/800/600?random=3&blur=0',
-      'https://picsum.photos/800/600?random=4&blur=0'
+      'https://via.placeholder.com/800x600/f59e0b/ffffff?text=Turaida+Castle',
+      'https://via.placeholder.com/800x600/d97706/ffffff?text=Castle+Trail'
     ],
     season: ['spring', 'summer', 'autumn', 'winter'],
     facilities: ['Parking', 'Museum', 'Cafe', 'Souvenir shop'],
@@ -124,8 +124,8 @@ export const realLatvianTrails: RealLocation[] = [
     },
     features: ['Bog ecosystem', 'Bird watching', 'Observation tower', 'Rare plants', 'Photography'],
     images: [
-      'https://picsum.photos/800/600?random=5&blur=0',
-      'https://picsum.photos/800/600?random=6&blur=0'
+      'https://via.placeholder.com/800x600/10b981/ffffff?text=Kemeri+Bog',
+      'https://via.placeholder.com/800x600/059669/ffffff?text=Boardwalk'
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Parking', 'Information boards', 'Observation tower'],
@@ -156,8 +156,8 @@ export const realLatvianTrails: RealLocation[] = [
     },
     features: ['Two seas meeting', 'Lighthouse', 'Livonian culture', 'Beach walking', 'Sunset views'],
     images: [
-      'https://picsum.photos/800/600?random=7&blur=0',
-      'https://picsum.photos/800/600?random=8&blur=0'
+      'https://via.placeholder.com/800x600/3b82f6/ffffff?text=Cape+Kolka',
+      'https://via.placeholder.com/800x600/1d4ed8/ffffff?text=Lighthouse'
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Parking', 'Lighthouse museum', 'Cafe'],
@@ -190,8 +190,8 @@ export const realLatvianCamping: RealLocation[] = [
     },
     features: ['Tent sites', 'RV hookups', 'Shower facilities', 'Restaurant', 'Adventure activities'],
     images: [
-      'https://picsum.photos/800/600?random=9&blur=0',
-      'https://picsum.photos/800/600?random=10&blur=0'
+      'https://via.placeholder.com/800x600/16a34a/ffffff?text=Sigulda+Camping',
+      'https://via.placeholder.com/800x600/15803d/ffffff?text=Camping+Site'
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Electricity', 'Water', 'Showers', 'Toilets', 'WiFi', 'Restaurant'],
@@ -223,8 +223,8 @@ export const realLatvianCamping: RealLocation[] = [
     },
     features: ['Beach access', 'Pine forest', 'Spa nearby', 'Train to Riga', 'Swimming'],
     images: [
-      'https://picsum.photos/800/600?random=11&blur=0',
-      'https://picsum.photos/800/600?random=12&blur=0'
+      'https://via.placeholder.com/800x600/0ea5e9/ffffff?text=Jurmala+Beach',
+      'https://via.placeholder.com/800x600/0284c7/ffffff?text=Beach+Camping'
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Beach access', 'Showers', 'Toilets', 'Parking', 'Store'],
@@ -260,8 +260,8 @@ export const realLatvianFishing: RealLocation[] = [
     },
     features: ['Trout fishing', 'Grayling', 'Fly fishing', 'Clean water', 'Scenic location'],
     images: [
-      'https://picsum.photos/800/600?random=13&blur=0',
-      'https://picsum.photos/800/600?random=14&blur=0'
+      'https://via.placeholder.com/800x600/06b6d4/ffffff?text=Gauja+River',
+      'https://via.placeholder.com/800x600/0891b2/ffffff?text=Fishing+Spot'
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['River access', 'Parking', 'Fishing permit required'],
@@ -291,8 +291,8 @@ export const realLatvianFishing: RealLocation[] = [
     },
     features: ['Pike fishing', 'Perch', 'Urban location', 'Easy access', 'Multiple spots'],
     images: [
-      'https://picsum.photos/800/600?random=15&blur=0',
-      'https://picsum.photos/800/600?random=16&blur=0'
+      'https://via.placeholder.com/800x600/8b5cf6/ffffff?text=Daugava+River',
+      'https://via.placeholder.com/800x600/7c3aed/ffffff?text=Urban+Fishing'
     ],
     season: ['spring', 'summer', 'autumn', 'winter'],
     facilities: ['Fishing platforms', 'Parking', 'Public transport'],
@@ -322,8 +322,8 @@ export const realLatvianWinter: RealLocation[] = [
     },
     features: ['Professional bobsled', 'Summer track', 'Historic venue', 'Guided tours', 'Adrenaline rush'],
     images: [
-      'https://picsum.photos/800/600?random=17&blur=0',
-      'https://picsum.photos/800/600?random=18&blur=0'
+      'https://via.placeholder.com/800x600/ef4444/ffffff?text=Bobsled+Track',
+      'https://via.placeholder.com/800x600/dc2626/ffffff?text=Winter+Sports'
     ],
     season: ['winter', 'summer'],
     facilities: ['Professional track', 'Safety equipment', 'Changing rooms', 'Cafe'],
@@ -355,8 +355,8 @@ export const realLatvianWinter: RealLocation[] = [
     },
     features: ['Multiple slopes', 'Ski lifts', 'Equipment rental', 'Ski school', 'Restaurant'],
     images: [
-      'https://picsum.photos/800/600?random=19&blur=0',
-      'https://picsum.photos/800/600?random=20&blur=0'
+      'https://via.placeholder.com/800x600/64748b/ffffff?text=Ski+Resort',
+      'https://via.placeholder.com/800x600/475569/ffffff?text=Winter+Slopes'
     ],
     season: ['winter'],
     facilities: ['Ski lifts', 'Equipment rental', 'Ski school', 'Restaurant', 'Parking'],

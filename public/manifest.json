@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Adventure Finder",
+  "name": "Latvian Adventure Finder",
+  "description": "Discover Latvia's hidden gems and outdoor adventures",
   "icons": [
     {
       "src": "favicon.ico",
@@ -10,16 +11,47 @@
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "maskable any"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "maskable any"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#16a34a",
+  "background_color": "#f0fdf4",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["travel", "lifestyle", "navigation"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Find Trails",
+      "short_name": "Trails",
+      "description": "Discover hiking trails",
+      "url": "/?tab=trails",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Find Camping",
+      "short_name": "Camping",
+      "description": "Find camping spots",
+      "url": "/?tab=camping",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Community",
+      "short_name": "Community",
+      "description": "Connect with adventurers",
+      "url": "/?tab=community",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    }
+  ]
 }
