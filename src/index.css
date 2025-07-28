@@ -19,12 +19,29 @@
   .dark {
     color-scheme: dark;
   }
+
+  /* Force better text colors in dark mode */
+  .dark * {
+    border-color: theme('colors.gray.700') !important;
+  }
+
+  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+    @apply text-gray-100 !important;
+  }
+
+  .dark p, .dark span, .dark div {
+    @apply text-gray-300 !important;
+  }
+
+  .dark label {
+    @apply text-gray-200 !important;
+  }
 }
 
 @layer components {
   .glass-morphism {
-    @apply bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg rounded-lg;
-    @apply dark:bg-gray-800/90 dark:border-gray-700/50 dark:shadow-xl;
+    @apply bg-white/95 backdrop-blur-md border border-gray-200 shadow-lg rounded-lg;
+    @apply dark:bg-gray-800/95 dark:border-gray-600 dark:shadow-2xl;
   }
 
   .adventure-gradient {
@@ -33,25 +50,46 @@
 
   .trail-card {
     @apply bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02];
-    @apply dark:bg-gray-800/95 dark:border-gray-700/50 dark:shadow-2xl;
+    @apply dark:bg-gray-800 dark:border-gray-600 dark:shadow-2xl;
   }
 
-  /* Better text contrast in dark mode */
-  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
-    @apply text-gray-100;
+  /* Better backgrounds for dark mode */
+  .dark .bg-white {
+    @apply bg-gray-800 !important;
   }
 
-  .dark p {
-    @apply text-gray-300;
+  .dark .bg-gray-50 {
+    @apply bg-gray-700 !important;
+  }
+
+  .dark .bg-gray-100 {
+    @apply bg-gray-700 !important;
   }
 
   /* Input improvements for dark mode */
   .dark input, .dark textarea, .dark select {
-    @apply bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400;
+    @apply bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400 !important;
   }
 
   .dark input:focus, .dark textarea:focus, .dark select:focus {
-    @apply ring-green-500 border-green-500;
+    @apply ring-green-500 border-green-500 !important;
+  }
+
+  /* Button improvements for dark mode */
+  .dark button {
+    @apply text-gray-200 !important;
+  }
+
+  .dark .text-gray-600 {
+    @apply text-gray-300 !important;
+  }
+
+  .dark .text-gray-700 {
+    @apply text-gray-200 !important;
+  }
+
+  .dark .text-gray-900 {
+    @apply text-gray-100 !important;
   }
 }
 

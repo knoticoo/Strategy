@@ -159,18 +159,18 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-nature-50 via-white to-adventure-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
       <header className="glass-morphism sticky top-0 z-50 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+          <div className="flex justify-between items-center h-14 sm:h-16 gap-2">
             {/* Logo & Title */}
-            <div className="flex items-center space-x-3">
-              <div className="adventure-gradient text-white p-2 rounded-lg">
-                <Map className="h-6 w-6" />
+            <div className="flex items-center space-x-2 flex-shrink-0 min-w-0">
+              <div className="adventure-gradient text-white p-2 rounded-lg flex-shrink-0">
+                <Map className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+              <div className="min-w-0">
+                <h1 className="text-sm sm:text-lg lg:text-xl font-bold text-gray-900 dark:text-white truncate">
                   {t('app.title')}
                 </h1>
-                <p className="text-xs text-gray-600 dark:text-gray-400 hidden sm:block">
+                <p className="text-xs text-gray-600 dark:text-gray-400 hidden md:block truncate">
                   {t('app.subtitle')}
                 </p>
               </div>
@@ -198,14 +198,14 @@ function App() {
             </nav>
 
             {/* Controls */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
               {/* Language Switcher */}
               <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
                 {['en', 'lv', 'ru'].map((lang) => (
                   <button
                     key={lang}
                     onClick={() => changeLanguage(lang)}
-                    className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
+                    className={`px-1.5 sm:px-2 py-1 text-xs font-medium rounded transition-colors ${
                       i18n.language === lang
                         ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
                         : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
@@ -267,8 +267,10 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {renderTabContent()}
+      <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-6">
+        <div className="w-full overflow-x-hidden">
+          {renderTabContent()}
+        </div>
       </main>
 
       {/* Footer */}
