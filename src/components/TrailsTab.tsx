@@ -323,13 +323,13 @@ const TrailsTab: React.FC = () => {
                   {trail.features.slice(0, 3).map((feature, index) => (
                     <span
                       key={index}
-                      className="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full"
+                      className="px-2 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs rounded-full"
                     >
                       {feature}
                     </span>
                   ))}
                   {trail.features.length > 3 && (
-                    <span className="px-2 py-1 bg-gray-50 text-gray-600 text-xs rounded-full">
+                    <span className="px-2 py-1 bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs rounded-full">
                       +{trail.features.length - 3} more
                     </span>
                   )}
@@ -446,13 +446,13 @@ const TrailsTab: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-gray-900 mb-3">Features</h4>
+                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Features</h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedTrail.features.map((feature, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full"
+                        className="px-2 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs rounded-full"
                       >
                         {feature}
                       </span>
@@ -460,8 +460,8 @@ const TrailsTab: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-gray-900 mb-3">Contact</h4>
+                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Contact</h4>
                   <div className="space-y-2 text-sm">
                     {selectedTrail.contact?.phone && (
                       <div>
