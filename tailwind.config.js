@@ -1,9 +1,144 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [],
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./public/index.html"
+  ],
+  darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'adventure': ['Inter', 'system-ui', 'sans-serif'],
+      },
+      colors: {
+        nature: {
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#4ade80',
+          500: '#22c55e',
+          600: '#16a34a',
+          700: '#15803d',
+          800: '#166534',
+          900: '#14532d',
+        },
+        adventure: {
+          50: '#fef7ee',
+          100: '#fdedd3',
+          200: '#fbd7a5',
+          300: '#f8b96d',
+          400: '#f59332',
+          500: '#f2750a',
+          600: '#e35d05',
+          700: '#bc4508',
+          800: '#95370e',
+          900: '#772f0f',
+        }
+      },
+      animation: {
+        'float': 'float 6s ease-in-out infinite',
+        'pulse-slow': 'pulse 3s ease-in-out infinite',
+        'bounce-slow': 'bounce 2s ease-in-out infinite',
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'slide-up': 'slideUp 0.3s ease-out',
+        'slide-down': 'slideDown 0.3s ease-out',
+        'scale-in': 'scaleIn 0.2s ease-out',
+        'wiggle': 'wiggle 1s ease-in-out infinite',
+        'glow': 'glow 2s ease-in-out infinite alternate',
+        'shimmer': 'shimmer 2s linear infinite',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        slideDown: {
+          '0%': { transform: 'translateY(-10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        scaleIn: {
+          '0%': { transform: 'scale(0.9)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+          '50%': { transform: 'rotate(3deg)' },
+        },
+        glow: {
+          '0%': { boxShadow: '0 0 5px rgba(34, 197, 94, 0.5)' },
+          '100%': { boxShadow: '0 0 20px rgba(34, 197, 94, 0.8)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+      },
+      backdropBlur: {
+        xs: '2px',
+      }
+    },
   },
-  plugins: [],
+  plugins: [
+    require('daisyui'),
+  ],
+  daisyui: {
+    themes: [
+      {
+        adventure: {
+          "primary": "#16a34a",
+          "primary-focus": "#15803d", 
+          "primary-content": "#ffffff",
+          "secondary": "#f59332",
+          "secondary-focus": "#e35d05",
+          "secondary-content": "#ffffff",
+          "accent": "#22c55e",
+          "accent-focus": "#16a34a",
+          "accent-content": "#ffffff",
+          "neutral": "#374151",
+          "neutral-focus": "#1f2937",
+          "neutral-content": "#f3f4f6",
+          "base-100": "#ffffff",
+          "base-200": "#f9fafb",
+          "base-300": "#f3f4f6",
+          "base-content": "#1f2937",
+          "info": "#3b82f6",
+          "success": "#10b981",
+          "warning": "#f59e0b",
+          "error": "#ef4444",
+        },
+        dark: {
+          "primary": "#22c55e",
+          "primary-focus": "#16a34a",
+          "primary-content": "#ffffff",
+          "secondary": "#f59332",
+          "secondary-focus": "#e35d05",
+          "secondary-content": "#ffffff",
+          "accent": "#4ade80",
+          "accent-focus": "#22c55e",
+          "accent-content": "#ffffff",
+          "neutral": "#1f2937",
+          "neutral-focus": "#111827",
+          "neutral-content": "#f3f4f6",
+          "base-100": "#1f2937",
+          "base-200": "#374151",
+          "base-300": "#4b5563",
+          "base-content": "#f3f4f6",
+          "info": "#3b82f6",
+          "success": "#10b981",
+          "warning": "#f59e0b",
+          "error": "#ef4444",
+        }
+      }
+    ],
+  },
 }
 
