@@ -209,7 +209,7 @@ const GamificationTab: React.FC = () => {
     };
 
     loadData();
-  }, [userXP, streak]);
+  }, [userXP, streak, levels]);
 
 
 
@@ -396,7 +396,6 @@ const GamificationTab: React.FC = () => {
                 <div className="space-y-4">
                   {challenges.slice(0, 2).map((challenge) => {
                     const Icon = challenge.icon;
-                    const progressPercentage = (challenge.progress / challenge.target) * 100;
                     return (
                       <div key={challenge.id} className="space-y-2">
                         <div className="flex items-center gap-2">
