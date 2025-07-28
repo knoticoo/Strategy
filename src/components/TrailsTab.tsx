@@ -96,7 +96,14 @@ const TrailsTab: React.FC = () => {
         duration: trail.duration,
         elevation: trail.elevation_gain,
         season: trail.best_season?.split(',') || ['all'],
-        features: trail.features ? JSON.parse(trail.features) : [],
+        features: (() => {
+          try {
+            return trail.features ? JSON.parse(trail.features) : [];
+          } catch (error) {
+            console.error('Error parsing trail features:', error, trail.features);
+            return [];
+          }
+        })(),
         images: [trail.image_url || '/images/default-trail.jpg'],
         facilities: [],
         rating: 4.5, // Default rating

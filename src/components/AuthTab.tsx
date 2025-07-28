@@ -256,16 +256,21 @@ const AuthTab: React.FC = () => {
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && currentUser) {
+      console.log('Starting avatar upload for user:', currentUser.id);
       const avatarUrl = await handleFileUpload(file);
       if (avatarUrl) {
         try {
+          console.log('Updating user avatar with URL:', avatarUrl);
           await api.updateUser(currentUser.id, { avatar_url: avatarUrl });
           // Update current user context
           const updatedUser = { ...currentUser, avatar: avatarUrl };
           login(updatedUser);
-        } catch (error) {
+          console.log('Avatar updated successfully');
+          alert('Avatar updated successfully!');
+        } catch (error: any) {
           console.error('Error updating avatar:', error);
-          alert('Error updating avatar');
+          const errorMessage = error.response?.data?.error || error.message || 'Unknown error';
+          alert(`Error updating avatar: ${errorMessage}`);
         }
       }
     }
@@ -916,14 +921,22 @@ const AuthTab: React.FC = () => {
                   {trail.region} • {trail.difficulty} • {trail.distance}
                 </p>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {(trail.features ? JSON.parse(trail.features) : []).slice(0, 3).map((feature: string, index: number) => (
-                    <span
-                      key={index}
-                      className="px-2 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs rounded-full"
-                    >
-                      {feature}
-                    </span>
-                  ))}
+                  {(() => {
+                    try {
+                      const features = trail.features ? JSON.parse(trail.features) : [];
+                      return Array.isArray(features) ? features.slice(0, 3).map((feature: string, index: number) => (
+                        <span
+                          key={index}
+                          className="px-2 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs rounded-full"
+                        >
+                          {feature}
+                        </span>
+                      )) : [];
+                    } catch (error) {
+                      console.error('Error parsing trail features:', error, trail.features);
+                      return [];
+                    }
+                  })()}
                 </div>
               </div>
               <div className="flex gap-2">
