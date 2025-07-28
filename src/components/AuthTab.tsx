@@ -18,7 +18,7 @@ import {
   Map
 } from 'lucide-react';
 
-interface LocalAppUser {
+// interface LocalAppUser {
   id: string;
   name: string;
   email: string;
@@ -31,7 +31,7 @@ interface LocalAppUser {
     points: number;
     level: number;
   };
-}
+// }
 
 const AuthTab: React.FC = () => {
   const { t } = useTranslation();
@@ -62,7 +62,7 @@ const AuthTab: React.FC = () => {
         id: '1',
         name: formData.name || 'Adventure Explorer',
         email: formData.email,
-        avatar: 'https://picsum.photos/120/120?random=100',
+        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face',
         location: 'Riga, Latvia',
         joinDate: '2024-01-15',
         stats: {
@@ -107,6 +107,21 @@ const AuthTab: React.FC = () => {
     });
   };
 
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const avatarUrl = event.target?.result as string;
+        if (currentUser) {
+          const updatedUser = { ...currentUser, avatar: avatarUrl };
+          login(updatedUser); // This will update the user in context
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   if (isLoggedIn && currentUser) {
     return (
       <div className="space-y-6">
@@ -126,13 +141,19 @@ const AuthTab: React.FC = () => {
             {/* Avatar */}
             <div className="relative">
               <img
-                src={currentUser.avatar || 'https://picsum.photos/120/120?random=101'}
+                src={currentUser.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face'}
                 alt={currentUser.name}
-                className="w-24 h-24 rounded-full border-4 border-green-500"
+                className="w-24 h-24 rounded-full border-4 border-green-500 object-cover"
               />
-              <button className="absolute bottom-0 right-0 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors">
+              <label className="absolute bottom-0 right-0 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors cursor-pointer">
                 <Camera className="h-4 w-4" />
-              </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                />
+              </label>
             </div>
 
             {/* User Info */}
