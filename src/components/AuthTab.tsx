@@ -36,7 +36,9 @@ const AuthTab: React.FC = () => {
   const { t } = useTranslation();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem('isLoggedIn') === 'true';
+  });
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -44,7 +46,10 @@ const AuthTab: React.FC = () => {
     confirmPassword: '',
     location: ''
   });
-  const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
+  const [currentUser, setCurrentUser] = useState<AppUser | null>(() => {
+    const savedUser = localStorage.getItem('currentUser');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -62,7 +67,7 @@ const AuthTab: React.FC = () => {
         id: '1',
         name: formData.name || 'Adventure Explorer',
         email: formData.email,
-        avatar: 'https://via.placeholder.com/100x100/22c55e/ffffff?text=AE',
+        avatar: 'https://placehold.co/120x120/22c55e/ffffff/png?text=AE',
         location: 'Riga, Latvia',
         joinDate: '2024-01-15',
         stats: {
@@ -74,6 +79,8 @@ const AuthTab: React.FC = () => {
       };
       setCurrentUser(mockUser);
       setIsLoggedIn(true);
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('currentUser', JSON.stringify(mockUser));
     } else {
       // Mock registration
       if (formData.password !== formData.confirmPassword) {
@@ -95,12 +102,16 @@ const AuthTab: React.FC = () => {
       };
       setCurrentUser(newUser);
       setIsLoggedIn(true);
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('currentUser', JSON.stringify(newUser));
     }
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setCurrentUser(null);
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('currentUser');
     setFormData({
       name: '',
       email: '',
@@ -129,7 +140,7 @@ const AuthTab: React.FC = () => {
             {/* Avatar */}
             <div className="relative">
               <img
-                src={currentUser.avatar || 'https://via.placeholder.com/120x120/22c55e/ffffff?text=User'}
+                src={currentUser.avatar || 'https://placehold.co/120x120/22c55e/ffffff/png?text=User'}
                 alt={currentUser.name}
                 className="w-24 h-24 rounded-full border-4 border-green-500"
               />
