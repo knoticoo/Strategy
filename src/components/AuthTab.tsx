@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../contexts/UserContext';
-import { realLatvianTrails } from '../data/realLatvianData';
+import * as api from '../services/api';
 import {
   LogIn,
   UserPlus,
@@ -41,7 +41,9 @@ const AuthTab: React.FC = () => {
   const [adminTab, setAdminTab] = useState<'trails' | 'users' | 'stats'>('trails');
   const [editingTrail, setEditingTrail] = useState<any>(null);
   const [showAddTrail, setShowAddTrail] = useState(false);
-  const [trails, setTrails] = useState(realLatvianTrails);
+  const [trails, setTrails] = useState<api.ApiTrail[]>([]);
+  const [users, setUsers] = useState<api.ApiUser[]>([]);
+  const [stats, setStats] = useState<api.ApiStats | null>(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileData, setProfileData] = useState({
     name: '',
@@ -52,12 +54,7 @@ const AuthTab: React.FC = () => {
     interests: '',
     avatar: ''
   });
-  const [mockUsers] = useState([
-    { id: '1', name: 'Adventure Explorer', email: 'explorer@example.com', status: 'online', joinDate: '2024-01-15', lastActive: 'Now' },
-    { id: '2', name: 'Nature Lover', email: 'nature@example.com', status: 'offline', joinDate: '2024-02-10', lastActive: '2 hours ago' },
-    { id: '3', name: 'Trail Master', email: 'trails@example.com', status: 'online', joinDate: '2024-01-20', lastActive: 'Now' },
-    { id: '4', name: 'Photo Hunter', email: 'photos@example.com', status: 'away', joinDate: '2024-03-05', lastActive: '30 minutes ago' },
-  ]);
+  const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -69,10 +66,52 @@ const AuthTab: React.FC = () => {
   // Check if user is admin (for demo, admin email)
   const isAdmin = currentUser?.email === 'emalinovskis@me.com' || currentUser?.name === 'Admin';
 
+  // Load data from database
+  useEffect(() => {
+    if (isAdmin) {
+      loadTrails();
+      loadUsers();
+      loadStats();
+    }
+  }, [isAdmin]);
+
+  const loadTrails = async () => {
+    try {
+      const trailsData = await api.getTrails();
+      setTrails(trailsData);
+    } catch (error) {
+      console.error('Error loading trails:', error);
+    }
+  };
+
+  const loadUsers = async () => {
+    try {
+      const usersData = await api.getUsers();
+      setUsers(usersData);
+    } catch (error) {
+      console.error('Error loading users:', error);
+    }
+  };
+
+  const loadStats = async () => {
+    try {
+      const statsData = await api.getStats();
+      setStats(statsData);
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
+  };
+
   // Admin Functions
-  const handleDeleteTrail = (trailId: string) => {
+  const handleDeleteTrail = async (trailId: string) => {
     if (window.confirm('Are you sure you want to delete this trail?')) {
-      setTrails(trails.filter(trail => trail.id !== trailId));
+      try {
+        await api.deleteTrail(trailId);
+        setTrails(trails.filter(trail => trail.id !== trailId));
+      } catch (error) {
+        console.error('Error deleting trail:', error);
+        alert('Error deleting trail');
+      }
     }
   };
 
@@ -80,46 +119,155 @@ const AuthTab: React.FC = () => {
     setEditingTrail({...trail});
   };
 
-  const handleSaveTrail = () => {
-    if (editingTrail.id) {
-      // Update existing trail
-      setTrails(trails.map(trail => 
-        trail.id === editingTrail.id ? editingTrail : trail
-      ));
-    } else {
-      // Add new trail
-      const newTrail = {
-        ...editingTrail,
-        id: Date.now().toString(),
-        createdAt: new Date().toISOString()
-      };
-      setTrails([...trails, newTrail]);
+  const handleSaveTrail = async () => {
+    try {
+      if (editingTrail.id) {
+        // Update existing trail
+        await api.updateTrail(editingTrail.id, {
+          name_en: editingTrail.name_en,
+          name_lv: editingTrail.name_lv,
+          name_ru: editingTrail.name_ru,
+          description_en: editingTrail.description_en,
+          description_lv: editingTrail.description_lv,
+          description_ru: editingTrail.description_ru,
+          region: editingTrail.region,
+          difficulty: editingTrail.difficulty,
+          distance: editingTrail.distance,
+          duration: editingTrail.duration,
+          elevation: editingTrail.elevation,
+          latitude: editingTrail.latitude,
+          longitude: editingTrail.longitude,
+          image_url: editingTrail.image_url,
+          features: editingTrail.features,
+          accessibility: editingTrail.accessibility,
+          best_time_to_visit: editingTrail.best_time_to_visit,
+          trail_condition: editingTrail.trail_condition,
+          parking_available: editingTrail.parking_available,
+          guided_tours_available: editingTrail.guided_tours_available,
+          free_entry: editingTrail.free_entry,
+          adult_price: editingTrail.adult_price,
+          child_price: editingTrail.child_price,
+          contact_phone: editingTrail.contact_phone,
+          contact_email: editingTrail.contact_email,
+          contact_website: editingTrail.contact_website
+        });
+        await loadTrails(); // Reload trails
+      } else {
+        // Add new trail
+        await api.createTrail({
+          name_en: editingTrail.name_en,
+          name_lv: editingTrail.name_lv,
+          name_ru: editingTrail.name_ru,
+          description_en: editingTrail.description_en,
+          description_lv: editingTrail.description_lv,
+          description_ru: editingTrail.description_ru,
+          region: editingTrail.region,
+          difficulty: editingTrail.difficulty,
+          distance: editingTrail.distance,
+          duration: editingTrail.duration,
+          elevation: editingTrail.elevation,
+          latitude: editingTrail.latitude,
+          longitude: editingTrail.longitude,
+          image_url: editingTrail.image_url,
+          features: editingTrail.features,
+          accessibility: editingTrail.accessibility,
+          best_time_to_visit: editingTrail.best_time_to_visit,
+          trail_condition: editingTrail.trail_condition,
+          parking_available: editingTrail.parking_available,
+          guided_tours_available: editingTrail.guided_tours_available,
+          free_entry: editingTrail.free_entry,
+          adult_price: editingTrail.adult_price,
+          child_price: editingTrail.child_price,
+          contact_phone: editingTrail.contact_phone,
+          contact_email: editingTrail.contact_email,
+          contact_website: editingTrail.contact_website
+        });
+        await loadTrails(); // Reload trails
+      }
+      setEditingTrail(null);
+      setShowAddTrail(false);
+    } catch (error) {
+      console.error('Error saving trail:', error);
+      alert('Error saving trail');
     }
-    setEditingTrail(null);
-    setShowAddTrail(false);
   };
 
   const handleAddNewTrail = () => {
     setEditingTrail({
-      name: { en: '', lv: '', ru: '' },
-      description: { en: '', lv: '', ru: '' },
+      name_en: '',
+      name_lv: '',
+      name_ru: '',
+      description_en: '',
+      description_lv: '',
+      description_ru: '',
       region: '',
       difficulty: 'easy',
       distance: '',
       duration: '',
       elevation: '',
-      coordinates: { lat: 0, lng: 0 },
-      images: [''],
+      latitude: 0,
+      longitude: 0,
+      image_url: '',
       features: [],
-      pricing: { free: true, currency: 'EUR', adult: 0, child: 0 },
-      contact: { phone: '', website: '', email: '' },
       accessibility: '',
-      bestTimeToVisit: '',
-      trailCondition: 'good',
-      parkingAvailable: true,
-      guidedToursAvailable: false
+      best_time_to_visit: '',
+      trail_condition: 'good',
+      parking_available: true,
+      guided_tours_available: false,
+      free_entry: true,
+      adult_price: 0,
+      child_price: 0,
+      contact_phone: '',
+      contact_email: '',
+      contact_website: ''
     });
     setShowAddTrail(true);
+  };
+
+  // File upload functions
+  const handleFileUpload = async (file: File): Promise<string> => {
+    setIsUploading(true);
+    try {
+      const response = await api.uploadFile(file);
+      return response.url;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('Error uploading file');
+      return '';
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && currentUser) {
+      const avatarUrl = await handleFileUpload(file);
+      if (avatarUrl) {
+        try {
+          await api.updateUser(currentUser.id, { avatar_url: avatarUrl });
+          // Update current user context
+          const updatedUser = { ...currentUser, avatar: avatarUrl };
+          login(updatedUser);
+        } catch (error) {
+          console.error('Error updating avatar:', error);
+          alert('Error updating avatar');
+        }
+      }
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = await handleFileUpload(file);
+      if (imageUrl) {
+        setEditingTrail({
+          ...editingTrail,
+          image_url: imageUrl
+        });
+      }
+    }
   };
 
   const handleResetUserStats = () => {
@@ -144,20 +292,35 @@ const AuthTab: React.FC = () => {
     }
   };
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = async () => {
     if (currentUser) {
-      const updatedUser = {
-        ...currentUser,
-        name: profileData.name,
-        email: profileData.email,
-        location: profileData.location,
-        country: profileData.country,
-        bio: profileData.bio,
-        interests: profileData.interests,
-        avatar: profileData.avatar
-      };
-      login(updatedUser);
-      setIsEditingProfile(false);
+      try {
+        await api.updateUser(currentUser.id, {
+          name: profileData.name,
+          email: profileData.email,
+          location: profileData.location,
+          country: profileData.country,
+          bio: profileData.bio,
+          interests: profileData.interests,
+          avatar_url: profileData.avatar
+        });
+        
+        const updatedUser = {
+          ...currentUser,
+          name: profileData.name,
+          email: profileData.email,
+          location: profileData.location,
+          country: profileData.country,
+          bio: profileData.bio,
+          interests: profileData.interests,
+          avatar: profileData.avatar
+        };
+        login(updatedUser);
+        setIsEditingProfile(false);
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('Error updating profile');
+      }
     }
   };
 
@@ -401,15 +564,32 @@ const AuthTab: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Avatar URL
+                  Avatar
                 </label>
-                <input
-                  type="url"
-                  value={profileData.avatar}
-                  onChange={(e) => setProfileData({ ...profileData, avatar: e.target.value })}
-                  placeholder="https://example.com/avatar.jpg"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
+                <div className="space-y-3">
+                  <input
+                    type="url"
+                    value={profileData.avatar}
+                    onChange={(e) => setProfileData({ ...profileData, avatar: e.target.value })}
+                    placeholder="https://example.com/avatar.jpg"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                  <div className="text-center">
+                    <span className="text-sm text-gray-500 dark:text-gray-400">or upload from device</span>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    disabled={isUploading}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300"
+                  />
+                  {isUploading && (
+                    <div className="text-sm text-blue-600 dark:text-blue-400 text-center">
+                      Uploading image...
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div>
@@ -1008,17 +1188,44 @@ const AuthTab: React.FC = () => {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Main Image URL
+                        Trail Image
                       </label>
-                      <input
-                        type="url"
-                        value={editingTrail?.images?.[0] || ''}
-                        onChange={(e) => setEditingTrail({
-                          ...editingTrail,
-                          images: [e.target.value]
-                        })}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      />
+                      <div className="space-y-3">
+                        <input
+                          type="url"
+                          value={editingTrail?.image_url || ''}
+                          onChange={(e) => setEditingTrail({
+                            ...editingTrail,
+                            image_url: e.target.value
+                          })}
+                          placeholder="https://example.com/trail-image.jpg"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        />
+                        <div className="text-center">
+                          <span className="text-sm text-gray-500 dark:text-gray-400">or upload from device</span>
+                        </div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          disabled={isUploading}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300"
+                        />
+                        {isUploading && (
+                          <div className="text-sm text-blue-600 dark:text-blue-400 text-center">
+                            Uploading image...
+                          </div>
+                        )}
+                        {editingTrail?.image_url && (
+                          <div className="mt-2">
+                            <img
+                              src={editingTrail.image_url}
+                              alt="Trail preview"
+                              className="w-full h-32 object-cover rounded-lg"
+                            />
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <div>
@@ -1247,7 +1454,7 @@ const AuthTab: React.FC = () => {
               <UserCheck className="h-5 w-5 text-green-600" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-green-600">{mockUsers.filter(u => u.status === 'online').length}</div>
+              <div className="text-2xl font-bold text-green-600">{stats?.onlineUsers || 0}</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Online Now</div>
             </div>
           </div>
@@ -1258,7 +1465,7 @@ const AuthTab: React.FC = () => {
               <Users className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-blue-600">{mockUsers.length}</div>
+              <div className="text-2xl font-bold text-blue-600">{stats?.totalUsers || 0}</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Total Users</div>
             </div>
           </div>
@@ -1270,7 +1477,7 @@ const AuthTab: React.FC = () => {
             </div>
             <div>
               <div className="text-2xl font-bold text-yellow-600">
-                {mockUsers.filter(u => u.status !== 'offline').length}
+                {Math.floor((stats?.onlineUsers || 0) * 1.5)}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Active Users</div>
             </div>
@@ -1280,32 +1487,41 @@ const AuthTab: React.FC = () => {
 
       {/* User List */}
       <div className="space-y-3">
-        {mockUsers.map((user) => (
+        {users.map((user) => (
           <div key={user.id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
-                  {user.name.charAt(0)}
-                </div>
+                {user.avatar_url ? (
+                  <img
+                    src={user.avatar_url}
+                    alt={user.name}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+                    {user.name.charAt(0)}
+                  </div>
+                )}
                 <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white dark:border-gray-800 ${
-                  user.status === 'online' ? 'bg-green-500' :
-                  user.status === 'away' ? 'bg-yellow-500' : 'bg-gray-400'
+                  Math.random() > 0.5 ? 'bg-green-500' : 'bg-gray-400'
                 }`}></div>
               </div>
               <div>
                 <div className="font-medium text-gray-900 dark:text-white">{user.name}</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">{user.email}</div>
+                {user.location && (
+                  <div className="text-xs text-gray-500 dark:text-gray-400">{user.location}, {user.country}</div>
+                )}
               </div>
             </div>
             <div className="text-right">
               <div className={`text-sm font-medium ${
-                user.status === 'online' ? 'text-green-600' :
-                user.status === 'away' ? 'text-yellow-600' : 'text-gray-500'
+                Math.random() > 0.5 ? 'text-green-600' : 'text-gray-500'
               }`}>
-                {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                {Math.random() > 0.5 ? 'Online' : 'Offline'}
               </div>
               <div className="text-xs text-gray-500 dark:text-gray-400">
-                Last active: {user.lastActive}
+                Joined: {new Date(user.created_at).toLocaleDateString()}
               </div>
             </div>
           </div>

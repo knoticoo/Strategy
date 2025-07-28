@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserContext';
+import * as api from '../services/api';
 import {
   Users,
   Camera,
@@ -14,10 +15,12 @@ import {
 } from 'lucide-react';
 
 const CommunityTab: React.FC = () => {
-  const { currentUser, isLoggedIn, communityPosts, addCommunityPost, toggleLike, addComment } = useUser();
+  const { currentUser, isLoggedIn } = useUser();
+  const [communityPosts, setCommunityPosts] = useState<api.ApiCommunityPost[]>([]);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showComments, setShowComments] = useState<string | null>(null);
   const [newComment, setNewComment] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
   const [newPost, setNewPost] = useState({
     content: '',
     type: 'photo' as 'photo' | 'check-in' | 'review' | 'achievement',
@@ -25,25 +28,76 @@ const CommunityTab: React.FC = () => {
     image: ''
   });
 
-  const handleSubmitPost = (e: React.FormEvent) => {
+  // Load community posts from database
+  useEffect(() => {
+    loadCommunityPosts();
+  }, []);
+
+  const loadCommunityPosts = async () => {
+    try {
+      const posts = await api.getCommunityPosts();
+      setCommunityPosts(posts);
+    } catch (error) {
+      console.error('Error loading community posts:', error);
+    }
+  };
+
+  // File upload function
+  const handleFileUpload = async (file: File): Promise<string> => {
+    setIsUploading(true);
+    try {
+      const response = await api.uploadFile(file);
+      return response.url;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('Error uploading file');
+      return '';
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = await handleFileUpload(file);
+      if (imageUrl) {
+        setNewPost({
+          ...newPost,
+          image: imageUrl
+        });
+      }
+    }
+  };
+
+  const handleSubmitPost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPost.content.trim()) return;
+    if (!newPost.content.trim() || !currentUser) return;
 
-    addCommunityPost({
-      type: newPost.type,
-      content: newPost.content,
-      location: newPost.location || undefined,
-      image: newPost.image || undefined
-    });
+    try {
+      await api.createCommunityPost({
+        user_id: currentUser.id,
+        type: newPost.type,
+        content: newPost.content,
+        location: newPost.location || undefined,
+        image_url: newPost.image || undefined
+      });
 
-    // Reset form
-    setNewPost({
-      content: '',
-      type: 'photo',
-      location: '',
-      image: ''
-    });
-    setShowCreatePost(false);
+      // Reload posts
+      await loadCommunityPosts();
+
+      // Reset form
+      setNewPost({
+        content: '',
+        type: 'photo',
+        location: '',
+        image: ''
+      });
+      setShowCreatePost(false);
+    } catch (error) {
+      console.error('Error creating post:', error);
+      alert('Error creating post');
+    }
   };
 
   const handleAddComment = (postId: string) => {
@@ -226,9 +280,9 @@ const CommunityTab: React.FC = () => {
               )}
 
               {newPost.type === 'photo' && (
-                <div className="space-y-2">
+                <div className="space-y-4">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    📸 Image URL
+                    📸 Photo
                   </label>
                   <input
                     type="url"
@@ -237,6 +291,30 @@ const CommunityTab: React.FC = () => {
                     placeholder="Paste your image URL here (optional)"
                     className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-200"
                   />
+                  <div className="text-center">
+                    <span className="text-sm text-gray-500 dark:text-gray-400">or upload from gallery</span>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={isUploading}
+                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 dark:file:bg-green-900 dark:file:text-green-300 transition-all duration-200"
+                  />
+                  {isUploading && (
+                    <div className="text-sm text-green-600 dark:text-green-400 text-center">
+                      Uploading photo...
+                    </div>
+                  )}
+                  {newPost.image && (
+                    <div className="mt-3">
+                      <img
+                        src={newPost.image}
+                        alt="Post preview"
+                        className="w-full h-48 object-cover rounded-xl"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -279,15 +357,21 @@ const CommunityTab: React.FC = () => {
               {/* Post Header */}
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <img
-                    src={post.userAvatar}
-                    alt={post.userName}
-                    className="w-10 h-10 rounded-full"
-                  />
+                  {post.user_avatar ? (
+                    <img
+                      src={post.user_avatar}
+                      alt={post.user_name}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+                      {post.user_name.charAt(0)}
+                    </div>
+                  )}
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <h4 className="font-semibold text-gray-900 dark:text-white">
-                        {post.userName}
+                        {post.user_name}
                       </h4>
                       <div className={`p-1 rounded-full ${getPostTypeColor(post.type)}`}>
                         {getPostTypeIcon(post.type)}
@@ -295,7 +379,7 @@ const CommunityTab: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                       <Clock className="h-3 w-3" />
-                      <span>{formatTimestamp(post.timestamp)}</span>
+                      <span>{formatTimestamp(post.created_at)}</span>
                       {post.location && (
                         <>
                           <span>•</span>
@@ -313,10 +397,10 @@ const CommunityTab: React.FC = () => {
                 </p>
 
                 {/* Post Image */}
-                {post.image && (
+                {post.image_url && (
                   <div className="mb-4">
                     <img
-                      src={post.image}
+                      src={post.image_url}
                       alt="Post content"
                       className="w-full h-64 object-cover rounded-lg"
                     />
@@ -326,22 +410,16 @@ const CommunityTab: React.FC = () => {
                 {/* Post Actions */}
                 <div className="flex items-center gap-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                   <button
-                    onClick={() => toggleLike(post.id)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
-                      post.likedBy.includes(currentUser?.id || '')
-                        ? 'text-red-600 bg-red-50 dark:bg-red-900/20'
-                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
-                    }`}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
-                    <Heart className={`h-5 w-5 ${post.likedBy.includes(currentUser?.id || '') ? 'fill-current' : ''}`} />
-                    <span>{post.likes}</span>
+                    <Heart className="h-5 w-5" />
+                    <span>{post.likes_count}</span>
                   </button>
                                    <button 
-                   onClick={() => setShowComments(showComments === post.id ? null : post.id)}
                    className="flex items-center gap-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                  >
                    <MessageCircle className="h-5 w-5" />
-                   <span>{post.comments.length}</span>
+                   <span>0</span>
                  </button>
                   <button className="flex items-center gap-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
                     <Share className="h-5 w-5" />
