@@ -400,15 +400,21 @@ const AuthTab: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    setFormData({
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      location: ''
-    });
+  const handleLogout = async () => {
+    try {
+      await logout();
+      // Reset form and switch to login mode
+      setFormData({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        location: ''
+      });
+      setIsLogin(true); // Switch back to login form
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   // Render Functions
