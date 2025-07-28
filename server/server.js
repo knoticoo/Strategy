@@ -9,6 +9,9 @@ const { v4: uuidv4 } = require('uuid');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Simple session tracking
+let onlineUsers = new Set();
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -247,17 +250,26 @@ function insertSampleData() {
 // API Routes
 
 // File upload endpoint
-app.post('/api/upload', upload.single('image'), (req, res) => {
-  try {
+app.post('/api/upload', (req, res) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      console.error('Upload error:', err);
+      return res.status(400).json({ error: err.message });
+    }
+    
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
     
-    const fileUrl = `http://localhost:${PORT}/uploads/${req.file.filename}`;
-    res.json({ url: fileUrl });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    try {
+      const fileUrl = `http://localhost:${PORT}/uploads/${req.file.filename}`;
+      console.log('File uploaded successfully:', fileUrl);
+      res.json({ url: fileUrl });
+    } catch (error) {
+      console.error('Server error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
 });
 
 // User routes
@@ -417,6 +429,30 @@ app.post('/api/community-posts', (req, res) => {
   });
 });
 
+// Get recent activity
+app.get('/api/recent-activity', (req, res) => {
+  db.all(`
+    SELECT 
+      cp.id,
+      cp.content,
+      cp.image_url,
+      cp.created_at,
+      u.name as user_name,
+      u.avatar_url as user_avatar,
+      'post' as type
+    FROM community_posts cp
+    JOIN users u ON cp.user_id = u.id
+    ORDER BY cp.created_at DESC
+    LIMIT 10
+  `, (err, activities) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json(activities);
+    }
+  });
+});
+
 // Statistics endpoint
 app.get('/api/stats', (req, res) => {
   const stats = {};
@@ -445,8 +481,8 @@ app.get('/api/stats', (req, res) => {
         }
         stats.totalPosts = postCount.count;
         
-        // Get online users (mock for now)
-        stats.onlineUsers = Math.floor(Math.random() * 5) + 1;
+        // Get online users from session tracking
+        stats.onlineUsers = onlineUsers.size;
         
         res.json(stats);
       });
@@ -466,6 +502,9 @@ app.post('/api/auth/login', (req, res) => {
     } else {
       // In production, verify password hash
       if (email === 'emalinovskis@me.com' && password === 'Millie1991') {
+        // Add user to online users
+        onlineUsers.add(user.id);
+        
         res.json({
           user: {
             id: user.id,

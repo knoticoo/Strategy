@@ -36,11 +36,12 @@ export interface ApiTrail {
   difficulty: string;
   distance: string;
   duration: string;
-  elevation: string;
+  elevation_gain: string;
   latitude: number;
   longitude: number;
   image_url: string;
-  features: string[];
+  features: string;
+  best_season: string;
   accessibility: string;
   best_time_to_visit: string;
   trail_condition: string;
@@ -150,6 +151,11 @@ export const createCommunityPost = async (postData: {
 // Statistics API
 export const getStats = async (): Promise<ApiStats> => {
   const response = await api.get('/stats');
+  return response.data;
+};
+
+export const getRecentActivity = async () => {
+  const response = await api.get('/recent-activity');
   return response.data;
 };
 
