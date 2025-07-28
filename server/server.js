@@ -13,9 +13,20 @@ const PORT = process.env.PORT || 5000;
 let onlineUsers = new Set();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
+
+// Add request logging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
 
 // Create uploads directory if it doesn't exist
 if (!fs.existsSync('uploads')) {
@@ -248,6 +259,16 @@ function insertSampleData() {
 }
 
 // API Routes
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    port: PORT,
+    onlineUsers: onlineUsers.size
+  });
+});
 
 // File upload endpoint
 app.post('/api/upload', (req, res) => {
