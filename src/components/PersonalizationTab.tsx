@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Brain,
   TrendingUp,
   Target,
-  Calendar,
   Award,
   Activity,
   BarChart3,
   Zap,
   Clock,
   MapPin,
-  Star,
   Heart,
   Route,
   Mountain,
@@ -19,7 +16,6 @@ import {
   Smartphone,
   Watch,
   Settings,
-  Filter,
   Sparkles,
   CheckCircle,
   ArrowRight
@@ -80,7 +76,6 @@ interface SmartRecommendation {
 }
 
 const PersonalizationTab: React.FC = () => {
-  const { t } = useTranslation();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [recommendations, setRecommendations] = useState<SmartRecommendation[]>([]);
   const [activeTab, setActiveTab] = useState<'overview' | 'recommendations' | 'analytics' | 'achievements'>('overview');
@@ -272,17 +267,7 @@ const PersonalizationTab: React.FC = () => {
     }
   };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'distance': return '👣';
-      case 'trails': return '🗺️';
-      case 'time': return '⏰';
-      case 'social': return '👥';
-      case 'safety': return '🛡️';
-      case 'seasonal': return '🌦️';
-      default: return '⭐';
-    }
-  };
+
 
   if (loading || !userProfile) {
     return (

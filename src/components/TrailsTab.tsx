@@ -6,25 +6,20 @@ import {
   Map,
   List,
   Search,
-  Filter,
   MapPin,
   Clock,
   TrendingUp,
   Star,
   Route,
-  Thermometer,
   Navigation,
-  Car,
   Heart,
   Share,
   Info,
-  ChevronDown,
-  ChevronUp,
   X
 } from 'lucide-react';
 
 const TrailsTab: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const [trails, setTrails] = useState<RealLocation[]>([]);
   const [filteredTrails, setFilteredTrails] = useState<RealLocation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,8 +37,39 @@ const TrailsTab: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    filterTrails();
-  }, [trails, searchTerm, selectedDifficulty, selectedRegion, selectedSeason]);
+    const filterData = () => {
+      let filtered = [...trails];
+
+      // Search filter
+      if (searchTerm) {
+        filtered = filtered.filter(trail =>
+          trail.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          trail.description[i18n.language as keyof typeof trail.description]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          trail.region.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          trail.features.some(feature => feature.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+      }
+
+      // Difficulty filter
+      if (selectedDifficulty !== 'all') {
+        filtered = filtered.filter(trail => trail.difficulty === selectedDifficulty);
+      }
+
+      // Region filter
+      if (selectedRegion !== 'all') {
+        filtered = filtered.filter(trail => trail.region === selectedRegion);
+      }
+
+      // Season filter
+      if (selectedSeason !== 'all') {
+        filtered = filtered.filter(trail => trail.season.includes(selectedSeason));
+      }
+
+      setFilteredTrails(filtered);
+    };
+
+    filterData();
+  }, [trails, searchTerm, selectedDifficulty, selectedRegion, selectedSeason, i18n.language]);
 
   const loadTrails = async () => {
     setLoading(true);
@@ -68,36 +94,7 @@ const TrailsTab: React.FC = () => {
     }
   };
 
-  const filterTrails = () => {
-    let filtered = [...trails];
 
-    // Search filter
-    if (searchTerm) {
-      filtered = filtered.filter(trail =>
-        trail.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        trail.description[i18n.language as keyof typeof trail.description]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        trail.region.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        trail.features.some(feature => feature.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-    }
-
-    // Difficulty filter
-    if (selectedDifficulty !== 'all') {
-      filtered = filtered.filter(trail => trail.difficulty === selectedDifficulty);
-    }
-
-    // Region filter
-    if (selectedRegion !== 'all') {
-      filtered = filtered.filter(trail => trail.region === selectedRegion);
-    }
-
-    // Season filter
-    if (selectedSeason !== 'all') {
-      filtered = filtered.filter(trail => trail.season.includes(selectedSeason));
-    }
-
-    setFilteredTrails(filtered);
-  };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {

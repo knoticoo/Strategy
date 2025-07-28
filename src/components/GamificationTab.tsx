@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Trophy,
   Medal,
@@ -69,7 +69,7 @@ const GamificationTab: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'achievements' | 'challenges' | 'leaderboard'>('overview');
   const [loading, setLoading] = useState(true);
 
-  const levels: UserLevel[] = [
+  const levels: UserLevel[] = useMemo(() => [
     { level: 1, title: 'Trail Seeker', minXP: 0, maxXP: 100, icon: Target, color: 'text-gray-600', bgColor: 'bg-gray-100' },
     { level: 2, title: 'Nature Walker', minXP: 100, maxXP: 250, icon: Route, color: 'text-green-600', bgColor: 'bg-green-100' },
     { level: 3, title: 'Forest Explorer', minXP: 250, maxXP: 500, icon: Mountain, color: 'text-blue-600', bgColor: 'bg-blue-100' },
@@ -77,7 +77,7 @@ const GamificationTab: React.FC = () => {
     { level: 5, title: 'Trail Master', minXP: 1000, maxXP: 2000, icon: Medal, color: 'text-orange-600', bgColor: 'bg-orange-100' },
     { level: 6, title: 'Nature Champion', minXP: 2000, maxXP: 4000, icon: Trophy, color: 'text-yellow-600', bgColor: 'bg-yellow-100' },
     { level: 7, title: 'Wilderness Legend', minXP: 4000, maxXP: 8000, icon: Crown, color: 'text-red-600', bgColor: 'bg-red-100' },
-  ];
+  ], []);
 
   useEffect(() => {
     const loadData = async () => {
