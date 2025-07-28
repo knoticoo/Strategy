@@ -42,6 +42,16 @@ const AuthTab: React.FC = () => {
   const [editingTrail, setEditingTrail] = useState<any>(null);
   const [showAddTrail, setShowAddTrail] = useState(false);
   const [trails, setTrails] = useState(realLatvianTrails);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileData, setProfileData] = useState({
+    name: '',
+    email: '',
+    location: '',
+    country: '',
+    bio: '',
+    interests: '',
+    avatar: ''
+  });
   const [mockUsers] = useState([
     { id: '1', name: 'Adventure Explorer', email: 'explorer@example.com', status: 'online', joinDate: '2024-01-15', lastActive: 'Now' },
     { id: '2', name: 'Nature Lover', email: 'nature@example.com', status: 'offline', joinDate: '2024-02-10', lastActive: '2 hours ago' },
@@ -101,8 +111,13 @@ const AuthTab: React.FC = () => {
       coordinates: { lat: 0, lng: 0 },
       images: [''],
       features: [],
-      pricing: { free: true, currency: 'EUR' },
-      contact: { phone: '', website: '' }
+      pricing: { free: true, currency: 'EUR', adult: 0, child: 0 },
+      contact: { phone: '', website: '', email: '' },
+      accessibility: '',
+      bestTimeToVisit: '',
+      trailCondition: 'good',
+      parkingAvailable: true,
+      guidedToursAvailable: false
     });
     setShowAddTrail(true);
   };
@@ -112,6 +127,51 @@ const AuthTab: React.FC = () => {
       localStorage.clear();
       window.location.reload();
     }
+  };
+
+  const handleEditProfile = () => {
+    if (currentUser) {
+      setProfileData({
+        name: currentUser.name || '',
+        email: currentUser.email || '',
+        location: currentUser.location || '',
+        country: (currentUser as any).country || '',
+        bio: (currentUser as any).bio || '',
+        interests: (currentUser as any).interests || '',
+        avatar: currentUser.avatar || ''
+      });
+      setIsEditingProfile(true);
+    }
+  };
+
+  const handleSaveProfile = () => {
+    if (currentUser) {
+      const updatedUser = {
+        ...currentUser,
+        name: profileData.name,
+        email: profileData.email,
+        location: profileData.location,
+        country: profileData.country,
+        bio: profileData.bio,
+        interests: profileData.interests,
+        avatar: profileData.avatar
+      };
+      login(updatedUser);
+      setIsEditingProfile(false);
+    }
+  };
+
+  const handleCancelEditProfile = () => {
+    setIsEditingProfile(false);
+    setProfileData({
+      name: '',
+      email: '',
+      location: '',
+      country: '',
+      bio: '',
+      interests: '',
+      avatar: ''
+    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,47 +254,192 @@ const AuthTab: React.FC = () => {
     <div className="space-y-6">
       {/* Profile Card */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-        <div className="flex flex-col md:flex-row items-center gap-6">
-          {/* Avatar */}
-          <div className="relative">
-            <img
-              src={currentUser?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face'}
-              alt={currentUser?.name}
-              className="w-24 h-24 rounded-full border-4 border-green-500 object-cover"
-            />
-            <label className="absolute bottom-0 right-0 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors cursor-pointer">
-              <Camera className="h-4 w-4" />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarUpload}
-                className="hidden"
+        {!isEditingProfile ? (
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            {/* Avatar */}
+            <div className="relative">
+              <img
+                src={currentUser?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face'}
+                alt={currentUser?.name}
+                className="w-24 h-24 rounded-full border-4 border-green-500 object-cover"
               />
-            </label>
-          </div>
+              <label className="absolute bottom-0 right-0 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors cursor-pointer">
+                <Camera className="h-4 w-4" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
 
-          {/* User Info */}
-          <div className="flex-1 text-center md:text-left">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              {currentUser?.name}
-            </h3>
-            <div className="space-y-2 text-gray-600 dark:text-gray-400">
-              <div className="flex items-center justify-center md:justify-start gap-2">
-                <Mail className="h-4 w-4" />
-                <span>{currentUser?.email}</span>
+            {/* User Info */}
+            <div className="flex-1 text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start gap-4 mb-4">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {currentUser?.name}
+                </h3>
+                <button
+                  onClick={handleEditProfile}
+                  className="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Edit Profile
+                </button>
               </div>
-              {currentUser?.location && (
+              
+              <div className="space-y-2 text-gray-600 dark:text-gray-400">
                 <div className="flex items-center justify-center md:justify-start gap-2">
-                  <MapPin className="h-4 w-4" />
-                  <span>{currentUser.location}</span>
+                  <Mail className="h-4 w-4" />
+                  <span>{currentUser?.email}</span>
                 </div>
-              )}
-              <div className="text-sm">
-                Member since {new Date(currentUser?.joinDate || '').toLocaleDateString()}
+                {currentUser?.location && (
+                  <div className="flex items-center justify-center md:justify-start gap-2">
+                    <MapPin className="h-4 w-4" />
+                    <span>{currentUser.location}</span>
+                  </div>
+                )}
+                {(currentUser as any)?.country && (
+                  <div className="flex items-center justify-center md:justify-start gap-2">
+                    <span className="text-sm">🌍 {(currentUser as any).country}</span>
+                  </div>
+                )}
+                {(currentUser as any)?.bio && (
+                  <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <p className="text-sm">{(currentUser as any).bio}</p>
+                  </div>
+                )}
+                {(currentUser as any)?.interests && (
+                  <div className="mt-2">
+                    <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Interests:</div>
+                    <div className="flex flex-wrap gap-1">
+                      {(currentUser as any).interests.split(',').map((interest: string, index: number) => (
+                        <span key={index} className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs rounded-full">
+                          {interest.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="text-sm">
+                  Member since {new Date(currentUser?.joinDate || '').toLocaleDateString()}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          /* Profile Edit Form */
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Edit Profile</h3>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSaveProfile}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Save Changes
+                </button>
+                <button
+                  onClick={handleCancelEditProfile}
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  value={profileData.name}
+                  onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={profileData.email}
+                  onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Location (City)
+                </label>
+                <input
+                  type="text"
+                  value={profileData.location}
+                  onChange={(e) => setProfileData({ ...profileData, location: e.target.value })}
+                  placeholder="e.g., Riga"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Country
+                </label>
+                <input
+                  type="text"
+                  value={profileData.country}
+                  onChange={(e) => setProfileData({ ...profileData, country: e.target.value })}
+                  placeholder="e.g., Latvia"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Avatar URL
+                </label>
+                <input
+                  type="url"
+                  value={profileData.avatar}
+                  onChange={(e) => setProfileData({ ...profileData, avatar: e.target.value })}
+                  placeholder="https://example.com/avatar.jpg"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Interests (comma-separated)
+                </label>
+                <input
+                  type="text"
+                  value={profileData.interests}
+                  onChange={(e) => setProfileData({ ...profileData, interests: e.target.value })}
+                  placeholder="e.g., Hiking, Photography, Nature"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Bio / About Me
+              </label>
+              <textarea
+                rows={4}
+                value={profileData.bio}
+                onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
+                placeholder="Tell us about yourself, your adventure experience, and what you love about exploring Latvia..."
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Stats Grid */}
@@ -552,83 +757,453 @@ const AuthTab: React.FC = () => {
                 </button>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Trail Name (English)
-                  </label>
-                  <input
-                    type="text"
-                    value={typeof editingTrail?.name === 'string' ? editingTrail.name : ((editingTrail?.name as any)?.en || '')}
-                    onChange={(e) => setEditingTrail({
-                      ...editingTrail,
-                      name: typeof editingTrail?.name === 'string' 
-                        ? e.target.value 
-                        : { ...(editingTrail.name as any), en: e.target.value }
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {/* Basic Information */}
+                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Basic Information</h4>
+                  
+                  <div className="grid grid-cols-1 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Trail Name (English)
+                      </label>
+                      <input
+                        type="text"
+                        value={typeof editingTrail?.name === 'string' ? editingTrail.name : ((editingTrail?.name as any)?.en || '')}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          name: typeof editingTrail?.name === 'string' 
+                            ? e.target.value 
+                            : { ...(editingTrail.name as any), en: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Region
-                  </label>
-                  <input
-                    type="text"
-                    value={editingTrail?.region || ''}
-                    onChange={(e) => setEditingTrail({
-                      ...editingTrail,
-                      region: e.target.value
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Trail Name (Latvian)
+                      </label>
+                      <input
+                        type="text"
+                        value={((editingTrail?.name as any)?.lv || '')}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          name: { ...(editingTrail.name as any), lv: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Distance
-                    </label>
-                    <input
-                      type="text"
-                      value={editingTrail?.distance || ''}
-                      onChange={(e) => setEditingTrail({
-                        ...editingTrail,
-                        distance: e.target.value
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Trail Name (Russian)
+                      </label>
+                      <input
+                        type="text"
+                        value={((editingTrail?.name as any)?.ru || '')}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          name: { ...(editingTrail.name as any), ru: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Description (English)
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={((editingTrail?.description as any)?.en || '')}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          description: { ...(editingTrail.description as any), en: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Description (Latvian)
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={((editingTrail?.description as any)?.lv || '')}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          description: { ...(editingTrail.description as any), lv: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Description (Russian)
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={((editingTrail?.description as any)?.ru || '')}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          description: { ...(editingTrail.description as any), ru: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Duration
-                    </label>
-                    <input
-                      type="text"
-                      value={editingTrail?.duration || ''}
-                      onChange={(e) => setEditingTrail({
-                        ...editingTrail,
-                        duration: e.target.value
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
+                </div>
+
+                {/* Location & Details */}
+                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Location & Details</h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Region
+                      </label>
+                      <input
+                        type="text"
+                        value={editingTrail?.region || ''}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          region: e.target.value
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Difficulty
+                      </label>
+                      <select
+                        value={editingTrail?.difficulty || 'easy'}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          difficulty: e.target.value
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      >
+                        <option value="easy">Easy</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="hard">Hard</option>
+                        <option value="expert">Expert</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Distance
+                      </label>
+                      <input
+                        type="text"
+                        value={editingTrail?.distance || ''}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          distance: e.target.value
+                        })}
+                        placeholder="e.g., 5.2 km"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Duration
+                      </label>
+                      <input
+                        type="text"
+                        value={editingTrail?.duration || ''}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          duration: e.target.value
+                        })}
+                        placeholder="e.g., 2-3 hours"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Elevation Gain
+                      </label>
+                      <input
+                        type="text"
+                        value={editingTrail?.elevation || ''}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          elevation: e.target.value
+                        })}
+                        placeholder="e.g., 150m"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Best Time to Visit
+                      </label>
+                      <input
+                        type="text"
+                        value={editingTrail?.bestTimeToVisit || ''}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          bestTimeToVisit: e.target.value
+                        })}
+                        placeholder="e.g., May - September"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Latitude
+                      </label>
+                      <input
+                        type="number"
+                        step="any"
+                        value={editingTrail?.coordinates?.lat || ''}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          coordinates: { 
+                            ...editingTrail.coordinates, 
+                            lat: parseFloat(e.target.value) || 0 
+                          }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Longitude
+                      </label>
+                      <input
+                        type="number"
+                        step="any"
+                        value={editingTrail?.coordinates?.lng || ''}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          coordinates: { 
+                            ...editingTrail.coordinates, 
+                            lng: parseFloat(e.target.value) || 0 
+                          }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Image URL
-                  </label>
-                  <input
-                    type="url"
-                    value={editingTrail?.images?.[0] || ''}
-                    onChange={(e) => setEditingTrail({
-                      ...editingTrail,
-                      images: [e.target.value]
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
+                {/* Media & Features */}
+                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Media & Features</h4>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Main Image URL
+                      </label>
+                      <input
+                        type="url"
+                        value={editingTrail?.images?.[0] || ''}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          images: [e.target.value]
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Features (comma-separated)
+                      </label>
+                      <input
+                        type="text"
+                        value={editingTrail?.features?.join(', ') || ''}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          features: e.target.value.split(',').map(f => f.trim()).filter(f => f)
+                        })}
+                        placeholder="e.g., Scenic views, Wildlife, Historical sites"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Accessibility Information
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={editingTrail?.accessibility || ''}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          accessibility: e.target.value
+                        })}
+                        placeholder="e.g., Wheelchair accessible, Family-friendly"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Services & Contact */}
+                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Services & Contact</h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={editingTrail?.parkingAvailable || false}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          parkingAvailable: e.target.checked
+                        })}
+                        className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                      />
+                      <label className="text-sm text-gray-700 dark:text-gray-300">
+                        Parking Available
+                      </label>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={editingTrail?.guidedToursAvailable || false}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          guidedToursAvailable: e.target.checked
+                        })}
+                        className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                      />
+                      <label className="text-sm text-gray-700 dark:text-gray-300">
+                        Guided Tours Available
+                      </label>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={editingTrail?.pricing?.free || false}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          pricing: { ...editingTrail.pricing, free: e.target.checked }
+                        })}
+                        className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                      />
+                      <label className="text-sm text-gray-700 dark:text-gray-300">
+                        Free Entry
+                      </label>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Trail Condition
+                      </label>
+                      <select
+                        value={editingTrail?.trailCondition || 'good'}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          trailCondition: e.target.value
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      >
+                        <option value="excellent">Excellent</option>
+                        <option value="good">Good</option>
+                        <option value="fair">Fair</option>
+                        <option value="poor">Poor</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {!editingTrail?.pricing?.free && (
+                    <div className="mt-4 grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Adult Price (€)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={editingTrail?.pricing?.adult || ''}
+                          onChange={(e) => setEditingTrail({
+                            ...editingTrail,
+                            pricing: { ...editingTrail.pricing, adult: parseFloat(e.target.value) || 0 }
+                          })}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Child Price (€)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={editingTrail?.pricing?.child || ''}
+                          onChange={(e) => setEditingTrail({
+                            ...editingTrail,
+                            pricing: { ...editingTrail.pricing, child: parseFloat(e.target.value) || 0 }
+                          })}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Phone
+                      </label>
+                      <input
+                        type="tel"
+                        value={editingTrail?.contact?.phone || ''}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          contact: { ...editingTrail.contact, phone: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        value={editingTrail?.contact?.email || ''}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          contact: { ...editingTrail.contact, email: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Website
+                      </label>
+                      <input
+                        type="url"
+                        value={editingTrail?.contact?.website || ''}
+                        onChange={(e) => setEditingTrail({
+                          ...editingTrail,
+                          contact: { ...editingTrail.contact, website: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex gap-4 pt-4">
