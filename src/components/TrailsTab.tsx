@@ -81,6 +81,9 @@ const TrailsTab: React.FC = () => {
       const convertedTrails: RealLocation[] = apiTrails.map(trail => ({
         id: trail.id,
         name: trail.name_en,
+        nameEn: trail.name_en,
+        nameLv: trail.name_lv || trail.name_en,
+        nameRu: trail.name_ru || trail.name_en,
         description: {
           en: trail.description_en || '',
           lv: trail.description_lv || '',
@@ -88,13 +91,14 @@ const TrailsTab: React.FC = () => {
         },
         coordinates: [trail.latitude, trail.longitude],
         region: trail.region,
-        difficulty: trail.difficulty,
+        difficulty: trail.difficulty as 'easy' | 'moderate' | 'hard',
         distance: trail.distance,
         duration: trail.duration,
         elevation: trail.elevation_gain,
         season: trail.best_season?.split(',') || ['all'],
         features: trail.features ? JSON.parse(trail.features) : [],
-        image: trail.image_url || '/images/default-trail.jpg',
+        images: [trail.image_url || '/images/default-trail.jpg'],
+        facilities: [],
         rating: 4.5, // Default rating
         reviews: 0 // Default reviews
       }));
