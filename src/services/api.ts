@@ -73,6 +73,8 @@ export interface ApiCommunityPost {
   image_url?: string;
   location?: string;
   likes_count: number;
+  comments_count: number;
+  user_liked: boolean;
   created_at: string;
 }
 
@@ -122,6 +124,11 @@ export const logout = async (userId: string): Promise<void> => {
   await api.post('/auth/logout', { userId });
 };
 
+export const sendHeartbeat = async (userId: string): Promise<{ success: boolean }> => {
+  const response = await api.post('/heartbeat', { user_id: userId });
+  return response.data;
+};
+
 // Trail API
 export const getTrails = async (): Promise<ApiTrail[]> => {
   const response = await api.get('/trails');
@@ -142,8 +149,10 @@ export const deleteTrail = async (id: string): Promise<void> => {
 };
 
 // Community Posts API
-export const getCommunityPosts = async (): Promise<ApiCommunityPost[]> => {
-  const response = await api.get('/community-posts');
+export const getCommunityPosts = async (userId?: string): Promise<ApiCommunityPost[]> => {
+  const response = await api.get('/community-posts', {
+    params: userId ? { user_id: userId } : {}
+  });
   return response.data;
 };
 
@@ -155,6 +164,26 @@ export const createCommunityPost = async (postData: {
   location?: string;
 }): Promise<{ id: string }> => {
   const response = await api.post('/community-posts', postData);
+  return response.data;
+};
+
+export const deleteCommunityPost = async (postId: string): Promise<{ message: string }> => {
+  const response = await api.delete(`/community-posts/${postId}`);
+  return response.data;
+};
+
+export const likePost = async (postId: string, userId: string): Promise<{ liked: boolean }> => {
+  const response = await api.post(`/community-posts/${postId}/like`, { user_id: userId });
+  return response.data;
+};
+
+export const addComment = async (postId: string, userId: string, content: string): Promise<any> => {
+  const response = await api.post(`/community-posts/${postId}/comments`, { user_id: userId, content });
+  return response.data;
+};
+
+export const getComments = async (postId: string): Promise<any[]> => {
+  const response = await api.get(`/community-posts/${postId}/comments`);
   return response.data;
 };
 
