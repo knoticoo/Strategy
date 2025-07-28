@@ -168,6 +168,171 @@ export const realLatvianTrails: RealLocation[] = [
       free: true,
       currency: 'EUR'
     }
+  },
+  {
+    id: 'slitere-national-park',
+    name: 'Slītere National Park Coastal Trail',
+    nameEn: 'Slītere National Park Coastal Trail',
+    nameLv: 'Slīteres nacionālā parka piekrastes taka',
+    nameRu: 'Прибрежная тропа Национального парка Слитере',
+    coordinates: [57.6667, 22.3333],
+    region: 'Kurzeme',
+    difficulty: 'easy',
+    duration: '2-3 hours',
+    distance: '6 km',
+    elevation: '50m',
+    description: {
+      en: 'Beautiful coastal trail through ancient forests and along pristine beaches. Lighthouse views and unique Livonian cultural heritage sites.',
+      lv: 'Skaista piekrastes taka cauri senajiem mežiem un gar neskartajām pludmalēm. Bākas skati un unikālie lībiešu kultūras mantojuma objekti.',
+      ru: 'Красивая прибрежная тропа через древние леса и вдоль нетронутых пляжей. Виды на маяк и уникальные объекты ливского культурного наследия.'
+    },
+    features: ['Coastal views', 'Ancient forests', 'Lighthouse', 'Livonian heritage', 'Bird watching'],
+    images: [
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop&q=80'
+    ],
+    season: ['spring', 'summer', 'autumn'],
+    facilities: ['Parking', 'Information boards', 'Viewpoints'],
+    contact: {
+      phone: '+371 63223830',
+      website: 'https://www.daba.gov.lv/slitere'
+    },
+    pricing: {
+      free: true,
+      currency: 'EUR'
+    }
+  },
+  {
+    id: 'daugavpils-fortress',
+    name: 'Daugavpils Fortress Historical Trail',
+    nameEn: 'Daugavpils Fortress Historical Trail',
+    nameLv: 'Daugavpils cietokšņa vēsturiskā taka',
+    nameRu: 'Историческая тропа крепости Даугавпилс',
+    coordinates: [55.8833, 26.5167],
+    region: 'Latgale',
+    difficulty: 'easy',
+    duration: '1-2 hours',
+    distance: '3 km',
+    elevation: '20m',
+    description: {
+      en: 'Explore the largest fortress in the Baltics built in early 19th century. Rich military history and well-preserved fortifications.',
+      lv: 'Izpētiet lielāko cietoksni Baltijā, kas būvēts 19. gadsimta sākumā. Bagāta militārā vēsture un labi saglabātas fortifikācijas.',
+      ru: 'Исследуйте крупнейшую крепость в Прибалтике, построенную в начале 19 века. Богатая военная история и хорошо сохранившиеся укрепления.'
+    },
+    features: ['Historic fortress', 'Military museum', 'Art center', 'Architecture', 'Cultural events'],
+    images: [
+      'https://images.unsplash.com/photo-1520637836862-4d197d17c92a?w=800&h=600&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1597149960419-0d90ac2e3db4?w=800&h=600&fit=crop&q=80'
+    ],
+    season: ['spring', 'summer', 'autumn', 'winter'],
+    facilities: ['Museum', 'Cafe', 'Parking', 'Guided tours'],
+    contact: {
+      phone: '+371 65422818',
+      website: 'https://www.daugavpilsnovads.lv'
+    },
+    pricing: {
+      free: false,
+      adult: 5,
+      child: 3,
+      currency: 'EUR'
+    }
+  },
+  {
+    id: 'liepaja-beach-trail',
+    name: 'Liepāja Beach and Dune Trail',
+    nameEn: 'Liepāja Beach and Dune Trail',
+    nameLv: 'Liepājas pludmales un kāpu taka',
+    nameRu: 'Тропа пляжа и дюн Лиепаи',
+    coordinates: [56.5167, 21.0167],
+    region: 'Kurzeme',
+    difficulty: 'easy',
+    duration: '2-4 hours',
+    distance: '10 km',
+    elevation: '30m',
+    description: {
+      en: 'Long sandy beach walk with impressive sand dunes and coastal vegetation. Perfect for sunset walks and bird watching.',
+      lv: 'Gara smilšainā pludmales pastaigas ar iespaidīgām smilšu kāpām un piekrastes veģetāciju. Ideāla saulrieta pastaigām un putnu vērošanai.',
+      ru: 'Длинная прогулка по песчаному пляжу с впечатляющими песчаными дюнами и прибрежной растительностью. Идеально для прогулок на закате и наблюдения за птицами.'
+    },
+    features: ['Sandy beach', 'Sand dunes', 'Sunset views', 'Bird watching', 'Sea breeze'],
+    images: [
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&q=80'
+    ],
+    season: ['spring', 'summer', 'autumn'],
+    facilities: ['Beach access', 'Parking', 'Restaurants'],
+    contact: {
+      website: 'https://www.liepaja.lv'
+    },
+    pricing: {
+      free: true,
+      currency: 'EUR'
+    }
+  },
+  {
+    id: 'razna-lake-circuit',
+    name: 'Rāzna Lake Circuit Trail',
+    nameEn: 'Rāzna Lake Circuit Trail',
+    nameLv: 'Rāznas ezera apļa taka',
+    nameRu: 'Круговая тропа озера Разна',
+    coordinates: [56.1333, 27.4167],
+    region: 'Latgale',
+    difficulty: 'moderate',
+    duration: '4-6 hours',
+    distance: '15 km',
+    elevation: '80m',
+    description: {
+      en: 'Scenic circuit around Latvia\'s second largest lake. Diverse landscapes including forests, meadows, and lake shores with excellent wildlife viewing.',
+      lv: 'Ainava aplis ap Latvijas otro lielāko ezeru. Daudzveidīgas ainavas, ieskaitot mežus, pļavas un ezera krastus ar lieliskām iespējām dzīvnieku vērošanai.',
+      ru: 'Живописный круг вокруг второго по величине озера Латвии. Разнообразные ландшафты, включая леса, луга и берега озера с отличными возможностями для наблюдения за дикой природой.'
+    },
+    features: ['Lake views', 'Forest paths', 'Wildlife watching', 'Photography', 'Peaceful nature'],
+    images: [
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop&q=80'
+    ],
+    season: ['spring', 'summer', 'autumn'],
+    facilities: ['Information center', 'Parking', 'Viewpoints'],
+    contact: {
+      phone: '+371 64607263',
+      website: 'https://www.razna.lv'
+    },
+    pricing: {
+      free: true,
+      currency: 'EUR'
+    }
+  },
+  {
+    id: 'ventspils-seaside-trail',
+    name: 'Ventspils Seaside and Forest Trail',
+    nameEn: 'Ventspils Seaside and Forest Trail',
+    nameLv: 'Ventspils jūrmales un meža taka',
+    nameRu: 'Приморская и лесная тропа Вентспилса',
+    coordinates: [57.3833, 21.5667],
+    region: 'Kurzeme',
+    difficulty: 'easy',
+    duration: '2-3 hours',
+    distance: '7 km',
+    elevation: '40m',
+    description: {
+      en: 'Combination of beach walking and forest paths near Ventspils. Beautiful coastal pine forests and clean beaches with good infrastructure.',
+      lv: 'Pludmales pastaigu un meža taku kombinācija pie Ventspils. Skaisti piekrastes priežu meži un tīras pludmales ar labu infrastruktūru.',
+      ru: 'Сочетание прогулок по пляжу и лесных тропинок возле Вентспилса. Красивые прибрежные сосновые леса и чистые пляжи с хорошей инфраструктурой.'
+    },
+    features: ['Beach access', 'Pine forests', 'Clean environment', 'Family friendly', 'Good facilities'],
+    images: [
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop&q=80'
+    ],
+    season: ['spring', 'summer', 'autumn'],
+    facilities: ['Beach facilities', 'Parking', 'Restaurants', 'Playground'],
+    contact: {
+      website: 'https://www.ventspils.lv'
+    },
+    pricing: {
+      free: true,
+      currency: 'EUR'
+    }
   }
 ];
 
@@ -260,8 +425,8 @@ export const realLatvianFishing: RealLocation[] = [
     },
     features: ['Trout fishing', 'Grayling', 'Fly fishing', 'Clean water', 'Scenic location'],
     images: [
-      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80', // River fishing
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&q=80'  // Clean river
+      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80', // Fishing by river
+      'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop&q=80'  // Angler fishing
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['River access', 'Parking', 'Fishing permit required'],
@@ -291,11 +456,199 @@ export const realLatvianFishing: RealLocation[] = [
     },
     features: ['Pike fishing', 'Perch', 'Urban location', 'Easy access', 'Multiple spots'],
     images: [
-      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80', // Urban fishing
-      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop&q=80'  // River bank
+      'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=800&h=600&fit=crop&q=80', // Urban fishing
+      'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop&q=80'  // City fishing
     ],
     season: ['spring', 'summer', 'autumn', 'winter'],
     facilities: ['Fishing platforms', 'Parking', 'Public transport'],
+    pricing: {
+      free: true,
+      currency: 'EUR'
+    }
+  },
+  {
+    id: 'burtnieks-lake-fishing',
+    name: 'Burtnieks Lake',
+    nameEn: 'Burtnieks Lake',
+    nameLv: 'Burtnieku ezers',
+    nameRu: 'Озеро Буртниекс',
+    coordinates: [57.6833, 25.2833],
+    region: 'Vidzeme',
+    difficulty: 'easy',
+    duration: 'Full day',
+    description: {
+      en: 'Latvia\'s fourth largest lake, excellent for pike, perch, and bream fishing. Shallow waters warm up quickly in summer, making it perfect for family fishing trips.',
+      lv: 'Latvijas ceturtais lielākais ezers, lielisks līdaku, asaru un plaudu makšķerēšanai. Seklie ūdeņi vasarā ātri sasilst, padarot to ideālu ģimenes makšķerēšanas braucieniem.',
+      ru: 'Четвертое по величине озеро Латвии, отличное для ловли щуки, окуня и леща. Мелкие воды быстро прогреваются летом, что делает его идеальным для семейной рыбалки.'
+    },
+    features: ['Pike fishing', 'Perch', 'Bream', 'Family friendly', 'Boat rental'],
+    images: [
+      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&q=80'
+    ],
+    season: ['spring', 'summer', 'autumn', 'winter'],
+    facilities: ['Boat rental', 'Parking', 'Fishing platforms'],
+    contact: {
+      phone: '+371 64207120'
+    },
+    pricing: {
+      free: false,
+      adult: 8,
+      child: 4,
+      currency: 'EUR'
+    }
+  },
+  {
+    id: 'engure-lake-fishing',
+    name: 'Engure Lake Nature Reserve',
+    nameEn: 'Engure Lake Nature Reserve',
+    nameLv: 'Engures ezers dabas rezervāts',
+    nameRu: 'Природный заповедник озера Энгуре',
+    coordinates: [57.2167, 23.1333],
+    region: 'Kurzeme',
+    difficulty: 'easy',
+    duration: 'Half day',
+    description: {
+      en: 'Shallow brackish lake perfect for roach, rudd, and small pike. Important bird area with restricted fishing zones. Beautiful nature reserve setting.',
+      lv: 'Sekls saldūdens ezers, kas ir ideāls plaudu, rauda un mazu līdaku makšķerēšanai. Svarīgs putnu novērošanas rajons ar ierobežotām makšķerēšanas zonām.',
+      ru: 'Мелкое пресноводное озеро, идеальное для ловли плотвы, красноперки и мелкой щуки. Важный район для наблюдения за птицами с ограниченными зонами рыбалки.'
+    },
+    features: ['Roach fishing', 'Bird watching', 'Nature reserve', 'Shallow waters', 'Peaceful setting'],
+    images: [
+      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop&q=80'
+    ],
+    season: ['spring', 'summer', 'autumn'],
+    facilities: ['Information center', 'Parking', 'Nature trails'],
+    contact: {
+      phone: '+371 63161170',
+      website: 'https://www.daba.gov.lv/engure'
+    },
+    pricing: {
+      free: false,
+      adult: 5,
+      child: 2,
+      currency: 'EUR'
+    }
+  },
+  {
+    id: 'aluksne-lake-fishing',
+    name: 'Alūksne Lake',
+    nameEn: 'Alūksne Lake',
+    nameLv: 'Alūksnes ezers',
+    nameRu: 'Алуксненское озеро',
+    coordinates: [57.4167, 27.0333],
+    region: 'Vidzeme',
+    difficulty: 'moderate',
+    duration: 'Full day',
+    description: {
+      en: 'Deep lake with excellent pike, perch, and vendace fishing. Historic Alūksne castle ruins on an island add charm to this fishing destination.',
+      lv: 'Dziļš ezers ar lielisko līdaku, asaru un sīgu makšķerēšanu. Vēsturiskās Alūksnes pils drupas uz salas piešķir šarmam šim makšķerēšanas galamērķim.',
+      ru: 'Глубокое озеро с отличной рыбалкой на щуку, окуня и ряпушку. Исторические руины замка Алуксне на острове добавляют очарования этому месту для рыбалки.'
+    },
+    features: ['Pike fishing', 'Vendace', 'Historic castle', 'Deep waters', 'Island views'],
+    images: [
+      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&q=80'
+    ],
+    season: ['spring', 'summer', 'autumn', 'winter'],
+    facilities: ['Parking', 'Boat launch', 'Castle museum'],
+    contact: {
+      phone: '+371 64381804',
+      website: 'https://www.aluksne.lv'
+    },
+    pricing: {
+      free: false,
+      adult: 6,
+      child: 3,
+      currency: 'EUR'
+    }
+  },
+  {
+    id: 'venta-river-kuldiga',
+    name: 'Venta River - Kuldīga Rapids',
+    nameEn: 'Venta River - Kuldīga Rapids',
+    nameLv: 'Ventas upe - Kuldīgas krāces',
+    nameRu: 'Река Вента - Кулдигские пороги',
+    coordinates: [56.9667, 21.9667],
+    region: 'Kurzeme',
+    difficulty: 'hard',
+    duration: 'Full day',
+    description: {
+      en: 'Famous for vimba bream and salmon fishing near Europe\'s widest waterfall. Historic town setting with medieval charm and excellent fish restaurants.',
+      lv: 'Slavens ar vīmbu un lašu makšķerēšanu pie Eiropas platākā ūdenskrituma. Vēsturiska pilsētas ainava ar viduslaiku šarmu un lieliskām zivju restorāniem.',
+      ru: 'Знаменит рыбалкой на рыбца и лосося у самого широкого водопада Европы. Историческая городская обстановка со средневековым шармом и отличными рыбными ресторанами.'
+    },
+    features: ['Vimba bream', 'Salmon', 'Historic waterfall', 'Medieval town', 'Rapids fishing'],
+    images: [
+      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop&q=80'
+    ],
+    season: ['spring', 'summer', 'autumn'],
+    facilities: ['Parking', 'Restaurants', 'Hotel', 'Guided tours'],
+    contact: {
+      phone: '+371 63322259',
+      website: 'https://www.kuldiga.lv'
+    },
+    pricing: {
+      free: false,
+      adult: 12,
+      child: 6,
+      currency: 'EUR'
+    }
+  },
+  {
+    id: 'liepaja-lake-fishing',
+    name: 'Liepāja Lake (Liepājas ezers)',
+    nameEn: 'Liepāja Lake',
+    nameLv: 'Liepājas ezers',
+    nameRu: 'Лиепайское озеро',
+    coordinates: [56.5333, 21.0167],
+    region: 'Kurzeme',
+    difficulty: 'easy',
+    duration: 'Half day',
+    description: {
+      en: 'Urban lake in Liepāja city center, perfect for casual fishing. Good for beginners with easy access and basic facilities nearby.',
+      lv: 'Pilsētas ezers Liepājas centrā, ideāls ikdienas makšķerēšanai. Labs iesācējiem ar vieglu pieeju un pamata ērtībām tuvumā.',
+      ru: 'Городское озеро в центре Лиепаи, идеальное для случайной рыбалки. Хорошо для начинающих с легким доступом и основными удобствами поблизости.'
+    },
+    features: ['Urban fishing', 'Easy access', 'Beginner friendly', 'City amenities', 'Small fish'],
+    images: [
+      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&q=80'
+    ],
+    season: ['spring', 'summer', 'autumn'],
+    facilities: ['Urban access', 'Parking', 'Cafes', 'Public transport'],
+    contact: {
+      website: 'https://www.liepaja.lv'
+    },
+    pricing: {
+      free: true,
+      currency: 'EUR'
+    }
+  },
+  {
+    id: 'driksna-lake-fishing',
+    name: 'Driksna Lake',
+    nameEn: 'Driksna Lake',
+    nameLv: 'Driksnas ezers',
+    nameRu: 'Озеро Дриксна',
+    coordinates: [56.8167, 27.1833],
+    region: 'Latgale',
+    difficulty: 'moderate',
+    duration: 'Full day',
+    description: {
+      en: 'Hidden gem among Latgale lakes with excellent pike and perch fishing. Quiet, less crowded spot perfect for serious anglers seeking solitude.',
+      lv: 'Slēpts dārgakmens starp Latgales ezeriem ar lielisko līdaku un asaru makšķerēšanu. Kluss, mazāk pārpildīts vieta, kas ideāla nopietņiem makšķerniekiem.',
+      ru: 'Скрытая жемчужина среди озер Латгалии с отличной рыбалкой на щуку и окуня. Тихое, менее людное место, идеальное для серьезных рыболовов, ищущих уединения.'
+    },
+    features: ['Pike fishing', 'Perch', 'Quiet location', 'Less crowded', 'Natural setting'],
+    images: [
+      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop&q=80'
+    ],
+    season: ['spring', 'summer', 'autumn', 'winter'],
+    facilities: ['Basic parking', 'Nature trails'],
     pricing: {
       free: true,
       currency: 'EUR'
