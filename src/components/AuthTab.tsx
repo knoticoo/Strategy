@@ -239,11 +239,14 @@ const AuthTab: React.FC = () => {
   const handleFileUpload = async (file: File): Promise<string> => {
     setIsUploading(true);
     try {
+      console.log('Uploading file:', file.name, file.size, file.type);
       const response = await api.uploadFile(file);
+      console.log('Upload response:', response);
       return response.url;
     } catch (error) {
       console.error('Error uploading file:', error);
-      alert('Error uploading file');
+      const errorMessage = error.response?.data?.error || error.message || 'Unknown upload error';
+      alert(`Upload failed: ${errorMessage}`);
       return '';
     } finally {
       setIsUploading(false);
@@ -360,9 +363,19 @@ const AuthTab: React.FC = () => {
     
     if (isLogin) {
       try {
-        // Use real API login
+        console.log('Attempting login with:', formData.email);
         const response = await api.login(formData.email, formData.password);
-        login(response.user);
+        console.log('Login response:', response);
+        
+        // Ensure user has proper structure
+        const user = {
+          ...response.user,
+          avatar: response.user.avatar || response.user.avatar_url,
+          joinDate: response.user.joinDate || response.user.created_at
+        };
+        
+        login(user);
+        console.log('User logged in successfully:', user);
         
         // Clear form
         setFormData({
@@ -372,9 +385,19 @@ const AuthTab: React.FC = () => {
           confirmPassword: '',
           location: ''
         });
+        
+        // Force reload stats if admin
+        if (user.isAdmin) {
+          setTimeout(() => {
+            loadStats();
+            loadUsers();
+            loadTrails();
+            loadRecentActivity();
+          }, 500);
+        }
       } catch (error) {
         console.error('Login error:', error);
-        alert('Login failed. Please check your credentials.');
+        alert(`Login failed: ${error.response?.data?.error || error.message || 'Unknown error'}`);
         return;
       }
     } else {
@@ -1824,6 +1847,27 @@ const AuthTab: React.FC = () => {
             className="mt-2 text-green-600 hover:text-green-700 font-medium"
           >
             {isLogin ? t('auth.registerLink') : t('auth.loginLink')}
+          </button>
+        </div>
+
+        {/* Debug API Test Button */}
+        <div className="text-center mt-4">
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                console.log('Testing API connection...');
+                const stats = await api.getStats();
+                console.log('API Stats:', stats);
+                alert(`API Working! Online users: ${stats.onlineUsers}, Total users: ${stats.totalUsers}`);
+              } catch (error) {
+                console.error('API Test failed:', error);
+                alert(`API Test failed: ${error.message}`);
+              }
+            }}
+            className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+          >
+            🧪 Test API Connection
           </button>
         </div>
       </div>
