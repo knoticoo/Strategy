@@ -79,6 +79,14 @@ const CommunityTab: React.FC = () => {
 
     try {
       console.log('Creating post with user:', currentUser);
+      console.log('Post data:', {
+        user_id: currentUser.id,
+        type: newPost.type,
+        content: newPost.content,
+        location: newPost.location || undefined,
+        image_url: newPost.image || undefined
+      });
+      
       await api.createCommunityPost({
         user_id: currentUser.id,
         type: newPost.type,
@@ -87,6 +95,8 @@ const CommunityTab: React.FC = () => {
         image_url: newPost.image || undefined
       });
 
+      console.log('Post created successfully');
+      
       // Reload posts
       await loadCommunityPosts();
 
@@ -102,7 +112,8 @@ const CommunityTab: React.FC = () => {
       setShowCreatePost(false);
     } catch (error) {
       console.error('Error creating post:', error);
-      alert('Error creating post. Please try again.');
+      const errorMessage = error.response?.data?.error || error.message || 'Unknown error';
+      alert(`Error creating post: ${errorMessage}`);
     }
   };
 
