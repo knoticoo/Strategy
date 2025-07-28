@@ -57,7 +57,7 @@ const AuthTab: React.FC = () => {
   });
 
   // Check if user is admin (for demo, admin email)
-  const isAdmin = currentUser?.email === 'admin@latvianadventures.com' || currentUser?.name === 'Admin';
+  const isAdmin = currentUser?.email === 'emalinovskis@me.com' || currentUser?.name === 'Admin';
 
   // Admin Functions
   const handleDeleteTrail = (trailId: string) => {
@@ -107,6 +107,13 @@ const AuthTab: React.FC = () => {
     setShowAddTrail(true);
   };
 
+  const handleResetUserStats = () => {
+    if (window.confirm('Are you sure you want to reset all user stats? This will clear localStorage data.')) {
+      localStorage.clear();
+      window.location.reload();
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -119,11 +126,11 @@ const AuthTab: React.FC = () => {
     
     if (isLogin) {
       // Mock login - check for admin credentials
-      const isAdminLogin = formData.email === 'admin@latvianadventures.com' || formData.name === 'Admin';
+      const isAdminLogin = (formData.email === 'emalinovskis@me.com' && formData.password === 'Millie1991') || formData.name === 'Admin';
       const mockUser = {
         id: isAdminLogin ? 'admin' : '1',
         name: isAdminLogin ? 'Admin' : (formData.name || 'Adventure Explorer'),
-        email: isAdminLogin ? 'admin@latvianadventures.com' : formData.email,
+        email: isAdminLogin ? 'emalinovskis@me.com' : formData.email,
         avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face',
         location: 'Riga, Latvia',
         joinDate: '2024-01-15',
@@ -410,6 +417,15 @@ const AuthTab: React.FC = () => {
         <p className="text-red-700 dark:text-red-300 text-sm mt-1">
           You have administrative privileges. Handle with care!
         </p>
+        <div className="text-xs text-red-600 dark:text-red-400 mt-2">
+          Admin Access: emalinovskis@me.com / Millie1991
+        </div>
+        <button
+          onClick={handleResetUserStats}
+          className="mt-3 px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
+        >
+          Reset All User Data
+        </button>
       </div>
 
       {/* Admin Navigation */}
@@ -481,7 +497,7 @@ const AuthTab: React.FC = () => {
             <div className="flex justify-between items-start gap-4">
               <div className="flex-1">
                 <h4 className="font-semibold text-gray-900 dark:text-white">
-                  {typeof trail.name === 'string' ? trail.name : trail.name.en}
+                  {typeof trail.name === 'string' ? trail.name : (trail.name as any).en}
                 </h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                   {trail.region} • {trail.difficulty} • {trail.distance}
@@ -543,12 +559,12 @@ const AuthTab: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    value={typeof editingTrail?.name === 'string' ? editingTrail.name : (editingTrail?.name?.en || '')}
+                    value={typeof editingTrail?.name === 'string' ? editingTrail.name : ((editingTrail?.name as any)?.en || '')}
                     onChange={(e) => setEditingTrail({
                       ...editingTrail,
                       name: typeof editingTrail?.name === 'string' 
                         ? e.target.value 
-                        : { ...editingTrail.name, en: e.target.value }
+                        : { ...(editingTrail.name as any), en: e.target.value }
                     })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
