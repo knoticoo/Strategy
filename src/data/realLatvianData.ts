@@ -56,8 +56,8 @@ export const realLatvianTrails: RealLocation[] = [
     },
     features: ['River views', 'Medieval castles', 'Sandstone cliffs', 'Wildlife watching', 'Photography spots'],
     images: [
-      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop'
+      'https://picsum.photos/800/600?random=1&blur=0',
+      'https://picsum.photos/800/600?random=2&blur=0'
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Parking', 'Restrooms', 'Information center', 'Marked trails'],
@@ -89,8 +89,8 @@ export const realLatvianTrails: RealLocation[] = [
     },
     features: ['Historic castle', 'Gutman\'s Cave', 'Ancient oaks', 'Valley views', 'Folk legends'],
     images: [
-      'https://images.unsplash.com/photo-1518709268805-4e9042af2ac1?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=800&h=600&fit=crop'
+      'https://picsum.photos/800/600?random=3&blur=0',
+      'https://picsum.photos/800/600?random=4&blur=0'
     ],
     season: ['spring', 'summer', 'autumn', 'winter'],
     facilities: ['Parking', 'Museum', 'Cafe', 'Souvenir shop'],
@@ -124,8 +124,8 @@ export const realLatvianTrails: RealLocation[] = [
     },
     features: ['Bog ecosystem', 'Bird watching', 'Observation tower', 'Rare plants', 'Photography'],
     images: [
-      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop'
+      'https://picsum.photos/800/600?random=5&blur=0',
+      'https://picsum.photos/800/600?random=6&blur=0'
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Parking', 'Information boards', 'Observation tower'],
@@ -156,8 +156,8 @@ export const realLatvianTrails: RealLocation[] = [
     },
     features: ['Two seas meeting', 'Lighthouse', 'Livonian culture', 'Beach walking', 'Sunset views'],
     images: [
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop'
+      'https://picsum.photos/800/600?random=7&blur=0',
+      'https://picsum.photos/800/600?random=8&blur=0'
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Parking', 'Lighthouse museum', 'Cafe'],
@@ -190,8 +190,8 @@ export const realLatvianCamping: RealLocation[] = [
     },
     features: ['Tent sites', 'RV hookups', 'Shower facilities', 'Restaurant', 'Adventure activities'],
     images: [
-      'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1537565266759-d30eac2d9762?w=800&h=600&fit=crop'
+      'https://picsum.photos/800/600?random=9&blur=0',
+      'https://picsum.photos/800/600?random=10&blur=0'
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Electricity', 'Water', 'Showers', 'Toilets', 'WiFi', 'Restaurant'],
@@ -223,8 +223,8 @@ export const realLatvianCamping: RealLocation[] = [
     },
     features: ['Beach access', 'Pine forest', 'Spa nearby', 'Train to Riga', 'Swimming'],
     images: [
-      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop'
+      'https://picsum.photos/800/600?random=11&blur=0',
+      'https://picsum.photos/800/600?random=12&blur=0'
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['Beach access', 'Showers', 'Toilets', 'Parking', 'Store'],
@@ -260,8 +260,8 @@ export const realLatvianFishing: RealLocation[] = [
     },
     features: ['Trout fishing', 'Grayling', 'Fly fishing', 'Clean water', 'Scenic location'],
     images: [
-      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=800&h=600&fit=crop'
+      'https://picsum.photos/800/600?random=13&blur=0',
+      'https://picsum.photos/800/600?random=14&blur=0'
     ],
     season: ['spring', 'summer', 'autumn'],
     facilities: ['River access', 'Parking', 'Fishing permit required'],
@@ -291,8 +291,8 @@ export const realLatvianFishing: RealLocation[] = [
     },
     features: ['Pike fishing', 'Perch', 'Urban location', 'Easy access', 'Multiple spots'],
     images: [
-      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=800&h=600&fit=crop'
+      'https://picsum.photos/800/600?random=15&blur=0',
+      'https://picsum.photos/800/600?random=16&blur=0'
     ],
     season: ['spring', 'summer', 'autumn', 'winter'],
     facilities: ['Fishing platforms', 'Parking', 'Public transport'],
@@ -322,8 +322,8 @@ export const realLatvianWinter: RealLocation[] = [
     },
     features: ['Professional bobsled', 'Summer track', 'Historic venue', 'Guided tours', 'Adrenaline rush'],
     images: [
-      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1551524164-687a55dd1126?w=800&h=600&fit=crop'
+      'https://picsum.photos/800/600?random=17&blur=0',
+      'https://picsum.photos/800/600?random=18&blur=0'
     ],
     season: ['winter', 'summer'],
     facilities: ['Professional track', 'Safety equipment', 'Changing rooms', 'Cafe'],
@@ -355,8 +355,8 @@ export const realLatvianWinter: RealLocation[] = [
     },
     features: ['Multiple slopes', 'Ski lifts', 'Equipment rental', 'Ski school', 'Restaurant'],
     images: [
-      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1551524164-687a55dd1126?w=800&h=600&fit=crop'
+      'https://picsum.photos/800/600?random=19&blur=0',
+      'https://picsum.photos/800/600?random=20&blur=0'
     ],
     season: ['winter'],
     facilities: ['Ski lifts', 'Equipment rental', 'Ski school', 'Restaurant', 'Parking'],
@@ -419,4 +419,10 @@ export const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2
     Math.sin(dLng/2) * Math.sin(dLng/2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   return R * c; // Distance in kilometers
+};
+
+// UTILITY FUNCTION FOR DIRECTIONS
+export const getDirectionsUrl = (lat: number, lng: number, name: string): string => {
+  // Google Maps directions URL
+  return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&destination_place_id=${encodeURIComponent(name)}`;
 };
