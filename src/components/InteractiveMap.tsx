@@ -45,7 +45,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
     // Custom icons for different types
     const getCustomIcon = (location: RealLocation) => {
-      let iconUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png';
       let iconColor = '#3388ff';
 
       // Different icons based on location type or features

@@ -12,11 +12,9 @@ import {
   Utensils,
   Star,
   Clock,
-  Euro,
   Phone,
   Globe,
   Search,
-  Filter,
   Map,
   List,
   Heart,
@@ -26,7 +24,7 @@ import {
 } from 'lucide-react';
 
 const CampingTab: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const [campsites, setCampsites] = useState<RealLocation[]>([]);
   const [filteredCampsites, setFilteredCampsites] = useState<RealLocation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,8 +40,27 @@ const CampingTab: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    filterCampsites();
-  }, [campsites, searchTerm, selectedRegion]);
+    const filterData = () => {
+      let filtered = [...campsites];
+
+      if (searchTerm) {
+        filtered = filtered.filter(campsite =>
+          campsite.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          campsite.description[i18n.language as keyof typeof campsite.description]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          campsite.region.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          campsite.features.some(feature => feature.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+      }
+
+      if (selectedRegion !== 'all') {
+        filtered = filtered.filter(campsite => campsite.region === selectedRegion);
+      }
+
+      setFilteredCampsites(filtered);
+    };
+
+    filterData();
+  }, [campsites, searchTerm, selectedRegion, i18n.language]);
 
   const loadCampsites = async () => {
     setLoading(true);
@@ -67,24 +84,7 @@ const CampingTab: React.FC = () => {
     }
   };
 
-  const filterCampsites = () => {
-    let filtered = [...campsites];
 
-    if (searchTerm) {
-      filtered = filtered.filter(campsite =>
-        campsite.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        campsite.description[i18n.language as keyof typeof campsite.description]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        campsite.region.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        campsite.features.some(feature => feature.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-    }
-
-    if (selectedRegion !== 'all') {
-      filtered = filtered.filter(campsite => campsite.region === selectedRegion);
-    }
-
-    setFilteredCampsites(filtered);
-  };
 
   const getDistanceFromUser = (campsite: RealLocation): string => {
     if (!userLocation) return '';
