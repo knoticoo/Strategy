@@ -14,7 +14,7 @@ import { Trail } from '../../types';
 import { DIFFICULTY_LABELS, DIFFICULTY_COLORS } from '../../constants';
 
 export const TrailsAdmin: React.FC = () => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   
   const [trails, setTrails] = useState<Trail[]>([
     {
@@ -83,7 +83,7 @@ export const TrailsAdmin: React.FC = () => {
   const [showTrailEditor, setShowTrailEditor] = useState(false);
 
   const handleDeleteTrail = (trailId: string) => {
-    if (confirm('Are you sure you want to delete this trail?')) {
+    if (window.confirm('Are you sure you want to delete this trail?')) {
       setTrails(prev => prev.filter(t => t.id !== trailId));
     }
   };

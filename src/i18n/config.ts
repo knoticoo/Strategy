@@ -340,7 +340,7 @@ const resources = {
         },
         settings: 'Notification Settings',
         settingsDescription: 'Choose what notifications you want to receive',
-        settings: {
+        settingsOptions: {
           email: 'Email notifications',
           push: 'Push notifications',
           mentions: 'Mentions and replies',
@@ -885,13 +885,13 @@ const resources = {
         },
         settings: 'Настройки уведомлений',
         settingsDescription: 'Выберите, какие уведомления вы хотите получать',
-        settings: {
+        settingsOptions: {
           email: 'Email уведомления',
           push: 'Push уведомления',
           mentions: 'Упоминания и ответы',
           follows: 'Новые подписчики',
           likes: 'Лайки ваших постов',
-          comments: 'Комментарии к вашим постам',
+          comments: 'Комментарии к вашим постов',
           achievements: 'Разблокировка достижений',
           trails: 'Обновления троп'
         }

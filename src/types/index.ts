@@ -120,6 +120,9 @@ export interface Notification {
   createdAt: string;
   userId: string;
   relatedId?: string;
+  timestamp?: string;
+  avatar?: string | null;
+  actionUrl?: string | null;
 }
 
 export interface NotificationSettings {
@@ -130,6 +133,8 @@ export interface NotificationSettings {
   system: boolean;
   email: boolean;
   push: boolean;
+  mentions: boolean;
+  trails: boolean;
 }
 
 // Profile Types

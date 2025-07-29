@@ -8,10 +8,10 @@ import {
   BookOpen
 } from 'lucide-react';
 import { EducationalContent, ContentForm } from '../../types';
-import { CATEGORY_LABELS, CATEGORY_COLORS, STATUS_LABELS, STATUS_COLORS } from '../../constants';
+import { CATEGORY_LABELS, STATUS_LABELS, STATUS_COLORS } from '../../constants';
 
 export const EducationAdmin: React.FC = () => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   
   // Education Admin State
   const [educationContent, setEducationContent] = useState<EducationalContent[]>([
@@ -164,7 +164,7 @@ export const EducationAdmin: React.FC = () => {
   };
 
   const handleDeleteContent = (contentId: string) => {
-    if (confirm('Are you sure you want to delete this content?')) {
+    if (window.confirm('Are you sure you want to delete this content?')) {
       setEducationContent(prev => prev.filter(c => c.id !== contentId));
     }
   };

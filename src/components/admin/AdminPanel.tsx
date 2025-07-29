@@ -4,8 +4,7 @@ import {
   Shield, 
   Users, 
   BarChart3, 
-  BookOpen,
-  AlertTriangle 
+  BookOpen 
 } from 'lucide-react';
 import { TrailsAdmin } from './TrailsAdmin';
 import { UsersAdmin } from './UsersAdmin';
@@ -17,7 +16,7 @@ interface AdminPanelProps {
 }
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ isAdmin }) => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const [adminTab, setAdminTab] = useState<'trails' | 'users' | 'stats' | 'education'>('trails');
 
   if (!isAdmin) {

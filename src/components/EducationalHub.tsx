@@ -833,7 +833,7 @@ const EducationalHub: React.FC = () => {
                   {/* Submit/Next Button */}
                   {!showQuizResult ? (
                     <button
-                      onClick={() => handleQuizAnswer(selectedAnswer)}
+                      onClick={() => selectedAnswer !== null && handleQuizAnswer(selectedAnswer)}
                       disabled={selectedAnswer === null}
                       className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium shadow-lg"
                     >
@@ -849,13 +849,13 @@ const EducationalHub: React.FC = () => {
                         } else {
                           // Quiz completed
                           const correctAnswers = quizQuestions.filter((q, i) => 
-                            userAnswers[i] === q.correct
+                            quizAnswers[i] === q.correct
                           ).length;
                           const percentage = Math.round((correctAnswers / quizQuestions.length) * 100);
                           updateProgress(selectedContent!.id, percentage, percentage >= 70);
                           setShowQuiz(false);
                           setCurrentQuestionIndex(0);
-                          setUserAnswers([]);
+                          setQuizAnswers([]);
                           setSelectedAnswer(null);
                           setShowQuizResult(false);
                         }

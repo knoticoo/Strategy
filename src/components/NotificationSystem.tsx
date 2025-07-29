@@ -12,19 +12,16 @@ import {
   MessageSquare,
   Award,
   Camera,
-  Calendar,
-  ChevronDown,
-  Filter,
-  MoreHorizontal
+  Filter
 } from 'lucide-react';
-import { useUserContext } from '../contexts/UserContext';
+import { useUser } from '../contexts/UserContext';
 import { Notification, NotificationSettings } from '../types';
 import { formatTime } from '../utils';
 import { Button, Modal } from './shared';
 
 export const NotificationSystem: React.FC = () => {
   const { t } = useTranslation();
-  const { currentUser } = useUserContext();
+  const { user: currentUser } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -457,7 +454,7 @@ export const NotificationSystem: React.FC = () => {
               {Object.entries(settings).map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between">
                   <label className="text-sm text-gray-700 dark:text-gray-300">
-                    {t(`notifications.settings.${key}`)}
+                                          {t(`notifications.settingsOptions.${key}`)}
                   </label>
                   <button
                     onClick={() => setSettings(prev => ({ ...prev, [key]: !value }))}

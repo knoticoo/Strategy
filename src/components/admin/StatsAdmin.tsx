@@ -5,11 +5,8 @@ import {
   TrendingUp,
   Users,
   Mountain,
-  BookOpen,
-  MessageSquare,
   Star,
   Activity,
-  Calendar,
   Globe,
   Smartphone,
   Monitor
@@ -17,7 +14,7 @@ import {
 import { AdminStats } from '../../types';
 
 export const StatsAdmin: React.FC = () => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   
   const [stats] = useState<AdminStats>({
     totalUsers: 1247,

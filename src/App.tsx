@@ -25,7 +25,7 @@ import EnhancedProfileTab from './components/EnhancedProfileTab';
 
 import EducationalHub from './components/EducationalHub';
 import AIAdventurePlanner from './components/AIAdventurePlanner';
-import NotificationSystem from './components/NotificationSystem';
+import { NotificationSystem } from './components/NotificationSystem';
 
 type TabType = 'trails' | 'community' | 'profile' | 'auth' | 'education' | 'ai-planner';
 

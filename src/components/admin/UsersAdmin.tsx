@@ -16,7 +16,7 @@ import { User } from '../../types';
 import { formatDate } from '../../utils';
 
 export const UsersAdmin: React.FC = () => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   
   const [users, setUsers] = useState<User[]>([
     {
@@ -111,7 +111,7 @@ export const UsersAdmin: React.FC = () => {
   };
 
   const handleDeleteUser = (userId: string) => {
-    if (confirm('Are you sure you want to delete this user?')) {
+    if (window.confirm('Are you sure you want to delete this user?')) {
       setUsers(prev => prev.filter(user => user.id !== userId));
     }
   };
