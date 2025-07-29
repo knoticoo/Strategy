@@ -2,39 +2,4 @@
 > ai-vet-bot-service@1.0.0 dev
 > nodemon src/server.ts
 
-[33m[nodemon] 3.1.10[39m
-[33m[nodemon] to restart at any time, enter `rs`[39m
-[33m[nodemon] watching path(s): *.*[39m
-[33m[nodemon] watching extensions: ts,json[39m
-[32m[nodemon] starting `ts-node src/server.ts`[39m
-/workspace/ai-bot-service/node_modules/ts-node/src/index.ts:859
-    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
-           ^
-TSError: ⨯ Unable to compile TypeScript:
-src/server.ts(8,24): error TS2307: Cannot find module './utils/logger' or its corresponding type declarations.
-src/server.ts(9,31): error TS2307: Cannot find module './database/setup' or its corresponding type declarations.
-src/server.ts(10,30): error TS2307: Cannot find module './middleware/errorHandler' or its corresponding type declarations.
-src/server.ts(11,29): error TS2307: Cannot find module './middleware/rateLimiter' or its corresponding type declarations.
-src/server.ts(12,32): error TS2307: Cannot find module './middleware/auth' or its corresponding type declarations.
-src/server.ts(16,26): error TS2307: Cannot find module './routes/health' or its corresponding type declarations.
-src/server.ts(18,29): error TS2307: Cannot find module './routes/analytics' or its corresponding type declarations.
-src/server.ts(19,25): error TS2307: Cannot find module './routes/admin' or its corresponding type declarations.
-src/server.ts(89,24): error TS6133: 'req' is declared but its value is never read.
-
-    at createTSError (/workspace/ai-bot-service/node_modules/ts-node/src/index.ts:859:12)
-    at reportTSError (/workspace/ai-bot-service/node_modules/ts-node/src/index.ts:863:19)
-    at getOutput (/workspace/ai-bot-service/node_modules/ts-node/src/index.ts:1077:36)
-    at Object.compile (/workspace/ai-bot-service/node_modules/ts-node/src/index.ts:1433:41)
-    at Module.m._compile (/workspace/ai-bot-service/node_modules/ts-node/src/index.ts:1617:30)
-    at node:internal/modules/cjs/loader:1895:10
-    at Object.require.extensions.<computed> [as .ts] (/workspace/ai-bot-service/node_modules/ts-node/src/index.ts:1621:12)
-    at Module.load (node:internal/modules/cjs/loader:1465:32)
-    at Function._load (node:internal/modules/cjs/loader:1282:12)
-    at TracingChannel.traceSync (node:diagnostics_channel:322:14) {
-  diagnosticCodes: [
-    2307, 2307, 2307,
-    2307, 2307, 2307,
-    2307, 2307, 6133
-  ]
-}
-[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+sh: 1: nodemon: not found
