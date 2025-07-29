@@ -1,6 +1,8 @@
 #!/bin/bash
 # AI Pet Doctor - Complete System Startup with Admin Panel
+# Version: 1.0.0
 # Password: Millie1991
+# Optimized for VPS deployment with custom AI training
 set -e
 
 # Colors for output
