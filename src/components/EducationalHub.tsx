@@ -9,10 +9,7 @@ import {
   Clock,
   Users,
   Award,
-  Play,
-  Pause,
-  Volume2,
-  VolumeX,
+
   ChevronRight,
   Star,
   Heart,
@@ -41,13 +38,13 @@ interface EducationalContent {
   id: string;
   title: string;
   category: 'nature' | 'history' | 'culture' | 'photography' | 'survival';
-  type: 'article' | 'video' | 'interactive' | 'quiz' | 'tutorial';
+        type: 'article' | 'interactive' | 'quiz' | 'tutorial';
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   duration: number; // minutes
   description: string;
   content: string;
   images: string[];
-  videoUrl?: string;
+  
   location?: {
     name: string;
     coordinates: { lat: number; lng: number };
@@ -86,8 +83,7 @@ const EducationalHub: React.FC = () => {
   const [quizAnswers, setQuizAnswers] = useState<number[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showQuizResult, setShowQuizResult] = useState(false);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-  const [videoMuted, setVideoMuted] = useState(false);
+
 
   // Mock educational content data
   const [educationalContent] = useState<EducationalContent[]>([
@@ -121,31 +117,30 @@ const EducationalHub: React.FC = () => {
         expertise: 'Forest Botanist'
       }
     },
-    {
-      id: 'nature-2',
-      title: 'Wildlife Watching: Birds and Mammals of Latvia',
-      category: 'nature',
-      type: 'video',
-      difficulty: 'intermediate',
-      duration: 35,
-      description: 'Discover the diverse wildlife of Latvia, from forest birds to coastal mammals.',
-      content: 'Latvia hosts over 300 bird species and numerous mammals including lynx, wolves, and brown bears...',
-      images: [
-        'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800',
-        'https://images.unsplash.com/photo-1574263867128-e6b48e67e1f9?w=800'
-      ],
-      videoUrl: 'https://example.com/wildlife-video',
-      relatedTrails: ['kemeri-bog-trail', 'slitere-coastal-walk'],
-      tags: ['wildlife', 'birds', 'mammals', 'observation', 'nature'],
-      rating: 4.9,
-      completedBy: 892,
-      createdAt: '2024-01-20',
-      author: {
-        name: 'Māris Strazds',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
-        expertise: 'Wildlife Biologist'
-      }
-    },
+          {
+        id: 'nature-2',
+        title: 'Wildlife Watching: Birds and Mammals of Latvia',
+        category: 'nature',
+        type: 'quiz',
+        difficulty: 'intermediate',
+        duration: 25,
+        description: 'Test your knowledge about the diverse wildlife of Latvia, from forest birds to coastal mammals.',
+        content: 'Latvia hosts over 300 bird species and numerous mammals including lynx, wolves, and brown bears. This interactive quiz will test your knowledge about identifying and understanding local wildlife.',
+        images: [
+          'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800',
+          'https://images.unsplash.com/photo-1574263867128-e6b48e67e1f9?w=800'
+        ],
+        relatedTrails: ['kemeri-bog-trail', 'slitere-coastal-walk'],
+        tags: ['wildlife', 'birds', 'mammals', 'observation', 'nature', 'quiz'],
+        rating: 4.9,
+        completedBy: 892,
+        createdAt: '2024-01-20',
+        author: {
+          name: 'Māris Strazds',
+          avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
+          expertise: 'Wildlife Biologist'
+        }
+      },
     // Historical Content
     {
       id: 'history-1',
@@ -201,57 +196,55 @@ const EducationalHub: React.FC = () => {
       }
     },
     // Photography Tutorials
-    {
-      id: 'photo-1',
-      title: 'Golden Hour Photography in Baltic Forests',
-      category: 'photography',
-      type: 'tutorial',
-      difficulty: 'intermediate',
-      duration: 40,
-      description: 'Master the art of capturing stunning forest photography during golden hour.',
-      content: 'Golden hour provides the perfect lighting for forest photography. Learn composition techniques...',
-      images: [
-        'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
-        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800'
-      ],
-      videoUrl: 'https://example.com/photography-tutorial',
-      relatedTrails: ['gauja-photo-spots', 'kemeri-sunrise-trail'],
-      tags: ['photography', 'golden hour', 'forest', 'composition', 'lighting'],
-      rating: 4.9,
-      completedBy: 2341,
-      createdAt: '2024-02-01',
-      author: {
-        name: 'Kaspars Goba',
-        avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100',
-        expertise: 'Nature Photographer'
-      }
-    },
+          {
+        id: 'photo-1',
+        title: 'Golden Hour Photography in Baltic Forests',
+        category: 'photography',
+        type: 'quiz',
+        difficulty: 'intermediate',
+        duration: 30,
+        description: 'Test your knowledge about capturing stunning forest photography during golden hour.',
+        content: 'Golden hour provides the perfect lighting for forest photography. This quiz covers composition techniques, camera settings, and timing for the best forest photography results.',
+        images: [
+          'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
+          'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800'
+        ],
+        relatedTrails: ['gauja-photo-spots', 'kemeri-sunrise-trail'],
+        tags: ['photography', 'golden hour', 'forest', 'composition', 'lighting', 'quiz'],
+        rating: 4.9,
+        completedBy: 2341,
+        createdAt: '2024-02-01',
+        author: {
+          name: 'Kaspars Goba',
+          avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100',
+          expertise: 'Nature Photographer'
+        }
+      },
     // Survival Skills
-    {
-      id: 'survival-1',
-      title: 'Essential Wilderness Survival Skills',
-      category: 'survival',
-      type: 'tutorial',
-      difficulty: 'advanced',
-      duration: 60,
-      description: 'Learn critical survival skills for outdoor adventures including shelter, fire, water, and navigation.',
-      content: 'In wilderness situations, knowing basic survival skills can be life-saving. This comprehensive guide covers...',
-      images: [
-        'https://images.unsplash.com/photo-1504851149312-7a075b496cc7?w=800',
-        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800'
-      ],
-      videoUrl: 'https://example.com/survival-skills',
-      relatedTrails: ['wilderness-survival-course', 'remote-camping-areas'],
-      tags: ['survival', 'wilderness', 'emergency', 'shelter', 'fire', 'navigation'],
-      rating: 4.8,
-      completedBy: 567,
-      createdAt: '2024-02-05',
-      author: {
-        name: 'Andris Bērziņš',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
-        expertise: 'Wilderness Survival Expert'
+          {
+        id: 'survival-1',
+        title: 'Essential Wilderness Survival Skills',
+        category: 'survival',
+        type: 'quiz',
+        difficulty: 'advanced',
+        duration: 45,
+        description: 'Test your knowledge of critical survival skills for outdoor adventures including shelter, fire, water, and navigation.',
+        content: 'In wilderness situations, knowing basic survival skills can be life-saving. This comprehensive quiz covers emergency shelter building, fire starting techniques, water purification, and navigation skills.',
+        images: [
+          'https://images.unsplash.com/photo-1504851149312-7a075b496cc7?w=800',
+          'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800'
+        ],
+        relatedTrails: ['wilderness-survival-course', 'remote-camping-areas'],
+        tags: ['survival', 'wilderness', 'emergency', 'shelter', 'fire', 'navigation', 'quiz'],
+        rating: 4.8,
+        completedBy: 567,
+        createdAt: '2024-02-05',
+        author: {
+          name: 'Andris Bērziņš',
+          avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
+          expertise: 'Wilderness Survival Expert'
+        }
       }
-    }
   ]);
 
   // Sample quiz questions
@@ -358,10 +351,10 @@ const EducationalHub: React.FC = () => {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'video': return Play;
       case 'interactive': return Target;
       case 'quiz': return Award;
       case 'tutorial': return BookOpen;
+      case 'article': return BookOpen;
       default: return BookOpen;
     }
   };
@@ -479,13 +472,6 @@ const EducationalHub: React.FC = () => {
                     <TypeIcon className="h-4 w-4 text-white" />
                   </div>
                 </div>
-                {content.videoUrl && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-black/50 rounded-full p-3">
-                      <Play className="h-8 w-8 text-white" />
-                    </div>
-                  </div>
-                )}
               </div>
 
               <div className="p-6">
@@ -608,72 +594,7 @@ const EducationalHub: React.FC = () => {
                 {selectedContent.description}
               </p>
 
-              {selectedContent.videoUrl && (
-                <div className="mb-6">
-                  <div className="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-                    {!isVideoPlaying ? (
-                      <div className="p-8 text-center">
-                        <Play className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-600 dark:text-gray-400 mb-4">Educational video content</p>
-                        <button
-                          onClick={() => {
-                            setIsVideoPlaying(true);
-                            updateProgress(selectedContent.id, 50);
-                          }}
-                          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 mx-auto"
-                        >
-                          <Play className="h-4 w-4" />
-                          Watch Video
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="relative">
-                        {/* Simulated video player */}
-                        <div className="aspect-video bg-black flex items-center justify-center relative">
-                          <img
-                            src={selectedContent.images[0]}
-                            alt="Video thumbnail"
-                            className="w-full h-full object-cover opacity-80"
-                          />
-                          <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                            <div className="text-white text-center">
-                              <div className="w-16 h-16 border-4 border-white rounded-full border-t-transparent animate-spin mx-auto mb-4"></div>
-                              <p className="text-lg font-medium">Playing Educational Video...</p>
-                              <p className="text-sm opacity-80 mt-2">{selectedContent.title}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="p-4 bg-gray-800 text-white flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <button
-                              onClick={() => setIsVideoPlaying(false)}
-                              className="p-2 hover:bg-gray-700 rounded"
-                            >
-                              <Pause className="h-5 w-5" />
-                            </button>
-                            <button
-                              onClick={() => setVideoMuted(!videoMuted)}
-                              className="p-2 hover:bg-gray-700 rounded"
-                            >
-                              {videoMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-                            </button>
-                            <span className="text-sm">Duration: {selectedContent.duration} min</span>
-                          </div>
-                          <button
-                            onClick={() => {
-                              setIsVideoPlaying(false);
-                              updateProgress(selectedContent.id, 100, true);
-                            }}
-                            className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded text-sm"
-                          >
-                            Mark as Watched
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+
 
               <div className="prose dark:prose-invert max-w-none mb-6">
                 <p>{selectedContent.content}</p>
