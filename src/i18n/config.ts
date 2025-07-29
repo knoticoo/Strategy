@@ -111,6 +111,15 @@ const resources = {
           noConnections: 'No social connections yet',
           startFollowing: 'Start following other adventurers to see their activities!'
         },
+        gallery: {
+          title: 'Photo Gallery',
+          addPhoto: 'Add Photo',
+          noPhotos: 'No photos yet',
+          sharePhotos: 'Share your adventure photos with the community!',
+          caption: 'Photo Caption',
+          upload: 'Upload Photo',
+          cancel: 'Cancel'
+        },
         settings: {
           title: 'Profile Settings',
           theme: 'Profile Theme',
@@ -1036,6 +1045,64 @@ const resources = {
         },
         buyNow: 'Купить Сейчас',
         rentNear: 'Арендовать Рядом'
+      },
+
+      // Profile
+      profile: {
+        tabs: {
+          overview: 'Обзор',
+          gallery: 'Галерея',
+          achievements: 'Достижения',
+          social: 'Социальные',
+          activity: 'Активность',
+          settings: 'Настройки'
+        },
+        bio: {
+          aboutMe: 'Обо мне',
+          edit: 'Редактировать биографию',
+          save: 'Сохранить биографию',
+          cancel: 'Отменить',
+          placeholder: 'Расскажите нам о себе и своих приключениях...',
+          noBio: 'Биография еще не добавлена. Нажмите редактировать, чтобы добавить свою историю!'
+        },
+        stats: {
+          trailsCompleted: 'Пройдено троп',
+          photosShared: 'Фото поделились',
+        },
+        achievements: {
+          title: 'Достижения',
+          earned: 'Заработано',
+          progress: 'Прогресс'
+        },
+        social: {
+          title: 'Социальные связи',
+          followers: 'Подписчики',
+          following: 'Подписки',
+          follow: 'Подписаться',
+          unfollow: 'Отписаться',
+          noConnections: 'Пока нет социальных связей',
+          startFollowing: 'Начните следить за другими искателями приключений, чтобы видеть их активность!'
+        },
+        gallery: {
+          title: 'Фото галерея',
+          addPhoto: 'Добавить фото',
+          noPhotos: 'Пока нет фото',
+          sharePhotos: 'Поделитесь своими фотографиями приключений с сообществом!',
+          caption: 'Подпись к фото',
+          upload: 'Загрузить фото',
+          cancel: 'Отменить'
+        },
+        settings: {
+          title: 'Настройки профиля',
+          theme: 'Тема профиля',
+          verification: 'Верификация',
+          getVerified: 'Получить верификацию',
+          verificationDesc: 'Станьте верифицированным гидом, пройдя 10 троп и получив положительные отзывы',
+          privacy: 'Настройки приватности',
+          makePublic: 'Сделать профиль публичным',
+          showActivity: 'Показывать временную шкалу активности',
+          findByEmail: 'Разрешить другим найти меня по email'
+        }
       },
 
       // Auth

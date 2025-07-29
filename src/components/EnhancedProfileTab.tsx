@@ -464,13 +464,13 @@ const EnhancedProfileTab: React.FC = () => {
         {activeTab === 'gallery' && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Photo Gallery</h3>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{t('profile.gallery.title')}</h3>
               <button
                 onClick={() => setShowAddPhoto(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <Plus className="h-4 w-4" />
-                Add Photo
+                {t('profile.gallery.addPhoto')}
               </button>
             </div>
 
@@ -479,7 +479,7 @@ const EnhancedProfileTab: React.FC = () => {
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md">
                   <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Add Photo</h4>
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white">{t('profile.gallery.addPhoto')}</h4>
                     <button
                       onClick={() => setShowAddPhoto(false)}
                       className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
@@ -559,8 +559,8 @@ const EnhancedProfileTab: React.FC = () => {
             {photoGallery.length === 0 && (
               <div className="text-center py-12">
                 <ImageIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No photos yet</h4>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">Share your adventure photos with the community!</p>
+                <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('profile.gallery.noPhotos')}</h4>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">{t('profile.gallery.sharePhotos')}</p>
               </div>
             )}
           </div>
