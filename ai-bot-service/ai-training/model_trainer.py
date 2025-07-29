@@ -18,10 +18,10 @@ from datetime import datetime
 # Transformers and training
 from transformers import (
     AutoTokenizer, AutoModelForCausalLM, TrainingArguments, Trainer,
-    DataCollatorForLanguageModeling, BitsAndBytesConfig
+    DataCollatorForLanguageModeling
 )
 from datasets import Dataset, load_dataset
-from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
+from peft import LoraConfig, get_peft_model, TaskType
 import wandb
 from accelerate import Accelerator
 
@@ -105,15 +105,9 @@ class VeterinaryModelTrainer:
         """Load base model and prepare for training"""
         logger.info(f"🤖 Loading base model: {self.config.base_model_name}")
         
-        # Configure quantization if enabled
+        # Configure quantization if enabled (disabled for CPU-only training)
         quantization_config = None
-        if self.config.use_4bit:
-            quantization_config = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_compute_dtype=getattr(torch, self.config.bnb_4bit_compute_dtype),
-                bnb_4bit_quant_type=self.config.bnb_4bit_quant_type,
-                bnb_4bit_use_double_quant=True,
-            )
+        # Note: 4-bit quantization disabled for CPU compatibility
         
         # Load tokenizer
         self.tokenizer = AutoTokenizer.from_pretrained(
@@ -151,9 +145,8 @@ class VeterinaryModelTrainer:
         # Resize token embeddings for new tokens
         self.model.resize_token_embeddings(len(self.tokenizer))
         
-        # Prepare model for k-bit training if using quantization
-        if self.config.use_4bit:
-            self.model = prepare_model_for_kbit_training(self.model)
+        # Prepare model for k-bit training if using quantization (disabled for CPU)
+        # Note: 4-bit quantization disabled for CPU compatibility
         
         # Configure LoRA if enabled
         if self.config.use_lora:
@@ -551,7 +544,7 @@ def main():
         gradient_accumulation_steps=16,  # Compensate with more accumulation
         learning_rate=3e-4,  # Slightly higher learning rate
         use_lora=True,  # Essential for memory efficiency
-        use_4bit=True,  # Essential for 4GB RAM
+        use_4bit=False,  # Disabled for CPU-only training
         lora_r=8,  # Smaller LoRA rank for memory
         lora_alpha=16,
         max_samples=5000,  # Limit training samples for faster training
