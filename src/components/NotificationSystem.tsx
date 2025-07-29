@@ -159,22 +159,80 @@ const NotificationSystem: React.FC = () => {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Notification interaction functions
+  const markAsRead = useCallback((notificationId: string) => {
+    if (!currentUser) return;
+    
+    setNotifications(prev => {
+      const updated = prev.map(n => 
+        n.id === notificationId ? { ...n, read: true } : n
+      );
+      // Persist to localStorage
+      localStorage.setItem(`notifications_${currentUser.id}`, JSON.stringify(updated));
+      return updated;
+    });
+    
+    setUnreadCount(prev => Math.max(0, prev - 1));
+  }, [currentUser]);
+
+  const deleteNotification = useCallback((notificationId: string) => {
+    if (!currentUser) return;
+    
+    setNotifications(prev => {
+      const updated = prev.filter(n => n.id !== notificationId);
+      // Persist to localStorage
+      localStorage.setItem(`notifications_${currentUser.id}`, JSON.stringify(updated));
+      return updated;
+    });
+    
+    setUnreadCount(prev => {
+      const notification = notifications.find(n => n.id === notificationId);
+      return notification && !notification.read ? Math.max(0, prev - 1) : prev;
+    });
+  }, [currentUser, notifications]);
+
+  const markAllAsRead = useCallback(() => {
+    if (!currentUser) return;
+    
+    setNotifications(prev => {
+      const updated = prev.map(n => ({ ...n, read: true }));
+      // Persist to localStorage
+      localStorage.setItem(`notifications_${currentUser.id}`, JSON.stringify(updated));
+      return updated;
+    });
+    
+    setUnreadCount(0);
+  }, [currentUser]);
+
 
 
   const loadNotifications = useCallback(async () => {
     if (!currentUser) return;
     
     try {
+      // First try to load from localStorage for persistence
+      const savedNotifications = localStorage.getItem(`notifications_${currentUser.id}`);
+      if (savedNotifications) {
+        const parsedNotifications = JSON.parse(savedNotifications);
+        setNotifications(parsedNotifications);
+        setUnreadCount(parsedNotifications.filter((n: Notification) => !n.read).length);
+        return;
+      }
+
       // Try to load from API, fallback to realistic mock data
       const apiNotifications = await api.getUserNotifications(currentUser.id);
       if (apiNotifications && apiNotifications.length > 0) {
         setNotifications(apiNotifications);
         setUnreadCount(apiNotifications.filter(n => !n.read).length);
+        // Save to localStorage for persistence
+        localStorage.setItem(`notifications_${currentUser.id}`, JSON.stringify(apiNotifications));
       } else {
         // Generate dynamic mock notifications based on user activity
         const dynamicNotifications = generateDynamicNotifications(currentUser, t);
         setNotifications(dynamicNotifications);
         setUnreadCount(dynamicNotifications.filter(n => !n.read).length);
+        // Save to localStorage for persistence
+        localStorage.setItem(`notifications_${currentUser.id}`, JSON.stringify(dynamicNotifications));
       }
     } catch (error) {
       console.error('Error loading notifications:', error);
@@ -182,6 +240,8 @@ const NotificationSystem: React.FC = () => {
       const dynamicNotifications = generateDynamicNotifications(currentUser, t);
       setNotifications(dynamicNotifications);
       setUnreadCount(dynamicNotifications.filter(n => !n.read).length);
+      // Save to localStorage for persistence
+      localStorage.setItem(`notifications_${currentUser.id}`, JSON.stringify(dynamicNotifications));
     }
   }, [currentUser, t]);
 

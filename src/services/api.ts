@@ -245,8 +245,32 @@ export const getUserPhotoGallery = async (userId: string): Promise<any[]> => {
     const response = await api.get(`/users/${userId}/gallery`);
     return response.data;
   } catch (error) {
-    console.log('Gallery API not implemented yet, returning empty array');
-    return [];
+    console.log('Gallery API not implemented yet, using localStorage fallback');
+    // Fallback to localStorage for demo
+    const savedPhotos = localStorage.getItem('userPhotos');
+    if (savedPhotos) {
+      return JSON.parse(savedPhotos);
+    }
+    
+    // Return mock photos if no saved photos
+    return [
+      {
+        id: '1',
+        url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400',
+        caption: 'Beautiful sunset at Gauja National Park',
+        location: 'Gauja National Park',
+        likes: 24,
+        uploadedAt: '2024-01-15T10:30:00Z'
+      },
+      {
+        id: '2', 
+        url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
+        caption: 'Morning hike through the forest',
+        location: 'Kemeri National Park',
+        likes: 18,
+        uploadedAt: '2024-01-12T08:15:00Z'
+      }
+    ];
   }
 };
 
