@@ -9,7 +9,9 @@ import {
   Users,
   LogIn,
   User,
-  Smartphone
+  Smartphone,
+  BookOpen,
+  Brain
 } from 'lucide-react';
 import './i18n/config';
 import { UserProvider } from './contexts/UserContext';
@@ -21,8 +23,10 @@ import AuthTab from './components/AuthTab';
 import EnhancedProfileTab from './components/EnhancedProfileTab';
 import NotificationSystem from './components/NotificationSystem';
 import PWAFeatures from './components/PWAFeatures';
+import EducationalHub from './components/EducationalHub';
+import AIAdventurePlanner from './components/AIAdventurePlanner';
 
-type TabType = 'trails' | 'community' | 'profile' | 'pwa' | 'auth';
+type TabType = 'trails' | 'community' | 'profile' | 'pwa' | 'auth' | 'education' | 'ai-planner';
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -92,6 +96,20 @@ function App() {
       bgColor: 'bg-orange-50 dark:bg-orange-900/20'
     },
     {
+      id: 'education' as TabType,
+      name: '🎓 Education',
+      icon: BookOpen,
+      color: 'text-indigo-600',
+      bgColor: 'bg-indigo-50 dark:bg-indigo-900/20'
+    },
+    {
+      id: 'ai-planner' as TabType,
+      name: '🤖 AI Planner',
+      icon: Brain,
+      color: 'text-pink-600',
+      bgColor: 'bg-pink-50 dark:bg-pink-900/20'
+    },
+    {
       id: 'auth' as TabType,
       name: t('nav.auth'),
       icon: LogIn,
@@ -110,6 +128,10 @@ function App() {
         return <EnhancedProfileTab />;
       case 'pwa':
         return <PWAFeatures />;
+      case 'education':
+        return <EducationalHub />;
+      case 'ai-planner':
+        return <AIAdventurePlanner />;
       case 'auth':
         return <AuthTab />;
       default:
