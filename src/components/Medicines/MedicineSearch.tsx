@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search, Filter, Pill, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Medicine, MedicineCategory, PetSpecies } from '../../types';
-import { searchMedicines, medicinesDatabase } from '../../data/medicines';
+import { vetDatabase } from '../../services/database/vetDatabase';
 import { MedicineCard } from './MedicineCard';
 
 export const MedicineSearch: React.FC = () => {
@@ -10,7 +10,7 @@ export const MedicineSearch: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<MedicineCategory | 'all'>('all');
   const [selectedSpecies, setSelectedSpecies] = useState<PetSpecies | 'all'>('all');
-  const [searchResults, setSearchResults] = useState<Medicine[]>(medicinesDatabase);
+  const [searchResults, setSearchResults] = useState<Medicine[]>(vetDatabase.getAllMedicines());
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
 
   const categories: { id: MedicineCategory | 'all'; label: string }[] = [
@@ -40,9 +40,14 @@ export const MedicineSearch: React.FC = () => {
       species: selectedSpecies === 'all' ? undefined : selectedSpecies
     };
     
-    const results = searchMedicines(searchQuery, filters);
+    const results = vetDatabase.searchMedicinesAdvanced(searchQuery, filters);
     setSearchResults(results);
-  }, [searchQuery, selectedCategory, selectedSpecies]);
+    
+    // Reset selected medicine if it's not in the new results
+    if (selectedMedicine && !results.find(m => m.id === selectedMedicine.id)) {
+      setSelectedMedicine(null);
+    }
+  }, [searchQuery, selectedCategory, selectedSpecies, selectedMedicine]);
 
   const handleMedicineSelect = (medicine: Medicine) => {
     setSelectedMedicine(medicine);

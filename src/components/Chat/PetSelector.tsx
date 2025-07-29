@@ -3,11 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { PetSpecies } from '../../types';
 
 interface PetSelectorProps {
-  selectedPet: PetSpecies | null;
-  onPetSelect: (pet: PetSpecies) => void;
+  onSelect: (pet: PetSpecies) => void;
 }
 
-export const PetSelector: React.FC<PetSelectorProps> = ({ selectedPet, onPetSelect }) => {
+export const PetSelector: React.FC<PetSelectorProps> = ({ onSelect }) => {
   const { t } = useTranslation();
 
   const petTypes: { id: PetSpecies; emoji: string }[] = [
@@ -22,28 +21,19 @@ export const PetSelector: React.FC<PetSelectorProps> = ({ selectedPet, onPetSele
   ];
 
   return (
-    <div>
-      <h3 className="text-lg font-medium text-gray-900 mb-3">
-        {t('chat.selectPet')}
-      </h3>
-      <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
+    <div className="grid grid-cols-4 md:grid-cols-8 gap-3">
         {petTypes.map((pet) => (
           <button
             key={pet.id}
-            onClick={() => onPetSelect(pet.id)}
-            className={`flex flex-col items-center p-3 rounded-lg border-2 transition-all duration-200 ${
-              selectedPet === pet.id
-                ? 'border-primary-500 bg-primary-50 text-primary-700'
-                : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-            }`}
+            onClick={() => onSelect(pet.id)}
+            className="flex flex-col items-center p-4 rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-all duration-200 hover:scale-105 group"
           >
-            <span className="text-2xl mb-1">{pet.emoji}</span>
-            <span className="text-xs font-medium text-center">
+            <span className="text-3xl mb-2 group-hover:scale-110 transition-transform">{pet.emoji}</span>
+            <span className="text-xs font-medium text-center text-gray-700 group-hover:text-primary-700">
               {t(`chat.petTypes.${pet.id}`)}
             </span>
           </button>
         ))}
-      </div>
     </div>
   );
 };

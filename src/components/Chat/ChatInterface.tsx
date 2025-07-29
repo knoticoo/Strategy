@@ -1,24 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Send, Bot, User, AlertTriangle, Loader2 } from 'lucide-react';
-import { ChatMessage, PetSpecies } from '../../types';
+import { Send, Bot, User, AlertTriangle, Sparkles, Brain, Stethoscope } from 'lucide-react';
+import { PetSpecies, ChatMessage } from '../../types';
+import { generateVetAdvice } from '../../services/aiService';
 import { PetSelector } from './PetSelector';
 import { EmergencyWarning } from './EmergencyWarning';
-import { generateVetAdvice } from '../../services/aiService';
 
 export const ChatInterface: React.FC = () => {
   const { t } = useTranslation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputMessage, setInputMessage] = useState('');
-  const [selectedPetType, setSelectedPetType] = useState<PetSpecies | null>(null);
+  const [inputValue, setInputValue] = useState('');
+  const [selectedPet, setSelectedPet] = useState<PetSpecies | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showEmergencyWarning, setShowEmergencyWarning] = useState(false);
+  const [showEmergency, setShowEmergency] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const emergencyKeywords = [
-    'не дышит', 'не дыхает', 'кровь', 'асиньш', 'судороги', 'krampi', 
-    'отравление', 'saindēšanās', 'без сознания', 'bezsamaņā', 'emergency', 'urgent'
-  ];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -28,52 +23,60 @@ export const ChatInterface: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
+  const emergencyKeywords = [
+    'difficulty breathing', 'not breathing', 'collapsed', 'unconscious', 'bleeding heavily',
+    'poisoning', 'seizure', 'blue gums', 'choking', 'severe pain',
+    'elpošanas grūtības', 'neelpo', 'sabrucis', 'bezsamaņā', 'stipri asiņo',
+    'saindēšanās', 'krampji', 'zilas smaganas', 'nosmok', 'stipras sāpes',
+    'затрудненное дыхание', 'не дышит', 'упал в обморок', 'без сознания', 'сильное кровотечение',
+    'отравление', 'судороги', 'синие десны', 'задыхается', 'сильная боль'
+  ];
+
   const checkForEmergency = (message: string): boolean => {
-    const lowerMessage = message.toLowerCase();
-    return emergencyKeywords.some(keyword => lowerMessage.includes(keyword));
+    return emergencyKeywords.some(keyword => 
+      message.toLowerCase().includes(keyword.toLowerCase())
+    );
   };
 
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim() || !selectedPetType) return;
-
-    const isEmergency = checkForEmergency(inputMessage);
-    if (isEmergency) {
-      setShowEmergencyWarning(true);
-      return;
-    }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputValue.trim() || !selectedPet || isLoading) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
-      role: 'user',
-      content: inputMessage,
-      timestamp: new Date().toISOString(),
-      petContext: {
-        species: selectedPetType,
-        symptoms: []
-      }
+      content: inputValue,
+      sender: 'user',
+      timestamp: new Date()
     };
 
     setMessages(prev => [...prev, userMessage]);
-    setInputMessage('');
+    setInputValue('');
+
+    // Check for emergency keywords
+    if (checkForEmergency(inputValue)) {
+      setShowEmergency(true);
+    }
+
     setIsLoading(true);
 
     try {
-      const aiResponse = await generateVetAdvice(inputMessage, selectedPetType);
+      const aiResponse = await generateVetAdvice(inputValue, selectedPet);
       
-      const assistantMessage: ChatMessage = {
+      const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        role: 'assistant',
         content: aiResponse,
-        timestamp: new Date().toISOString()
+        sender: 'assistant',
+        timestamp: new Date()
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
+      setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
+      console.error('Error generating AI response:', error);
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: t('common.error') + ': ' + (error as Error).message,
-        timestamp: new Date().toISOString()
+        content: t('chat.errorMessage'),
+        sender: 'assistant',
+        timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -81,145 +84,218 @@ export const ChatInterface: React.FC = () => {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
   const exampleQuestions = [
-    { text: t('chat.examples.hairLoss'), species: 'dog' as PetSpecies },
-    { text: t('chat.examples.appetite'), species: 'cat' as PetSpecies },
-    { text: t('chat.examples.behavior'), species: 'bird' as PetSpecies }
+    { lv: "Mans suns zaudē matus", ru: "Моя собака теряет шерсть", en: "My dog is losing hair" },
+    { lv: "Kaķis daudz vemj", ru: "Кошка часто рвет", en: "Cat is vomiting frequently" },
+    { lv: "Putns neēd", ru: "Птица не ест", en: "Bird is not eating" },
+    { lv: "Trusis šķauda", ru: "Кролик чихает", en: "Rabbit is sneezing" }
   ];
 
-  const handleExampleClick = (question: string, species: PetSpecies) => {
-    setSelectedPetType(species);
-    setInputMessage(question);
+  const handleExampleClick = (question: string) => {
+    setInputValue(question);
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <div className="card">
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="bg-primary-100 p-3 rounded-full">
-            <Bot className="h-6 w-6 text-primary-600" />
+    <div className="flex flex-col h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-10 left-10 w-20 h-20 bg-primary-300 rounded-full"></div>
+        <div className="absolute top-32 right-20 w-16 h-16 bg-accent-300 rounded-full"></div>
+        <div className="absolute bottom-20 left-1/4 w-12 h-12 bg-primary-200 rounded-full"></div>
+        <div className="absolute bottom-32 right-1/3 w-24 h-24 bg-accent-200 rounded-full"></div>
+      </div>
+
+      {/* Header */}
+      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 p-6 relative z-10">
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="p-3 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl shadow-lg">
+            <Stethoscope className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">{t('chat.title')}</h2>
-            <p className="text-gray-600">{t('welcome.description')}</p>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+              {t('welcome.aiConsultation')}
+            </h2>
+            <p className="text-gray-600 text-sm flex items-center space-x-1">
+              <Brain className="h-4 w-4" />
+              <span>AI-powered veterinary assistance</span>
+              <Sparkles className="h-4 w-4 text-yellow-500" />
+            </p>
           </div>
         </div>
 
-        {/* Pet Selector */}
-        <div className="mb-6">
-          <PetSelector
-            selectedPet={selectedPetType}
-            onPetSelect={setSelectedPetType}
-          />
-        </div>
-
-        {/* Chat Messages */}
-        <div className="bg-gray-50 rounded-lg p-4 h-96 overflow-y-auto mb-4">
-          {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <Bot className="h-12 w-12 text-gray-400 mb-4" />
-              <p className="text-gray-600 mb-6">{t('welcome.description')}</p>
-              
-              {/* Example Questions */}
-              <div className="w-full max-w-md">
-                <h3 className="text-sm font-medium text-gray-700 mb-3">
-                  {t('chat.examples.title')}
-                </h3>
-                <div className="space-y-2">
-                  {exampleQuestions.map((example, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleExampleClick(example.text, example.species)}
-                      className="w-full text-left p-3 bg-white rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors duration-200 text-sm"
-                    >
-                      {example.text}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`chat-message ${message.role}`}>
-                    <div className="flex items-start space-x-2">
-                      {message.role === 'assistant' && (
-                        <Bot className="h-5 w-5 text-primary-600 mt-0.5" />
-                      )}
-                      {message.role === 'user' && (
-                        <User className="h-5 w-5 text-white mt-0.5" />
-                      )}
-                      <div className="flex-1">
-                        <p className="whitespace-pre-wrap">{message.content}</p>
-                        <p className={`text-xs mt-2 ${
-                          message.role === 'user' ? 'text-primary-200' : 'text-gray-500'
-                        }`}>
-                          {new Date(message.timestamp).toLocaleTimeString()}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="chat-message assistant">
-                    <div className="flex items-center space-x-2">
-                      <Loader2 className="h-5 w-5 text-primary-600 animate-spin" />
-                      <span>{t('chat.thinking')}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Input Area */}
-        <div className="flex space-x-2">
-          <div className="flex-1">
-            <textarea
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder={t('chat.placeholder')}
-              disabled={!selectedPetType || isLoading}
-              className="input-field resize-none"
-              rows={3}
-            />
+        {!selectedPet && (
+          <div className="bg-gradient-to-r from-primary-50 to-indigo-50 rounded-xl p-4 border border-primary-200">
+            <h3 className="font-semibold text-primary-800 mb-3 flex items-center space-x-2">
+              <span>🐾</span>
+              <span>{t('chat.selectPetType')}</span>
+            </h3>
+            <PetSelector onSelect={setSelectedPet} />
           </div>
-          <button
-            onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || !selectedPetType || isLoading}
-            className="btn-primary px-6 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Send className="h-5 w-5" />
-          </button>
-        </div>
-
-        {!selectedPetType && (
-          <p className="text-sm text-amber-600 mt-2 flex items-center">
-            <AlertTriangle className="h-4 w-4 mr-1" />
-            {t('chat.selectPet')}
-          </p>
         )}
       </div>
 
+      {/* Chat Messages */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 relative z-10">
+        {messages.length === 0 && selectedPet && (
+          <div className="text-center py-12">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-primary-100 to-primary-200 rounded-full mb-6">
+              <Bot className="h-10 w-10 text-primary-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+              {t('chat.welcomeMessage')}
+            </h3>
+            <p className="text-gray-600 mb-8 max-w-md mx-auto">
+              {t('chat.welcomeDescription')}
+            </p>
+            
+            {/* Example Questions */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl mx-auto">
+              {exampleQuestions.map((q, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleExampleClick(q.lv)}
+                  className="p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-gray-200/50 hover:border-primary-300 hover:bg-white/90 transition-all duration-200 text-left group"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-gradient-to-r from-primary-400 to-primary-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <span className="text-white text-sm">💭</span>
+                    </div>
+                    <span className="text-gray-700 group-hover:text-primary-700 font-medium">
+                      {q.lv}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`flex max-w-4xl ${
+                message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'
+              } space-x-3`}
+            >
+              {/* Avatar */}
+              <div
+                className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
+                  message.sender === 'user'
+                    ? 'bg-gradient-to-r from-accent-400 to-accent-500 ml-3'
+                    : 'bg-gradient-to-r from-primary-400 to-primary-500 mr-3'
+                }`}
+              >
+                {message.sender === 'user' ? (
+                  <User className="h-5 w-5 text-white" />
+                ) : (
+                  <Bot className="h-5 w-5 text-white" />
+                )}
+              </div>
+
+              {/* Message Content */}
+              <div
+                className={`rounded-2xl px-6 py-4 shadow-sm ${
+                  message.sender === 'user'
+                    ? 'bg-gradient-to-r from-accent-500 to-accent-600 text-white'
+                    : 'bg-white/80 backdrop-blur-sm border border-gray-200/50 text-gray-800'
+                }`}
+              >
+                <div className="prose prose-sm max-w-none">
+                  {message.content.split('\n').map((line, index) => {
+                    if (line.startsWith('**') && line.endsWith('**')) {
+                      return (
+                        <h4 key={index} className={`font-bold mb-2 ${
+                          message.sender === 'user' ? 'text-white' : 'text-gray-900'
+                        }`}>
+                          {line.replace(/\*\*/g, '')}
+                        </h4>
+                      );
+                    }
+                    return (
+                      <p key={index} className={`mb-1 ${
+                        message.sender === 'user' ? 'text-white/90' : 'text-gray-700'
+                      }`}>
+                        {line}
+                      </p>
+                    );
+                  })}
+                </div>
+                <div className={`text-xs mt-3 ${
+                  message.sender === 'user' ? 'text-white/70' : 'text-gray-500'
+                }`}>
+                  {message.timestamp.toLocaleTimeString()}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* Loading Animation */}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="flex max-w-4xl flex-row space-x-3">
+              <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-r from-primary-400 to-primary-500 flex items-center justify-center mr-3">
+                <Bot className="h-5 w-5 text-white" />
+              </div>
+              <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl px-6 py-4 shadow-sm">
+                <div className="flex items-center space-x-2">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                  <span className="text-sm text-gray-600 ml-3">AI is analyzing...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input Form */}
+      {selectedPet && (
+        <div className="bg-white/80 backdrop-blur-sm border-t border-gray-200/50 p-6 relative z-10">
+          <form onSubmit={handleSubmit} className="flex space-x-4">
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder={t('chat.inputPlaceholder')}
+                className="w-full px-6 py-4 bg-white/90 backdrop-blur-sm border border-gray-300/50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-800 placeholder-gray-500"
+                disabled={isLoading}
+              />
+              <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                <Sparkles className="h-5 w-5" />
+              </div>
+            </div>
+            <button
+              type="submit"
+              disabled={!inputValue.trim() || isLoading}
+              className="px-8 py-4 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 disabled:from-gray-300 disabled:to-gray-400 text-white rounded-2xl font-medium transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl disabled:shadow-none transform hover:scale-105 disabled:scale-100"
+            >
+              <Send className="h-5 w-5" />
+              <span>{t('chat.sendButton')}</span>
+            </button>
+          </form>
+          
+          <div className="mt-4 text-center">
+            <p className="text-xs text-gray-500 flex items-center justify-center space-x-1">
+              <AlertTriangle className="h-3 w-3" />
+              <span>{t('chat.disclaimer')}</span>
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Emergency Warning Modal */}
-      {showEmergencyWarning && (
-        <EmergencyWarning onClose={() => setShowEmergencyWarning(false)} />
+      {showEmergency && (
+        <EmergencyWarning onClose={() => setShowEmergency(false)} />
       )}
     </div>
   );

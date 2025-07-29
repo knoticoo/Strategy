@@ -15,13 +15,9 @@ export type PetSpecies = 'dog' | 'cat' | 'bird' | 'rabbit' | 'hamster' | 'guinea
 
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant';
+  sender: 'user' | 'assistant';
   content: string;
-  timestamp: string;
-  petContext?: {
-    species: PetSpecies;
-    symptoms: string[];
-  };
+  timestamp: Date;
 }
 
 export interface Medicine {
