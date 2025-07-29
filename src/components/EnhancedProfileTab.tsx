@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useUser } from '../contexts/UserContext';
 import * as api from '../services/api';
 import {
@@ -89,31 +89,33 @@ const EnhancedProfileTab: React.FC = () => {
   const [newPhotoCaption, setNewPhotoCaption] = useState('');
   const [showAddPhoto, setShowAddPhoto] = useState(false);
 
-  const loadProfileData = async () => {
+  const loadProfileData = useCallback(async () => {
+    if (!currentUser) return;
+    
     try {
       // Load achievements
-      const achievementsData = await api.getUserAchievements(currentUser!.id);
+      const achievementsData = await api.getUserAchievements(currentUser.id);
       setAchievements(achievementsData);
 
       // Load photo gallery
-      const galleryData = await api.getUserPhotoGallery(currentUser!.id);
+      const galleryData = await api.getUserPhotoGallery(currentUser.id);
       setPhotoGallery(galleryData);
 
       // Load social connections
-      const socialData = await api.getUserSocialConnections(currentUser!.id);
+      const socialData = await api.getUserSocialConnections(currentUser.id);
       setSocialConnections(socialData);
 
       // Load activity timeline
-      const activityData = await api.getUserActivityTimeline(currentUser!.id);
+      const activityData = await api.getUserActivityTimeline(currentUser.id);
       setActivityTimeline(activityData);
 
       // Load enhanced stats
-      const statsData = await api.getUserEnhancedStats(currentUser!.id);
+      const statsData = await api.getUserEnhancedStats(currentUser.id);
       setStats(statsData);
     } catch (error) {
       console.error('Error loading profile data:', error);
     }
-  };
+  }, [currentUser]);
 
   useEffect(() => {
     if (currentUser) {

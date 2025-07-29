@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useUser } from '../contexts/UserContext';
 import * as api from '../services/api';
 import {
@@ -82,7 +82,7 @@ const PWAFeatures: React.FC = () => {
   const watchIdRef = useRef<number | null>(null);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const initializePWA = async () => {
+  const initializePWA = useCallback(async () => {
     // Initialize battery API
     if ('getBattery' in navigator) {
       try {
@@ -103,7 +103,7 @@ const PWAFeatures: React.FC = () => {
 
     // Request permissions
     await requestPermissions();
-  };
+  }, []);
 
   useEffect(() => {
     // Initialize PWA features
@@ -127,7 +127,7 @@ const PWAFeatures: React.FC = () => {
       window.removeEventListener('online', () => setIsOnline(true));
       window.removeEventListener('offline', () => setIsOnline(false));
     };
-  }, []);
+  }, [initializePWA]);
 
   const requestPermissions = async () => {
     // Location permission

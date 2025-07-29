@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useUser } from '../contexts/UserContext';
 import * as api from '../services/api';
 import {
@@ -69,26 +69,30 @@ const NotificationSystem: React.FC = () => {
   const wsRef = useRef<WebSocket | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async () => {
+    if (!currentUser) return;
+    
     try {
-      const notificationsData = await api.getUserNotifications(currentUser!.id);
+      const notificationsData = await api.getUserNotifications(currentUser.id);
       setNotifications(notificationsData);
       setUnreadCount(notificationsData.filter(n => !n.read).length);
     } catch (error) {
       console.error('Error loading notifications:', error);
     }
-  };
+  }, [currentUser]);
 
-  const loadNotificationSettings = async () => {
+  const loadNotificationSettings = useCallback(async () => {
+    if (!currentUser) return;
+    
     try {
-      const settingsData = await api.getNotificationSettings(currentUser!.id);
+      const settingsData = await api.getNotificationSettings(currentUser.id);
       setSettings(settingsData);
     } catch (error) {
       console.error('Error loading notification settings:', error);
     }
-  };
+  }, [currentUser]);
 
-  const setupWebSocket = () => {
+  const setupWebSocket = useCallback(() => {
     if (!currentUser) return;
 
     const wsUrl = `ws://${window.location.hostname}:5000/ws/notifications/${currentUser.id}`;
@@ -111,7 +115,7 @@ const NotificationSystem: React.FC = () => {
       console.log('WebSocket disconnected, attempting to reconnect...');
       setTimeout(setupWebSocket, 5000);
     };
-  };
+  }, [currentUser]);
 
   const requestNotificationPermission = async () => {
     if ('Notification' in window && Notification.permission === 'default') {
@@ -142,7 +146,7 @@ const NotificationSystem: React.FC = () => {
         wsRef.current.close();
       }
     };
-  }, [isLoggedIn, currentUser]);
+  }, [isLoggedIn, currentUser, loadNotifications, loadNotificationSettings, setupWebSocket]);
 
   const handleNewNotification = (notification: Notification) => {
     setNotifications(prev => [notification, ...prev]);
