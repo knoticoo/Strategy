@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useUser } from '../contexts/UserContext';
 import * as api from '../services/api';
 import {
@@ -64,6 +65,7 @@ interface ActivityTimelineItem {
 }
 
 const EnhancedProfileTab: React.FC = () => {
+  const { t } = useTranslation();
   const { currentUser, isLoggedIn } = useUser();
   const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'achievements' | 'social' | 'activity' | 'settings'>('overview');
   const [isEditing, setIsEditing] = useState(false);
@@ -232,7 +234,7 @@ const EnhancedProfileTab: React.FC = () => {
       <div className="text-center py-12">
         <User className="h-16 w-16 text-gray-400 mx-auto mb-4" />
         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-          Please log in to view your profile
+          {t('profile.loginRequired')}
         </h3>
       </div>
     );
