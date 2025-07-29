@@ -205,9 +205,9 @@ const TrailsTab: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">🏔️ {t('trails.title')}</h2>
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">🏔️ Adventure Trails</h2>
         <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          {t('trails.subtitle')}
+          Discover Latvia's most beautiful hiking and adventure trails
         </p>
       </div>
 
@@ -219,7 +219,7 @@ const TrailsTab: React.FC = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <input
               type="text"
-              placeholder={t('common.search') + ' trails, locations, features...'}
+              placeholder="Search trails, locations, features..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all"
