@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../contexts/UserContext';
 import * as api from '../services/api';
+import { AdminPanel } from './admin/AdminPanel';
 import {
   LogIn,
   UserPlus,
@@ -2237,7 +2238,7 @@ const AuthTab: React.FC = () => {
             {activeSection === 'profile' && renderProfileSection()}
             {activeSection === 'favorites' && renderFavoritesSection()}
             {activeSection === 'progress' && renderProgressSection()}
-            {activeSection === 'admin' && isAdmin && renderAdminSection()}
+            {activeSection === 'admin' && isAdmin && <AdminPanel isAdmin={isAdmin} />}
           </div>
         </div>
 

@@ -88,8 +88,18 @@ const resources = {
         stats: {
           trailsCompleted: 'Trails Completed',
           photosShared: 'Photos Shared',
-          points: 'Points',
-          level: 'Level'
+          points: 'Points Earned',
+          level: 'Level',
+          currentLevel: 'Current Level',
+          memberSince: 'Member since',
+          interests: 'Interests',
+          hiking: 'Hiking',
+          photography: 'Photography',
+          natureConservation: 'Nature Conservation',
+          recentActivity: 'Recent Activity',
+          startJourney: 'Start your adventure journey! Share photos and complete activities to see your progress here.',
+          favourites: 'Favourites',
+          progress: 'Progress'
         },
         gallery: {
           title: 'Photo Gallery',
@@ -1060,6 +1070,18 @@ const resources = {
         stats: {
           trailsCompleted: 'Пройдено троп',
           photosShared: 'Фото поделились',
+          points: 'Заработано очков',
+          level: 'Уровень',
+          currentLevel: 'Текущий уровень',
+          memberSince: 'Участник с',
+          interests: 'Интересы',
+          hiking: 'Пешие походы',
+          photography: 'Фотография',
+          natureConservation: 'Охрана природы',
+          recentActivity: 'Недавняя активность',
+          startJourney: 'Начните свое приключение! Делитесь фотографиями и выполняйте активности, чтобы видеть свой прогресс здесь.',
+          favourites: 'Избранное',
+          progress: 'Прогресс'
         },
         achievements: {
           title: 'Достижения',
