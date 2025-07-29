@@ -159,25 +159,55 @@ const EnhancedProfileTab: React.FC = () => {
       setNewPhotoCaption('');
       setShowAddPhoto(false);
       await loadProfileData(); // Reload gallery
+      alert('Photo uploaded successfully!');
     } catch (error) {
       console.error('Error uploading photo:', error);
+      alert('Failed to upload photo. Please try again.');
     } finally {
       setIsUploadingPhoto(false);
     }
   };
 
+  const handleSavePhoto = async () => {
+    if (!newPhotoCaption.trim()) {
+      alert('Please enter a caption for your photo.');
+      return;
+    }
+    
+    // This function is called by the Save Photo button
+    // The actual upload happens when file is selected, this just validates and closes
+    setShowAddPhoto(false);
+    setNewPhotoCaption('');
+  };
+
   const handleFollowUser = async (userId: string) => {
+    if (!currentUser) {
+      alert('Please log in to follow users.');
+      return;
+    }
+
     try {
-      await api.followUser(currentUser!.id, userId);
       // Update local state immediately for better UX
       setSocialConnections(prev => prev.map(connection => 
         connection.id === userId 
           ? { ...connection, isFollowing: !connection.isFollowing }
           : connection
       ));
+
+      await api.followUser(currentUser.id, userId);
       await loadProfileData(); // Reload social connections
+      
+      const connection = socialConnections.find(c => c.id === userId);
+      const action = connection?.isFollowing ? 'unfollowed' : 'followed';
+      alert(`Successfully ${action} user!`);
     } catch (error) {
       console.error('Error following user:', error);
+      // Revert the optimistic update
+      setSocialConnections(prev => prev.map(connection => 
+        connection.id === userId 
+          ? { ...connection, isFollowing: !connection.isFollowing }
+          : connection
+      ));
       alert('Failed to follow/unfollow user. Please try again.');
     }
   };
@@ -415,6 +445,21 @@ const EnhancedProfileTab: React.FC = () => {
                       onChange={(e) => setNewPhotoCaption(e.target.value)}
                       className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setShowAddPhoto(false)}
+                        className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleSavePhoto}
+                        disabled={isUploadingPhoto || !newPhotoCaption.trim()}
+                        className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {isUploadingPhoto ? 'Uploading...' : 'Save Photo'}
+                      </button>
+                    </div>
                     {isUploadingPhoto && (
                       <div className="flex items-center gap-2 text-blue-600">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
