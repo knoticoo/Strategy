@@ -1,163 +1,135 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useUser } from '../contexts/UserContext';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import * as api from '../services/api';
 import {
   Bell,
   X,
+  Check,
+  Trash2,
   Settings,
-  Check
+  User,
+  MapPin,
+  Star,
+  MessageSquare,
+  Award,
+  Camera,
+  Calendar,
+  ChevronDown,
+  Filter,
+  MoreHorizontal
 } from 'lucide-react';
+import { useUserContext } from '../contexts/UserContext';
+import { Notification, NotificationSettings } from '../types';
+import { formatTime } from '../utils';
+import { Button, Modal } from './shared';
 
-// Generate dynamic notifications based on user activity
-const generateDynamicNotifications = (user: any, t: any): Notification[] => {
-  const now = Date.now();
-  const notifications: Notification[] = [];
-  
-  // Random activity-based notifications with proper typing
-  const activities: Array<{
-    type: 'like' | 'comment' | 'follow' | 'achievement' | 'system';
-    users?: string[];
-    actions?: string[];
-    achievements?: string[];
-    messages?: string[];
-  }> = [
-    {
-      type: 'like',
-      users: ['Anna Bērziņa', 'Mārtiņš Kalniņš', 'Līga Sproģe', 'Jānis Ozols'],
-      actions: ['liked your trail photo', 'liked your adventure post', 'liked your trail review']
-    },
-    {
-      type: 'comment',
-      users: ['Kristīne Liepa', 'Roberts Krūmiņš', 'Elīna Dārziņa', 'Andris Meiers'],
-      actions: ['commented on your photo', 'replied to your post', 'asked about the trail']
-    },
-    {
-      type: 'follow',
-      users: ['Adventure Latvia', 'Nature Explorer', 'Trail Guide Pro', 'Outdoor Enthusiast'],
-      actions: ['started following you', 'wants to join your adventures']
-    },
-    {
-      type: 'achievement',
-      achievements: ['Forest Explorer', 'Mountain Climber', 'Photo Master', 'Trail Blazer', 'Nature Guide'],
-      actions: ['unlocked', 'earned', 'achieved']
-    },
-    {
-      type: 'system',
-      messages: [
-        'New trails added in Gauja National Park',
-        'Weather alert: Perfect hiking conditions this weekend',
-        'Your trail review was featured',
-        'Monthly adventure challenge available'
-      ]
-    }
-  ];
-
-  // Generate 3-8 random notifications
-  const notificationCount = Math.floor(Math.random() * 6) + 3;
-  
-  for (let i = 0; i < notificationCount; i++) {
-    const activity = activities[Math.floor(Math.random() * activities.length)];
-    const timeOffset = Math.floor(Math.random() * 86400000 * 7); // Up to 7 days ago
-    
-    let notification: Notification;
-    
-    if (activity.type === 'achievement' && activity.achievements && activity.actions) {
-      const achievement = activity.achievements[Math.floor(Math.random() * activity.achievements.length)];
-      const action = activity.actions[Math.floor(Math.random() * activity.actions.length)];
-      notification = {
-        id: `dynamic-${i}`,
-        type: 'achievement',
-        title: t('notifications.achievement.title'),
-        message: `You ${action} the "${achievement}" badge!`,
-        read: Math.random() > 0.4, // 60% chance of being unread
-        createdAt: new Date(now - timeOffset).toISOString(),
-        userId: 'system'
-      };
-    } else if (activity.type === 'system' && activity.messages) {
-      const message = activity.messages[Math.floor(Math.random() * activity.messages.length)];
-      notification = {
-        id: `dynamic-${i}`,
-        type: 'system',
-        title: 'System Notification',
-        message: message,
-        read: Math.random() > 0.3, // 70% chance of being unread
-        createdAt: new Date(now - timeOffset).toISOString(),
-        userId: 'system'
-      };
-    } else if (activity.users && activity.actions) {
-      const user = activity.users[Math.floor(Math.random() * activity.users.length)];
-      const action = activity.actions[Math.floor(Math.random() * activity.actions.length)];
-      notification = {
-        id: `dynamic-${i}`,
-        type: activity.type as 'like' | 'comment' | 'follow',
-        title: activity.type === 'like' ? t('notifications.like.title') : 
-               activity.type === 'comment' ? t('notifications.comment.title') : 
-               'New Follower',
-        message: `${user} ${action}`,
-        read: Math.random() > 0.5, // 50% chance of being unread
-        createdAt: new Date(now - timeOffset).toISOString(),
-        userId: `user-${i}`
-      };
-    } else {
-      // Fallback notification if data is missing
-      notification = {
-        id: `dynamic-${i}`,
-        type: 'system',
-        title: 'System Notification',
-        message: 'New activity in your adventure network',
-        read: Math.random() > 0.5,
-        createdAt: new Date(now - timeOffset).toISOString(),
-        userId: 'system'
-      };
-    }
-    
-    notifications.push(notification);
-  }
-  
-  // Sort by creation date (newest first)
-  return notifications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-};
-
-interface Notification {
-  id: string;
-  type: 'like' | 'comment' | 'follow' | 'trail' | 'achievement' | 'system';
-  title: string;
-  message: string;
-  read: boolean;
-  createdAt: string;
-  userId: string;
-  relatedId?: string;
-}
-
-interface NotificationSettings {
-  likes: boolean;
-  comments: boolean;
-  follows: boolean;
-  achievements: boolean;
-  system: boolean;
-  email: boolean;
-  push: boolean;
-}
-
-const NotificationSystem: React.FC = () => {
+export const NotificationSystem: React.FC = () => {
   const { t } = useTranslation();
-  const { currentUser, isLoggedIn } = useUser();
+  const { currentUser } = useUserContext();
+  const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [showNotifications, setShowNotifications] = useState(false);
+  const [filter, setFilter] = useState<'all' | 'unread' | 'mentions' | 'follows'>('all');
   const [showSettings, setShowSettings] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const [settings, setSettings] = useState<NotificationSettings>({
+    email: true,
+    push: true,
+    mentions: true,
+    follows: true,
     likes: true,
     comments: true,
-    follows: true,
     achievements: true,
-    system: true,
-    email: false,
-    push: false
+    trails: false
   });
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  // Load notifications
+  const loadNotifications = useCallback(async () => {
+    if (!currentUser) return;
+    
+    setLoading(true);
+    try {
+      // Try to load from localStorage first for persistence
+      const savedNotifications = localStorage.getItem(`notifications_${currentUser.id}`);
+      if (savedNotifications) {
+        const parsedNotifications = JSON.parse(savedNotifications);
+        setNotifications(parsedNotifications);
+        setUnreadCount(parsedNotifications.filter((n: Notification) => !n.read).length);
+        setLoading(false);
+        return;
+      }
+
+      // Generate dynamic notifications based on user activity
+      const dynamicNotifications: Notification[] = [
+        {
+          id: `notif-${Date.now()}-1`,
+          type: 'follow',
+          title: t('notifications.newFollower'),
+          message: t('notifications.newFollowerMessage', { name: 'Anna Bērziņa' }),
+          timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+          read: false,
+          avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+          actionUrl: '/profile/anna-berzina'
+        },
+        {
+          id: `notif-${Date.now()}-2`,
+          type: 'like',
+          title: t('notifications.photoLiked'),
+          message: t('notifications.photoLikedMessage', { name: 'Mārtiņš Kalniņš', trail: 'Gauja National Park' }),
+          timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+          read: false,
+          avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
+          actionUrl: '/trails/gauja-national-park'
+        },
+        {
+          id: `notif-${Date.now()}-3`,
+          type: 'achievement',
+          title: t('notifications.achievementUnlocked'),
+          message: t('notifications.achievementMessage', { achievement: 'Nature Explorer' }),
+          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          read: true,
+          avatar: null,
+          actionUrl: '/profile/achievements'
+        },
+        {
+          id: `notif-${Date.now()}-4`,
+          type: 'comment',
+          title: t('notifications.newComment'),
+          message: t('notifications.commentMessage', { name: 'Līga Sproģe', trail: 'Kemeri Bog Trail' }),
+          timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+          read: true,
+          avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100',
+          actionUrl: '/trails/kemeri-bog-trail'
+        },
+        {
+          id: `notif-${Date.now()}-5`,
+          type: 'system',
+          title: t('notifications.welcomeBack'),
+          message: t('notifications.welcomeMessage'),
+          timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+          read: true,
+          avatar: null,
+          actionUrl: null
+        }
+      ];
+
+      setNotifications(dynamicNotifications);
+      setUnreadCount(dynamicNotifications.filter(n => !n.read).length);
+      
+      // Save to localStorage for persistence
+      localStorage.setItem(`notifications_${currentUser.id}`, JSON.stringify(dynamicNotifications));
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentUser, t]);
+
+  // Load notifications on mount and user change
+  useEffect(() => {
+    loadNotifications();
+  }, [loadNotifications]);
 
   // Notification interaction functions
   const markAsRead = useCallback((notificationId: string) => {
@@ -167,7 +139,6 @@ const NotificationSystem: React.FC = () => {
       const updated = prev.map(n => 
         n.id === notificationId ? { ...n, read: true } : n
       );
-      // Persist to localStorage
       localStorage.setItem(`notifications_${currentUser.id}`, JSON.stringify(updated));
       return updated;
     });
@@ -179,15 +150,15 @@ const NotificationSystem: React.FC = () => {
     if (!currentUser) return;
     
     setNotifications(prev => {
+      const notification = prev.find(n => n.id === notificationId);
       const updated = prev.filter(n => n.id !== notificationId);
-      // Persist to localStorage
       localStorage.setItem(`notifications_${currentUser.id}`, JSON.stringify(updated));
+      
+      if (notification && !notification.read) {
+        setUnreadCount(count => Math.max(0, count - 1));
+      }
+      
       return updated;
-    });
-    
-    setUnreadCount(prev => {
-      const notification = notifications.find(n => n.id === notificationId);
-      return notification && !notification.read ? Math.max(0, prev - 1) : prev;
     });
   }, [currentUser, notifications]);
 
@@ -196,7 +167,6 @@ const NotificationSystem: React.FC = () => {
     
     setNotifications(prev => {
       const updated = prev.map(n => ({ ...n, read: true }));
-      // Persist to localStorage
       localStorage.setItem(`notifications_${currentUser.id}`, JSON.stringify(updated));
       return updated;
     });
@@ -204,79 +174,25 @@ const NotificationSystem: React.FC = () => {
     setUnreadCount(0);
   }, [currentUser]);
 
-
-
-  const loadNotifications = useCallback(async () => {
-    if (!currentUser) return;
-    
-    try {
-      // First try to load from localStorage for persistence
-      const savedNotifications = localStorage.getItem(`notifications_${currentUser.id}`);
-      if (savedNotifications) {
-        const parsedNotifications = JSON.parse(savedNotifications);
-        setNotifications(parsedNotifications);
-        setUnreadCount(parsedNotifications.filter((n: Notification) => !n.read).length);
-        return;
-      }
-
-      // Try to load from API, fallback to realistic mock data
-      const apiNotifications = await api.getUserNotifications(currentUser.id);
-      if (apiNotifications && apiNotifications.length > 0) {
-        setNotifications(apiNotifications);
-        setUnreadCount(apiNotifications.filter(n => !n.read).length);
-        // Save to localStorage for persistence
-        localStorage.setItem(`notifications_${currentUser.id}`, JSON.stringify(apiNotifications));
-      } else {
-        // Generate dynamic mock notifications based on user activity
-        const dynamicNotifications = generateDynamicNotifications(currentUser, t);
-        setNotifications(dynamicNotifications);
-        setUnreadCount(dynamicNotifications.filter(n => !n.read).length);
-        // Save to localStorage for persistence
-        localStorage.setItem(`notifications_${currentUser.id}`, JSON.stringify(dynamicNotifications));
-      }
-    } catch (error) {
-      console.error('Error loading notifications:', error);
-      // Fallback to dynamic mock data
-      const dynamicNotifications = generateDynamicNotifications(currentUser, t);
-      setNotifications(dynamicNotifications);
-      setUnreadCount(dynamicNotifications.filter(n => !n.read).length);
-      // Save to localStorage for persistence
-      localStorage.setItem(`notifications_${currentUser.id}`, JSON.stringify(dynamicNotifications));
+  // Filter notifications
+  const filteredNotifications = notifications.filter(notification => {
+    switch (filter) {
+      case 'unread':
+        return !notification.read;
+      case 'mentions':
+        return notification.type === 'mention' || notification.type === 'comment';
+      case 'follows':
+        return notification.type === 'follow';
+      default:
+        return true;
     }
-  }, [currentUser, t]);
-
-  const loadNotificationSettings = useCallback(async () => {
-    if (!currentUser) return;
-    
-    try {
-      // Use default settings for now
-      setSettings({
-        likes: true,
-        comments: true,
-        follows: true,
-        achievements: true,
-        system: true,
-        email: false,
-        push: false
-      });
-    } catch (error) {
-      console.error('Error loading notification settings:', error);
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    if (isLoggedIn && currentUser) {
-      loadNotifications();
-      loadNotificationSettings();
-    }
-  }, [isLoggedIn, currentUser, loadNotifications, loadNotificationSettings]);
+  });
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowNotifications(false);
-        setShowSettings(false);
+        setIsOpen(false);
       }
     };
 
@@ -284,199 +200,292 @@ const NotificationSystem: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const updateSettings = async (newSettings: NotificationSettings) => {
-    try {
-      setSettings(newSettings);
-      // Here you would save to the API
-    } catch (error) {
-      console.error('Error updating notification settings:', error);
-    }
-  };
-
+  // Get notification icon
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'like': return '❤️';
-      case 'comment': return '💬';
-      case 'follow': return '👥';
-      case 'trail': return '🏔️';
-      case 'achievement': return '🏆';
-      case 'system': return '📢';
-      default: return '🔔';
+      case 'follow': return <User className="h-4 w-4" />;
+      case 'like': return <Star className="h-4 w-4" />;
+      case 'comment': return <MessageSquare className="h-4 w-4" />;
+      case 'achievement': return <Award className="h-4 w-4" />;
+      case 'photo': return <Camera className="h-4 w-4" />;
+      case 'trail': return <MapPin className="h-4 w-4" />;
+      default: return <Bell className="h-4 w-4" />;
     }
   };
 
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-    
-    if (diffInMinutes < 1) return t('common.time.now');
-    if (diffInMinutes < 60) return t('common.time.minutes', { count: diffInMinutes });
-    if (diffInMinutes < 1440) return t('common.time.hours', { count: Math.floor(diffInMinutes / 60) });
-    return t('common.time.days', { count: Math.floor(diffInMinutes / 1440) });
+  // Get notification color
+  const getNotificationColor = (type: string) => {
+    switch (type) {
+      case 'follow': return 'text-blue-600 bg-blue-100 dark:bg-blue-900/20';
+      case 'like': return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/20';
+      case 'comment': return 'text-green-600 bg-green-100 dark:bg-green-900/20';
+      case 'achievement': return 'text-purple-600 bg-purple-100 dark:bg-purple-900/20';
+      case 'photo': return 'text-pink-600 bg-pink-100 dark:bg-pink-900/20';
+      case 'trail': return 'text-indigo-600 bg-indigo-100 dark:bg-indigo-900/20';
+      default: return 'text-gray-600 bg-gray-100 dark:bg-gray-900/20';
+    }
   };
 
-  if (!isLoggedIn) {
-    return null;
-  }
+  if (!currentUser) return null;
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Bell Icon */}
+      {/* Notification Bell */}
       <button
-        onClick={() => {
-          setShowNotifications(!showNotifications);
-          setShowSettings(false);
-        }}
-        className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+        onClick={() => setIsOpen(!isOpen)}
+        className="relative p-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        aria-label={t('notifications.title')}
       >
-        <Bell className="h-5 w-5" />
+        <Bell className="h-6 w-6" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center min-w-[20px]">
+          <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
       </button>
 
-      {/* Notifications Dropdown - Beautiful & Mobile Responsive */}
-      {showNotifications && (
-        <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 max-h-[75vh] overflow-hidden transform transition-all duration-200 animate-in slide-in-from-top-2 fade-in-0">
+      {/* Notification Dropdown */}
+      {isOpen && (
+        <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 max-h-[80vh] flex flex-col animate-in slide-in-from-top-2 fade-in-0 duration-200">
           {/* Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-3">
+              <h3 className="font-semibold text-gray-900 dark:text-white">
                 {t('notifications.title')}
               </h3>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    setShowSettings(!showSettings);
-                    setShowNotifications(false);
-                  }}
-                  className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded"
-                >
-                  <Settings className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => setShowNotifications(false)}
-                  className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
+              {unreadCount > 0 && (
+                <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">
+                  {unreadCount} {t('notifications.unread')}
+                </span>
+              )}
             </div>
-            {unreadCount > 0 && (
+            <div className="flex items-center gap-1">
               <button
-                onClick={markAllAsRead}
-                className="mt-2 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                onClick={() => setShowSettings(true)}
+                className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                title={t('notifications.settings')}
               >
-                {t('notifications.markAllRead')}
+                <Settings className="h-4 w-4" />
               </button>
-            )}
-          </div>
-
-          {/* Notifications List */}
-          <div className="max-h-80 overflow-y-auto">
-            {notifications.length === 0 ? (
-              <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-                <Bell className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p>{t('notifications.empty')}</p>
-              </div>
-            ) : (
-              notifications.map(notification => (
-                <div
-                  key={notification.id}
-                  className={`p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                    !notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="text-xl flex-shrink-0">
-                      {getNotificationIcon(notification.type)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          <h4 className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                            {notification.title}
-                          </h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 break-words">
-                            {notification.message}
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
-                            {formatTime(notification.createdAt)}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-1 flex-shrink-0">
-                          {!notification.read && (
-                            <button
-                              onClick={() => markAsRead(notification.id)}
-                              className="p-1 text-green-600 hover:text-green-700 rounded"
-                              title={t('notifications.markRead')}
-                            >
-                              <Check className="h-3 w-3" />
-                            </button>
-                          )}
-                          <button
-                            onClick={() => deleteNotification(notification.id)}
-                            className="p-1 text-gray-400 hover:text-red-600 rounded"
-                            title={t('notifications.delete')}
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Settings Dropdown - Beautiful & Mobile Responsive */}
-      {showSettings && (
-        <div className="absolute right-0 mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 transform transition-all duration-200 animate-in slide-in-from-top-2 fade-in-0">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {t('notifications.settings.title')}
-              </h3>
               <button
-                onClick={() => setShowSettings(false)}
-                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded"
+                onClick={() => setIsOpen(false)}
+                className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
           </div>
 
-          <div className="p-4 space-y-4">
-            {Object.entries(settings).map(([key, value]) => (
-              <div key={key} className="flex items-center justify-between">
-                <label className="text-sm text-gray-700 dark:text-gray-300">
-                  {t(`notifications.settings.${key}`)}
-                </label>
+          {/* Filters */}
+          <div className="flex items-center gap-2 p-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+            <Filter className="h-4 w-4 text-gray-500" />
+            <div className="flex gap-1 flex-wrap">
+              {[
+                { key: 'all', label: t('notifications.filters.all') },
+                { key: 'unread', label: t('notifications.filters.unread') },
+                { key: 'mentions', label: t('notifications.filters.mentions') },
+                { key: 'follows', label: t('notifications.filters.follows') }
+              ].map(({ key, label }) => (
                 <button
-                  onClick={() => updateSettings({ ...settings, [key]: !value })}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    value ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
+                  key={key}
+                  onClick={() => setFilter(key as any)}
+                  className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                    filter === key
+                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
+                      : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600'
                   }`}
                 >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      value ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
+                  {label}
                 </button>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+
+          {/* Actions */}
+          {unreadCount > 0 && (
+            <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={markAllAsRead}
+                icon={Check}
+                className="w-full justify-center"
+              >
+                {t('notifications.markAllRead')}
+              </Button>
+            </div>
+          )}
+
+          {/* Notifications List */}
+          <div className="flex-1 overflow-y-auto">
+            {loading ? (
+              <div className="p-8 text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-gray-500 dark:text-gray-400">{t('notifications.loading')}</p>
+              </div>
+            ) : filteredNotifications.length === 0 ? (
+              <div className="p-8 text-center">
+                <Bell className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                <p className="text-gray-500 dark:text-gray-400 mb-2">
+                  {filter === 'all' ? t('notifications.empty') : t('notifications.emptyFiltered')}
+                </p>
+                <p className="text-sm text-gray-400 dark:text-gray-500">
+                  {t('notifications.emptyDescription')}
+                </p>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                {filteredNotifications.map((notification) => (
+                  <div
+                    key={notification.id}
+                    className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer ${
+                      !notification.read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''
+                    }`}
+                    onClick={() => {
+                      if (!notification.read) {
+                        markAsRead(notification.id);
+                      }
+                      if (notification.actionUrl) {
+                        window.location.href = notification.actionUrl;
+                      }
+                    }}
+                  >
+                    <div className="flex items-start gap-3">
+                      {/* Avatar or Icon */}
+                      <div className="flex-shrink-0">
+                        {notification.avatar ? (
+                          <img
+                            src={notification.avatar}
+                            alt=""
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${getNotificationColor(notification.type)}`}>
+                            {getNotificationIcon(notification.type)}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <p className={`text-sm font-medium ${
+                              !notification.read 
+                                ? 'text-gray-900 dark:text-white' 
+                                : 'text-gray-700 dark:text-gray-300'
+                            }`}>
+                              {notification.title}
+                            </p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                              {notification.message}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                              {formatTime(notification.timestamp)}
+                            </p>
+                          </div>
+
+                          {/* Actions */}
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {!notification.read && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  markAsRead(notification.id);
+                                }}
+                                className="p-1 text-gray-400 hover:text-blue-600 rounded transition-colors"
+                                title={t('notifications.markRead')}
+                              >
+                                <Check className="h-4 w-4" />
+                              </button>
+                            )}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteNotification(notification.id);
+                              }}
+                              className="p-1 text-gray-400 hover:text-red-600 rounded transition-colors"
+                              title={t('notifications.delete')}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Unread indicator */}
+                      {!notification.read && (
+                        <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          {filteredNotifications.length > 0 && (
+            <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  // Navigate to notifications page
+                }}
+                className="w-full text-center text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+              >
+                {t('notifications.viewAll')}
+              </button>
+            </div>
+          )}
         </div>
       )}
+
+      {/* Settings Modal */}
+      <Modal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+        title={t('notifications.settings')}
+        size="md"
+      >
+        <div className="space-y-6">
+          <div>
+            <h4 className="font-medium text-gray-900 dark:text-white mb-4">
+              {t('notifications.settingsDescription')}
+            </h4>
+            <div className="space-y-4">
+              {Object.entries(settings).map(([key, value]) => (
+                <div key={key} className="flex items-center justify-between">
+                  <label className="text-sm text-gray-700 dark:text-gray-300">
+                    {t(`notifications.settings.${key}`)}
+                  </label>
+                  <button
+                    onClick={() => setSettings(prev => ({ ...prev, [key]: !value }))}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      value ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        value ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setShowSettings(false)}>
+              {t('common.cancel')}
+            </Button>
+            <Button onClick={() => setShowSettings(false)}>
+              {t('common.save')}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
-
-export default NotificationSystem;
