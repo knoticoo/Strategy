@@ -51,7 +51,7 @@ router.post('/ask', validateRequest(askSchema), async (req: Request, res: Respon
     });
 
     // Save conversation to database
-    await conversationDb.saveConversation({
+    await conversationDb.saveConversation(aiResponse.sessionId, {
       id: conversationId,
       sessionId: aiResponse.sessionId,
       query,
@@ -166,7 +166,7 @@ router.get('/history/:sessionId', async (req: Request, res: Response) => {
       parseInt(offset as string)
     );
 
-    res.json({
+    return res.json({
       success: true,
       data: {
         sessionId,
@@ -182,7 +182,7 @@ router.get('/history/:sessionId', async (req: Request, res: Response) => {
   } catch (error) {
     logger.error('❌ Failed to fetch conversation history:', error);
     
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to fetch conversation history'
     });
@@ -212,7 +212,7 @@ router.post('/translate', async (req: Request, res: Response) => {
   try {
     const translation = await aiBot.translateText(text, from, to, context);
 
-    res.json({
+    return res.json({
       success: true,
       data: {
         originalText: text,
@@ -227,7 +227,7 @@ router.post('/translate', async (req: Request, res: Response) => {
   } catch (error) {
     logger.error('❌ Translation failed:', error);
     
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Translation failed'
     });

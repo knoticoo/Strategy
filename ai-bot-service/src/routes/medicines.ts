@@ -46,13 +46,13 @@ router.get('/', async (req: Request, res: Response) => {
 
     // Apply filters
     if (species) {
-      medicines = medicines.filter(med => 
+      medicines = medicines.filter((med: any) => 
         med.species.includes(species as string) || med.species.includes('general')
       );
     }
 
     if (category) {
-      medicines = medicines.filter(med => med.category === category);
+      medicines = medicines.filter((med: any) => med.category === category);
     }
 
     // Limit results
@@ -124,7 +124,7 @@ router.get('/:id', async (req: Request, res: Response) => {
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       data: medicine
     });
@@ -132,7 +132,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   } catch (error) {
     logger.error('❌ Failed to fetch medicine details:', error);
     
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to fetch medicine details'
     });
@@ -353,7 +353,7 @@ router.post('/search', async (req: Request, res: Response) => {
 });
 
 // GET /api/v1/medicines/stats - Get medicine database statistics
-router.get('/stats', async (req: Request, res: Response) => {
+router.get('/stats', async (_req: Request, res: Response) => {
   try {
     const stats = await medicationDb.getStats();
     const aiStats = localAIProvider.getStats();
