@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useUser } from '../contexts/UserContext';
 import { useTranslation } from 'react-i18next';
 import {
@@ -9,28 +9,14 @@ import {
   Clock,
   Users,
   Award,
-
-  ChevronRight,
   Star,
   Heart,
   Share,
   Download,
   Search,
-  Filter,
-  TreePine,
-  Mountain,
-  Fish,
-  Bird,
-  Flower,
-  Compass,
-  Tent,
-  Flame,
-  Droplets,
   Shield,
-  AlertTriangle,
   CheckCircle,
   X,
-  Eye,
   Target
 } from 'lucide-react';
 
@@ -72,7 +58,7 @@ interface UserProgress {
 
 const EducationalHub: React.FC = () => {
   const { t } = useTranslation();
-  const { currentUser, isLoggedIn } = useUser();
+  const { isLoggedIn } = useUser();
   const [activeCategory, setActiveCategory] = useState<'nature' | 'history' | 'culture' | 'photography' | 'survival'>('nature');
   const [selectedContent, setSelectedContent] = useState<EducationalContent | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
