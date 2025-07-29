@@ -62,6 +62,66 @@ const resources = {
         }
       },
       
+      // Profile
+      profile: {
+        loginRequired: 'Please log in to view your profile',
+        tabs: {
+          overview: 'Overview',
+          gallery: 'Gallery',
+          achievements: 'Achievements',
+          social: 'Social',
+          activity: 'Activity',
+          settings: 'Settings'
+        },
+        bio: {
+          edit: 'Edit Bio',
+          save: 'Save Bio',
+          cancel: 'Cancel',
+          placeholder: 'Tell us about yourself and your adventures...'
+        },
+        stats: {
+          trailsCompleted: 'Trails Completed',
+          photosShared: 'Photos Shared',
+          points: 'Points',
+          level: 'Level'
+        },
+        gallery: {
+          addPhoto: 'Add Photo',
+          noPhotos: 'No photos yet',
+          sharePhotos: 'Share your adventure photos with the community!'
+        },
+        achievements: {
+          title: 'Achievements',
+          unlocked: '{{count}} of {{total}} unlocked',
+          categories: {
+            trails: 'Trail Explorer',
+            social: 'Social Butterfly',
+            photos: 'Photo Master',
+            special: 'Special Awards'
+          }
+        },
+        social: {
+          title: 'Social Connections',
+          followers: 'Followers',
+          following: 'Following',
+          follow: 'Follow',
+          unfollow: 'Unfollow',
+          noConnections: 'No social connections yet',
+          startFollowing: 'Start following other adventurers to see their activities!'
+        },
+        settings: {
+          title: 'Profile Settings',
+          theme: 'Profile Theme',
+          verification: 'Verification',
+          getVerified: 'Get Verified',
+          verificationDesc: 'Become a verified guide by completing 10 trails and receiving positive reviews',
+          privacy: 'Privacy Settings',
+          makePublic: 'Make profile public',
+          showActivity: 'Show activity timeline',
+          findByEmail: 'Allow others to find me by email'
+        }
+      },
+      
       // Trails
       trails: {
         title: 'Adventure Trails',
@@ -710,6 +770,66 @@ const resources = {
         share: 'Поделиться',
         favorite: 'Избранное',
         remove: 'Удалить'
+      },
+      
+      // Profile
+      profile: {
+        loginRequired: 'Пожалуйста, войдите в систему, чтобы просмотреть свой профиль',
+        tabs: {
+          overview: 'Обзор',
+          gallery: 'Галерея',
+          achievements: 'Достижения',
+          social: 'Социальные',
+          activity: 'Активность',
+          settings: 'Настройки'
+        },
+        bio: {
+          edit: 'Редактировать биографию',
+          save: 'Сохранить биографию',
+          cancel: 'Отменить',
+          placeholder: 'Расскажите нам о себе и своих приключениях...'
+        },
+        stats: {
+          trailsCompleted: 'Пройдено троп',
+          photosShared: 'Фото поделились',
+          points: 'Очки',
+          level: 'Уровень'
+        },
+        gallery: {
+          addPhoto: 'Добавить фото',
+          noPhotos: 'Пока нет фотографий',
+          sharePhotos: 'Поделитесь фотографиями своих приключений с сообществом!'
+        },
+        achievements: {
+          title: 'Достижения',
+          unlocked: '{{count}} из {{total}} разблокировано',
+          categories: {
+            trails: 'Исследователь троп',
+            social: 'Социальная бабочка',
+            photos: 'Мастер фото',
+            special: 'Особые награды'
+          }
+        },
+        social: {
+          title: 'Социальные связи',
+          followers: 'Подписчики',
+          following: 'Подписки',
+          follow: 'Подписаться',
+          unfollow: 'Отписаться',
+          noConnections: 'Пока нет социальных связей',
+          startFollowing: 'Начните следить за другими путешественниками, чтобы видеть их активность!'
+        },
+        settings: {
+          title: 'Настройки профиля',
+          theme: 'Тема профиля',
+          verification: 'Верификация',
+          getVerified: 'Получить верификацию',
+          verificationDesc: 'Станьте верифицированным гидом, пройдя 10 троп и получив положительные отзывы',
+          privacy: 'Настройки конфиденциальности',
+          makePublic: 'Сделать профиль публичным',
+          showActivity: 'Показать временную шкалу активности',
+          findByEmail: 'Разрешить другим находить меня по электронной почте'
+        }
       },
       
       // Trails
