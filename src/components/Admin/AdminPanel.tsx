@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { LoginForm } from './LoginForm';
 import { 
   Activity, 
   Brain, 
@@ -19,7 +20,8 @@ import {
   Users,
   MessageSquare,
   Zap,
-  ArrowLeft
+  ArrowLeft,
+  LogOut
 } from 'lucide-react';
 
 interface TrainingStatus {
@@ -84,6 +86,8 @@ interface AdminStats {
 
 export const AdminPanel: React.FC = () => {
   const { t } = useTranslation();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const [activeTab, setActiveTab] = useState<'overview' | 'training' | 'system' | 'model' | 'analytics'>('overview');
   const [trainingStatus, setTrainingStatus] = useState<TrainingStatus>({
     isTraining: false,
@@ -129,6 +133,26 @@ export const AdminPanel: React.FC = () => {
   });
 
   const [isLoading, setIsLoading] = useState(true);
+
+  // Password authentication
+  const handleLogin = (password: string) => {
+    if (password === 'Millie1991') {
+      setIsAuthenticated(true);
+      setLoginError('');
+      // Store authentication in sessionStorage
+      sessionStorage.setItem('adminAuth', 'true');
+    } else {
+      setLoginError('Invalid password. Please try again.');
+    }
+  };
+
+  // Check authentication on component mount
+  useEffect(() => {
+    const authStatus = sessionStorage.getItem('adminAuth');
+    if (authStatus === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   // Fetch data from API
   const fetchTrainingStatus = async () => {
@@ -205,8 +229,16 @@ export const AdminPanel: React.FC = () => {
     }
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('adminAuth');
+    setIsAuthenticated(false);
+    setLoginError('');
+  };
+
   // Real-time updates
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     const fetchAllData = async () => {
       setIsLoading(true);
       await Promise.all([
@@ -223,7 +255,7 @@ export const AdminPanel: React.FC = () => {
     // Update every 5 seconds
     const interval = setInterval(fetchAllData, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isAuthenticated]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -244,6 +276,11 @@ export const AdminPanel: React.FC = () => {
       default: return <Clock className="w-4 h-4" />;
     }
   };
+
+  // Show login form if not authenticated
+  if (!isAuthenticated) {
+    return <LoginForm onLogin={handleLogin} error={loginError} />;
+  }
 
   if (isLoading) {
     return (
@@ -278,13 +315,22 @@ export const AdminPanel: React.FC = () => {
                 {getStatusIcon(trainingStatus.status)}
                 <span className="capitalize">{trainingStatus.status.replace('_', ' ')}</span>
               </div>
-              <button
-                onClick={restartServices}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <RefreshCw className="w-4 h-4" />
-                <span>Restart Services</span>
-              </button>
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={restartServices}
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  <span>Restart Services</span>
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
