@@ -95,8 +95,12 @@ const getPetSpeciesInfo = (species: PetSpecies, _language: SupportedLanguage) =>
 
 export const generateVetAdvice = async (query: string, species: PetSpecies): Promise<string> => {
   try {
+    console.log(`🤖 INTELLIGENT AI ACTIVATED: Query "${query}" for ${species}`);
+    
     // Use the new intelligent AI system that learns from external sources
     const aiResponse = await intelligentVeterinaryAI.generateIntelligentResponse(query, species);
+    
+    console.log(`✅ INTELLIGENT AI RESPONSE: Confidence ${Math.round(aiResponse.confidence * 100)}%, Sources: ${aiResponse.sources.length}`);
     
     // Log the query for learning
     vetDatabase.learnFromQuery({

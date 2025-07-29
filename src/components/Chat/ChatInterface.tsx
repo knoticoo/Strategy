@@ -13,6 +13,7 @@ export const ChatInterface: React.FC = () => {
   const [selectedPet, setSelectedPet] = useState<PetSpecies | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showEmergency, setShowEmergency] = useState(false);
+  const [aiStatus, setAiStatus] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -58,9 +59,25 @@ export const ChatInterface: React.FC = () => {
     }
 
     setIsLoading(true);
+    setAiStatus('🔍 Analyzing your query...');
 
     try {
+      // Show AI working status
+      setAiStatus('🌐 Searching veterinary databases...');
+      
+      // Simulate some delay to show the AI is working
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setAiStatus('🤖 Analyzing symptoms and conditions...');
+      
+      await new Promise(resolve => setTimeout(resolve, 600));
+      setAiStatus('💊 Discovering relevant medications...');
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setAiStatus('🌍 Translating medical information...');
+
       const aiResponse = await generateVetAdvice(inputValue, selectedPet);
+      
+      setAiStatus('✅ Response ready!');
       
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -72,6 +89,7 @@ export const ChatInterface: React.FC = () => {
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       console.error('Error generating AI response:', error);
+      setAiStatus('❌ Error occurred');
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         content: t('chat.errorMessage'),
@@ -81,15 +99,69 @@ export const ChatInterface: React.FC = () => {
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      setAiStatus('');
     }
   };
 
-  const exampleQuestions = [
-    { lv: "Mans suns zaudē matus", ru: "Моя собака теряет шерсть", en: "My dog is losing hair" },
-    { lv: "Kaķis daudz vemj", ru: "Кошка часто рвет", en: "Cat is vomiting frequently" },
-    { lv: "Putns neēd", ru: "Птица не ест", en: "Bird is not eating" },
-    { lv: "Trusis šķauda", ru: "Кролик чихает", en: "Rabbit is sneezing" }
-  ];
+  // Dynamic example questions based on selected pet
+  const getExampleQuestions = (petType: PetSpecies | null) => {
+    if (!petType) return [];
+
+    const examples = {
+      dog: [
+        { lv: "Mans suns zaudē matus", ru: "Моя собака теряет шерсть", en: "My dog is losing hair" },
+        { lv: "Suns daudz vemj", ru: "Собака часто рвет", en: "Dog is vomiting frequently" },
+        { lv: "Suns klepoj", ru: "Собака кашляет", en: "Dog is coughing" },
+        { lv: "Sunim sāp acis", ru: "У собаки болят глаза", en: "Dog has sore eyes" }
+      ],
+      cat: [
+        { lv: "Kaķis zaudē matus", ru: "Кошка теряет шерсть", en: "Cat is losing hair" },
+        { lv: "Kaķis daudz vemj", ru: "Кошка часто рвет", en: "Cat is vomiting frequently" },
+        { lv: "Kaķis nevar čurāt", ru: "Кошка не может мочиться", en: "Cat cannot urinate" },
+        { lv: "Kaķim sāp acis", ru: "У кошки болят глаза", en: "Cat has sore eyes" }
+      ],
+      bird: [
+        { lv: "Putns neēd", ru: "Птица не ест", en: "Bird is not eating" },
+        { lv: "Putns nevar lidot", ru: "Птица не может летать", en: "Bird cannot fly" },
+        { lv: "Putns smagi elpo", ru: "Птица тяжело дышит", en: "Bird is breathing heavily" },
+        { lv: "Putnam izkrišana spalvas", ru: "У птицы выпадают перья", en: "Bird is losing feathers" }
+      ],
+      rabbit: [
+        { lv: "Trusis šķauda", ru: "Кролик чихает", en: "Rabbit is sneezing" },
+        { lv: "Trusis neēd", ru: "Кролик не ест", en: "Rabbit is not eating" },
+        { lv: "Trusim caureja", ru: "У кролика диарея", en: "Rabbit has diarrhea" },
+        { lv: "Trusis guļ daudz", ru: "Кролик много спит", en: "Rabbit sleeps too much" }
+      ],
+      hamster: [
+        { lv: "Kāmis neēd", ru: "Хомяк не ест", en: "Hamster is not eating" },
+        { lv: "Kāmis daudz guļ", ru: "Хомяк много спит", en: "Hamster sleeps too much" },
+        { lv: "Kāmim pietūkums", ru: "У хомяка опухоль", en: "Hamster has swelling" },
+        { lv: "Kāmis smagi elpo", ru: "Хомяк тяжело дышит", en: "Hamster is breathing heavily" }
+      ],
+      guinea_pig: [
+        { lv: "Jūras cūciņa neēd", ru: "Морская свинка не ест", en: "Guinea pig is not eating" },
+        { lv: "Jūras cūciņa klepoj", ru: "Морская свинка кашляет", en: "Guinea pig is coughing" },
+        { lv: "Jūras cūciņai caureja", ru: "У морской свинки диарея", en: "Guinea pig has diarrhea" },
+        { lv: "Jūras cūciņa zaudē svaru", ru: "Морская свинка теряет вес", en: "Guinea pig is losing weight" }
+      ],
+      fish: [
+        { lv: "Zivs peld uz sāniem", ru: "Рыба плавает на боку", en: "Fish is swimming sideways" },
+        { lv: "Zivij balti plankumi", ru: "У рыбы белые пятна", en: "Fish has white spots" },
+        { lv: "Zivs neēd", ru: "Рыба не ест", en: "Fish is not eating" },
+        { lv: "Zivij saplēstas spuras", ru: "У рыбы порванные плавники", en: "Fish has torn fins" }
+      ],
+      reptile: [
+        { lv: "Rāpulis neēd", ru: "Рептилия не ест", en: "Reptile is not eating" },
+        { lv: "Rāpulim ādas problēmas", ru: "У рептилии проблемы с кожей", en: "Reptile has skin problems" },
+        { lv: "Rāpulis neaktīvs", ru: "Рептилия неактивна", en: "Reptile is inactive" },
+        { lv: "Rāpulim acis aizvērtas", ru: "У рептилии закрыты глаза", en: "Reptile has closed eyes" }
+      ]
+    };
+
+    return examples[petType] || [];
+  };
+
+  const exampleQuestions = getExampleQuestions(selectedPet);
 
   const handleExampleClick = (question: string) => {
     setInputValue(question);
@@ -283,7 +355,9 @@ export const ChatInterface: React.FC = () => {
                     <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                     <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                   </div>
-                  <span className="text-sm text-gray-600 ml-3">AI is analyzing...</span>
+                  <span className="text-sm text-gray-600 ml-3">
+                    {aiStatus || 'AI is analyzing...'}
+                  </span>
                 </div>
               </div>
             </div>
