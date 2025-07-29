@@ -5,7 +5,7 @@ import { analyzeSymptoms } from './vetAdvice/symptomAnalyzer';
 import { generateTreatmentRecommendations } from './vetAdvice/treatmentRecommendations';
 
 // Multilingual pet species information
-const getPetSpeciesInfo = (species: PetSpecies, language: SupportedLanguage) => {
+const getPetSpeciesInfo = (species: PetSpecies, _language: SupportedLanguage) => {
   const speciesData = {
     dog: {
       name: { lv: 'suns', ru: 'собака', en: 'dog' },
