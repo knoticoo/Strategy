@@ -9,6 +9,116 @@ import {
   Check
 } from 'lucide-react';
 
+// Generate dynamic notifications based on user activity
+const generateDynamicNotifications = (user: any, t: any): Notification[] => {
+  const now = Date.now();
+  const notifications: Notification[] = [];
+  
+  // Random activity-based notifications with proper typing
+  const activities: Array<{
+    type: 'like' | 'comment' | 'follow' | 'achievement' | 'system';
+    users?: string[];
+    actions?: string[];
+    achievements?: string[];
+    messages?: string[];
+  }> = [
+    {
+      type: 'like',
+      users: ['Anna Bērziņa', 'Mārtiņš Kalniņš', 'Līga Sproģe', 'Jānis Ozols'],
+      actions: ['liked your trail photo', 'liked your adventure post', 'liked your trail review']
+    },
+    {
+      type: 'comment',
+      users: ['Kristīne Liepa', 'Roberts Krūmiņš', 'Elīna Dārziņa', 'Andris Meiers'],
+      actions: ['commented on your photo', 'replied to your post', 'asked about the trail']
+    },
+    {
+      type: 'follow',
+      users: ['Adventure Latvia', 'Nature Explorer', 'Trail Guide Pro', 'Outdoor Enthusiast'],
+      actions: ['started following you', 'wants to join your adventures']
+    },
+    {
+      type: 'achievement',
+      achievements: ['Forest Explorer', 'Mountain Climber', 'Photo Master', 'Trail Blazer', 'Nature Guide'],
+      actions: ['unlocked', 'earned', 'achieved']
+    },
+    {
+      type: 'system',
+      messages: [
+        'New trails added in Gauja National Park',
+        'Weather alert: Perfect hiking conditions this weekend',
+        'Your trail review was featured',
+        'Monthly adventure challenge available'
+      ]
+    }
+  ];
+
+  // Generate 3-8 random notifications
+  const notificationCount = Math.floor(Math.random() * 6) + 3;
+  
+  for (let i = 0; i < notificationCount; i++) {
+    const activity = activities[Math.floor(Math.random() * activities.length)];
+    const timeOffset = Math.floor(Math.random() * 86400000 * 7); // Up to 7 days ago
+    
+    let notification: Notification;
+    
+    if (activity.type === 'achievement' && activity.achievements && activity.actions) {
+      const achievement = activity.achievements[Math.floor(Math.random() * activity.achievements.length)];
+      const action = activity.actions[Math.floor(Math.random() * activity.actions.length)];
+      notification = {
+        id: `dynamic-${i}`,
+        type: 'achievement',
+        title: t('notifications.achievement.title'),
+        message: `You ${action} the "${achievement}" badge!`,
+        read: Math.random() > 0.4, // 60% chance of being unread
+        createdAt: new Date(now - timeOffset).toISOString(),
+        userId: 'system'
+      };
+    } else if (activity.type === 'system' && activity.messages) {
+      const message = activity.messages[Math.floor(Math.random() * activity.messages.length)];
+      notification = {
+        id: `dynamic-${i}`,
+        type: 'system',
+        title: 'System Notification',
+        message: message,
+        read: Math.random() > 0.3, // 70% chance of being unread
+        createdAt: new Date(now - timeOffset).toISOString(),
+        userId: 'system'
+      };
+    } else if (activity.users && activity.actions) {
+      const user = activity.users[Math.floor(Math.random() * activity.users.length)];
+      const action = activity.actions[Math.floor(Math.random() * activity.actions.length)];
+      notification = {
+        id: `dynamic-${i}`,
+        type: activity.type as 'like' | 'comment' | 'follow',
+        title: activity.type === 'like' ? t('notifications.like.title') : 
+               activity.type === 'comment' ? t('notifications.comment.title') : 
+               'New Follower',
+        message: `${user} ${action}`,
+        read: Math.random() > 0.5, // 50% chance of being unread
+        createdAt: new Date(now - timeOffset).toISOString(),
+        userId: `user-${i}`
+      };
+    } else {
+      // Fallback notification if data is missing
+      notification = {
+        id: `dynamic-${i}`,
+        type: 'system',
+        title: 'System Notification',
+        message: 'New activity in your adventure network',
+        read: Math.random() > 0.5,
+        createdAt: new Date(now - timeOffset).toISOString(),
+        userId: 'system'
+      };
+    }
+    
+    notifications.push(notification);
+  }
+  
+  // Sort by creation date (newest first)
+  return notifications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+};
+
 interface Notification {
   id: string;
   type: 'like' | 'comment' | 'follow' | 'trail' | 'achievement' | 'system';
@@ -47,101 +157,7 @@ const NotificationSystem: React.FC = () => {
     push: false
   });
 
-  const wsRef = useRef<WebSocket | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Generate dynamic notifications based on user activity
-  const generateDynamicNotifications = (user: any): Notification[] => {
-    const now = Date.now();
-    const notifications: Notification[] = [];
-    
-    // Random activity-based notifications
-    const activities = [
-      {
-        type: 'like',
-        users: ['Anna Bērziņa', 'Mārtiņš Kalniņš', 'Līga Sproģe', 'Jānis Ozols'],
-        actions: ['liked your trail photo', 'liked your adventure post', 'liked your trail review']
-      },
-      {
-        type: 'comment',
-        users: ['Kristīne Liepa', 'Roberts Krūmiņš', 'Elīna Dārziņa', 'Andris Meiers'],
-        actions: ['commented on your photo', 'replied to your post', 'asked about the trail']
-      },
-      {
-        type: 'follow',
-        users: ['Adventure Latvia', 'Nature Explorer', 'Trail Guide Pro', 'Outdoor Enthusiast'],
-        actions: ['started following you', 'wants to join your adventures']
-      },
-      {
-        type: 'achievement',
-        achievements: ['Forest Explorer', 'Mountain Climber', 'Photo Master', 'Trail Blazer', 'Nature Guide'],
-        actions: ['unlocked', 'earned', 'achieved']
-      },
-      {
-        type: 'system',
-        messages: [
-          'New trails added in Gauja National Park',
-          'Weather alert: Perfect hiking conditions this weekend',
-          'Your trail review was featured',
-          'Monthly adventure challenge available'
-        ]
-      }
-    ];
-
-    // Generate 3-8 random notifications
-    const notificationCount = Math.floor(Math.random() * 6) + 3;
-    
-    for (let i = 0; i < notificationCount; i++) {
-      const activity = activities[Math.floor(Math.random() * activities.length)];
-      const timeOffset = Math.floor(Math.random() * 86400000 * 7); // Up to 7 days ago
-      
-      let notification: Notification;
-      
-      if (activity.type === 'achievement') {
-        const achievement = activity.achievements[Math.floor(Math.random() * activity.achievements.length)];
-        const action = activity.actions[Math.floor(Math.random() * activity.actions.length)];
-        notification = {
-          id: `dynamic-${i}`,
-          type: 'achievement',
-          title: t('notifications.achievement.title'),
-          message: `You ${action} the "${achievement}" badge!`,
-          read: Math.random() > 0.4, // 60% chance of being unread
-          createdAt: new Date(now - timeOffset).toISOString(),
-          userId: 'system'
-        };
-      } else if (activity.type === 'system') {
-        const message = activity.messages[Math.floor(Math.random() * activity.messages.length)];
-        notification = {
-          id: `dynamic-${i}`,
-          type: 'system',
-          title: 'System Notification',
-          message: message,
-          read: Math.random() > 0.3, // 70% chance of being unread
-          createdAt: new Date(now - timeOffset).toISOString(),
-          userId: 'system'
-        };
-      } else {
-        const user = activity.users[Math.floor(Math.random() * activity.users.length)];
-        const action = activity.actions[Math.floor(Math.random() * activity.actions.length)];
-        notification = {
-          id: `dynamic-${i}`,
-          type: activity.type,
-          title: activity.type === 'like' ? t('notifications.like.title') : 
-                 activity.type === 'comment' ? t('notifications.comment.title') : 
-                 'New Follower',
-          message: `${user} ${action}`,
-          read: Math.random() > 0.5, // 50% chance of being unread
-          createdAt: new Date(now - timeOffset).toISOString(),
-          userId: `user-${i}`
-        };
-      }
-      
-      notifications.push(notification);
-    }
-    
-    // Sort by creation date (newest first)
-    return notifications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  };
 
 
 
@@ -156,18 +172,18 @@ const NotificationSystem: React.FC = () => {
         setUnreadCount(apiNotifications.filter(n => !n.read).length);
       } else {
         // Generate dynamic mock notifications based on user activity
-        const dynamicNotifications = generateDynamicNotifications(currentUser);
+        const dynamicNotifications = generateDynamicNotifications(currentUser, t);
         setNotifications(dynamicNotifications);
         setUnreadCount(dynamicNotifications.filter(n => !n.read).length);
       }
     } catch (error) {
       console.error('Error loading notifications:', error);
       // Fallback to dynamic mock data
-      const dynamicNotifications = generateDynamicNotifications(currentUser);
+      const dynamicNotifications = generateDynamicNotifications(currentUser, t);
       setNotifications(dynamicNotifications);
       setUnreadCount(dynamicNotifications.filter(n => !n.read).length);
     }
-  }, [currentUser]);
+  }, [currentUser, t]);
 
   const loadNotificationSettings = useCallback(async () => {
     if (!currentUser) return;
