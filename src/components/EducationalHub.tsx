@@ -63,7 +63,10 @@ const EducationalHub: React.FC = () => {
   const [selectedContent, setSelectedContent] = useState<EducationalContent | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
-  const [userProgress, setUserProgress] = useState<UserProgress[]>([]);
+  const [userProgress, setUserProgress] = useState<UserProgress[]>(() => {
+    const saved = localStorage.getItem('educationProgress');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [showQuiz, setShowQuiz] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [quizAnswers, setQuizAnswers] = useState<number[]>([]);
@@ -269,24 +272,36 @@ const EducationalHub: React.FC = () => {
   };
 
   const updateProgress = (contentId: string, progress: number, completed: boolean = false) => {
+    const newProgress = {
+      contentId,
+      progress,
+      completed,
+      timeSpent: 0,
+      completedAt: completed ? new Date().toISOString() : undefined
+    };
+
     setUserProgress(prev => {
       const existing = prev.find(p => p.contentId === contentId);
+      let updatedProgress;
       if (existing) {
-        return prev.map(p => 
+        updatedProgress = prev.map(p => 
           p.contentId === contentId 
             ? { ...p, progress, completed, completedAt: completed ? new Date().toISOString() : undefined }
             : p
         );
       } else {
-        return [...prev, {
-          contentId,
-          progress,
-          completed,
-          timeSpent: 0,
-          completedAt: completed ? new Date().toISOString() : undefined
-        }];
+        updatedProgress = [...prev, newProgress];
       }
+      
+      // Save to localStorage for persistence
+      localStorage.setItem('educationProgress', JSON.stringify(updatedProgress));
+      return updatedProgress;
     });
+
+    // Show feedback to user
+    if (completed) {
+      alert('🎉 Content marked as complete! Great job!');
+    }
   };
 
   const startQuiz = () => {

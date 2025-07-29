@@ -333,9 +333,9 @@ const NotificationSystem: React.FC = () => {
         )}
       </button>
 
-      {/* Notifications Dropdown - Mobile Responsive */}
+      {/* Notifications Dropdown - Beautiful & Mobile Responsive */}
       {showNotifications && (
-        <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-[70vh] overflow-hidden sm:right-0 -right-4">
+        <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 max-h-[75vh] overflow-hidden transform transition-all duration-200 animate-in slide-in-from-top-2 fade-in-0">
           {/* Header */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
@@ -430,9 +430,9 @@ const NotificationSystem: React.FC = () => {
         </div>
       )}
 
-      {/* Settings Dropdown - Mobile Responsive */}
+      {/* Settings Dropdown - Beautiful & Mobile Responsive */}
       {showSettings && (
-        <div className="absolute right-0 mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 sm:right-0 -right-4">
+        <div className="absolute right-0 mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 transform transition-all duration-200 animate-in slide-in-from-top-2 fade-in-0">
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
