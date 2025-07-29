@@ -48,7 +48,7 @@ export const digestive: Medicine[] = [
     sideEffects: ['Konstipācija', 'Kuņģa diskomforts'],
     contraindications: ['Nieru mazspēja'],
     ingredients: ['Sucralfate'],
-    sucralfateSpecies: ['dog', 'cat'],
+    forSpecies: ['dog', 'cat'],
     prescriptionRequired: true
   },
 
