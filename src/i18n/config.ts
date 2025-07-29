@@ -854,6 +854,48 @@ const resources = {
           findByEmail: 'Разрешить другим находить меня по электронной почте'
         }
       },
+
+      // Notifications
+      notifications: {
+        title: 'Уведомления',
+        unread: 'непрочитанных',
+        empty: 'Уведомлений пока нет',
+        emptyFiltered: 'Нет уведомлений по вашему фильтру',
+        emptyDescription: 'Когда у вас появятся уведомления, они будут показаны здесь',
+        loading: 'Загрузка уведомлений...',
+        markAllRead: 'Отметить все как прочитанные',
+        markRead: 'Отметить как прочитанное',
+        delete: 'Удалить уведомление',
+        viewAll: 'Посмотреть все уведомления',
+        newFollower: 'Новый подписчик',
+        newFollowerMessage: '{{name}} начал(а) следить за вами',
+        photoLiked: 'Фото понравилось',
+        photoLikedMessage: '{{name}} понравилось ваше фото из {{trail}}',
+        achievementUnlocked: 'Достижение разблокировано',
+        achievementMessage: 'Вы заработали значок "{{achievement}}"!',
+        newComment: 'Новый комментарий',
+        commentMessage: '{{name}} прокомментировал(а) ваш пост {{trail}}',
+        welcomeBack: 'Добро пожаловать обратно',
+        welcomeMessage: 'Продолжите свое приключение!',
+        filters: {
+          all: 'Все',
+          unread: 'Непрочитанные',
+          mentions: 'Упоминания',
+          follows: 'Подписки'
+        },
+        settings: 'Настройки уведомлений',
+        settingsDescription: 'Выберите, какие уведомления вы хотите получать',
+        settings: {
+          email: 'Email уведомления',
+          push: 'Push уведомления',
+          mentions: 'Упоминания и ответы',
+          follows: 'Новые подписчики',
+          likes: 'Лайки ваших постов',
+          comments: 'Комментарии к вашим постам',
+          achievements: 'Разблокировка достижений',
+          trails: 'Обновления троп'
+        }
+      },
       
       // Trails
       trails: {
