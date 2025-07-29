@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 
 const TrailsTab: React.FC = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [trails, setTrails] = useState<RealLocation[]>([]);
   const [filteredTrails, setFilteredTrails] = useState<RealLocation[]>([]);
   const [loading, setLoading] = useState(true);
