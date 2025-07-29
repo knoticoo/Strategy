@@ -65,8 +65,7 @@ export const vitamins: Medicine[] = [
     usage: 'Muskuļu slimības, reproduktīvās problēmas, ādas veselība',
     dosage: {
       dog: '10-50 IU dienā atkarībā no svara',
-      cat: '10-30 IU dienā',
-      horse: '1000-2000 IU dienā'
+      cat: '10-30 IU dienā'
     },
     sideEffects: ['Reti - asiņošanas traucējumi lielās devās'],
     contraindications: ['Antikoagulanta terapija'],

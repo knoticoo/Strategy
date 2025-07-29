@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Header } from './components/Layout/Header';
 import { ChatInterface } from './components/Chat/ChatInterface';
 import { MedicineSearch } from './components/Medicines/MedicineSearch';

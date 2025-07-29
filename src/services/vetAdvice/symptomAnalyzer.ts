@@ -1,4 +1,4 @@
-import { PetSpecies } from '../../types';
+// Symptom analysis utilities
 
 export interface SymptomAnalysis {
   symptoms: string[];

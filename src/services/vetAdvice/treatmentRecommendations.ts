@@ -63,7 +63,7 @@ const petSpeciesInfo = {
 };
 
 export const generateTreatmentRecommendations = (
-  query: string, 
+  _query: string, 
   species: PetSpecies, 
   symptomAnalysis: SymptomAnalysis
 ): TreatmentRecommendation => {
