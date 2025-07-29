@@ -667,63 +667,95 @@ const EducationalHub: React.FC = () => {
         </div>
       )}
 
-      {/* Quiz Modal */}
+      {/* Quiz Modal - Redesigned */}
       {showQuiz && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                Knowledge Quiz
-              </h3>
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                Question {currentQuestionIndex + 1} of {quizQuestions.length}
-              </span>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in-0 duration-200">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden shadow-2xl animate-in slide-in-from-bottom-4 duration-300">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-2xl font-bold">
+                  {t('education.quiz.title')}
+                </h3>
+                <button
+                  onClick={() => setShowQuiz(false)}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+              
+              {/* Progress Bar */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>{t('education.quiz.question')} {currentQuestionIndex + 1} {t('common.of')} {quizQuestions.length}</span>
+                  <span>{Math.round(((currentQuestionIndex + 1) / quizQuestions.length) * 100)}%</span>
+                </div>
+                <div className="w-full bg-white/20 rounded-full h-3">
+                  <div
+                    className="bg-white h-3 rounded-full transition-all duration-500 shadow-lg"
+                    style={{ width: `${((currentQuestionIndex + 1) / quizQuestions.length) * 100}%` }}
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="mb-6">
-              <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                {quizQuestions[currentQuestionIndex].question}
-              </h4>
+            {/* Content */}
+            <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
+              {/* Question */}
+              <div className="text-center">
+                <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  {quizQuestions[currentQuestionIndex].question}
+                </h4>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  {t('education.quiz.selectAnswer')}
+                </p>
+              </div>
               
-              <div className="space-y-3">
+              {/* Options */}
+              <div className="grid gap-3">
                 {quizQuestions[currentQuestionIndex].options.map((option, index) => {
-                  let buttonClass = "w-full p-4 text-left rounded-lg transition-colors border-2 ";
+                  let buttonClass = "w-full p-4 text-left rounded-xl transition-all duration-200 border-2 transform hover:scale-[1.02] ";
                   
                   if (showQuizResult) {
                     if (index === quizQuestions[currentQuestionIndex].correct) {
                       // Correct answer
-                      buttonClass += "bg-green-100 dark:bg-green-900/30 border-green-500 text-green-800 dark:text-green-200";
+                      buttonClass += "bg-green-50 dark:bg-green-900/30 border-green-500 text-green-800 dark:text-green-200 shadow-lg scale-[1.02]";
                     } else if (index === selectedAnswer) {
                       // Wrong answer that user selected
-                      buttonClass += "bg-red-100 dark:bg-red-900/30 border-red-500 text-red-800 dark:text-red-200";
+                      buttonClass += "bg-red-50 dark:bg-red-900/30 border-red-500 text-red-800 dark:text-red-200 shadow-lg scale-[1.02]";
                     } else {
                       // Other options
-                      buttonClass += "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400";
+                      buttonClass += "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 opacity-60";
                     }
                   } else {
                     // Normal state
-                    buttonClass += "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-white";
+                    if (selectedAnswer === index) {
+                      buttonClass += "bg-blue-50 dark:bg-blue-900/30 border-blue-500 text-blue-800 dark:text-blue-200 shadow-lg scale-[1.02]";
+                    } else {
+                      buttonClass += "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-white hover:border-blue-300 dark:hover:border-blue-500";
+                    }
                   }
 
                   return (
                     <button
                       key={index}
-                      onClick={() => !showQuizResult && handleQuizAnswer(index)}
+                      onClick={() => !showQuizResult && setSelectedAnswer(index)}
                       disabled={showQuizResult}
                       className={buttonClass}
                     >
-                      <div className="flex items-center gap-3">
-                        <span className="font-bold text-lg">
-                          {String.fromCharCode(65 + index)}.
-                        </span>
-                        <span className="font-medium">
+                      <div className="flex items-center gap-4">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white dark:bg-gray-600 flex items-center justify-center font-bold text-lg shadow-sm">
+                          {String.fromCharCode(65 + index)}
+                        </div>
+                        <span className="font-medium flex-1">
                           {option}
                         </span>
                         {showQuizResult && index === quizQuestions[currentQuestionIndex].correct && (
-                          <CheckCircle className="h-5 w-5 text-green-600 ml-auto" />
+                          <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0" />
                         )}
                         {showQuizResult && index === selectedAnswer && index !== quizQuestions[currentQuestionIndex].correct && (
-                          <X className="h-5 w-5 text-red-600 ml-auto" />
+                          <X className="h-6 w-6 text-red-600 flex-shrink-0" />
                         )}
                       </div>
                     </button>
@@ -731,30 +763,39 @@ const EducationalHub: React.FC = () => {
                 })}
               </div>
 
+              {/* Result Feedback */}
               {showQuizResult && (
-                <div className="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                <div className={`p-4 rounded-xl border-2 animate-in slide-in-from-bottom-2 duration-300 ${
+                  selectedAnswer === quizQuestions[currentQuestionIndex].correct
+                    ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+                    : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+                }`}>
                   <div className="flex items-start gap-3">
                     {selectedAnswer === quizQuestions[currentQuestionIndex].correct ? (
                       <>
-                        <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+                        <div className="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center">
+                          <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+                        </div>
                         <div>
-                          <p className="font-medium text-green-800 dark:text-green-200">
-                            Correct! Well done! 🎉
+                          <p className="font-semibold text-green-800 dark:text-green-200 text-lg">
+                            {t('education.quiz.correct')} 🎉
                           </p>
-                          <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                            You selected the right answer.
+                          <p className="text-green-700 dark:text-green-300 mt-1">
+                            {t('education.quiz.correctMessage')}
                           </p>
                         </div>
                       </>
                     ) : (
                       <>
-                        <X className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
+                        <div className="flex-shrink-0 w-10 h-10 bg-red-100 dark:bg-red-800 rounded-full flex items-center justify-center">
+                          <X className="h-6 w-6 text-red-600 dark:text-red-400" />
+                        </div>
                         <div>
-                          <p className="font-medium text-red-800 dark:text-red-200">
-                            Incorrect. The correct answer is highlighted in green.
+                          <p className="font-semibold text-red-800 dark:text-red-200 text-lg">
+                            {t('education.quiz.incorrect')}
                           </p>
-                          <p className="text-sm text-red-700 dark:text-red-300 mt-1">
-                            Learn from this and try again next time!
+                          <p className="text-red-700 dark:text-red-300 mt-1">
+                            {t('education.quiz.incorrectMessage')}
                           </p>
                         </div>
                       </>
@@ -764,20 +805,69 @@ const EducationalHub: React.FC = () => {
               )}
             </div>
 
-            <div className="flex justify-between">
-              <button
-                onClick={() => setShowQuiz(false)}
-                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-              
-              <div className="w-full max-w-xs mx-4">
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div
-                    className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${((currentQuestionIndex + 1) / quizQuestions.length) * 100}%` }}
-                  />
+            {/* Footer */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 p-6 border-t border-gray-200 dark:border-gray-600">
+              <div className="flex items-center justify-between gap-4">
+                <button
+                  onClick={() => setShowQuiz(false)}
+                  className="px-6 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors font-medium"
+                >
+                  {t('common.cancel')}
+                </button>
+                
+                <div className="flex items-center gap-3">
+                  {/* Previous Button */}
+                  {currentQuestionIndex > 0 && (
+                    <button
+                      onClick={() => {
+                        setCurrentQuestionIndex(prev => prev - 1);
+                        setSelectedAnswer(null);
+                        setShowQuizResult(false);
+                      }}
+                      className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors font-medium"
+                    >
+                      {t('common.previous')}
+                    </button>
+                  )}
+                  
+                  {/* Submit/Next Button */}
+                  {!showQuizResult ? (
+                    <button
+                      onClick={() => handleQuizAnswer(selectedAnswer)}
+                      disabled={selectedAnswer === null}
+                      className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium shadow-lg"
+                    >
+                      {t('education.quiz.submit')}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        if (currentQuestionIndex < quizQuestions.length - 1) {
+                          setCurrentQuestionIndex(prev => prev + 1);
+                          setSelectedAnswer(null);
+                          setShowQuizResult(false);
+                        } else {
+                          // Quiz completed
+                          const correctAnswers = quizQuestions.filter((q, i) => 
+                            userAnswers[i] === q.correct
+                          ).length;
+                          const percentage = Math.round((correctAnswers / quizQuestions.length) * 100);
+                          updateProgress(selectedContent!.id, percentage, percentage >= 70);
+                          setShowQuiz(false);
+                          setCurrentQuestionIndex(0);
+                          setUserAnswers([]);
+                          setSelectedAnswer(null);
+                          setShowQuizResult(false);
+                        }
+                      }}
+                      className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium shadow-lg"
+                    >
+                      {currentQuestionIndex < quizQuestions.length - 1 
+                        ? t('common.next')
+                        : t('education.quiz.finish')
+                      }
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

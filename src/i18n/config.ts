@@ -54,6 +54,10 @@ const resources = {
         delete: 'Delete',
         edit: 'Edit',
         success: 'Success',
+        next: 'Next',
+        previous: 'Previous',
+        submit: 'Submit',
+        of: 'of',
         time: {
           now: 'now',
           minutes: '{{count}}m ago',
@@ -88,9 +92,13 @@ const resources = {
           level: 'Level'
         },
         gallery: {
+          title: 'Photo Gallery',
           addPhoto: 'Add Photo',
           noPhotos: 'No photos yet',
-          sharePhotos: 'Share your adventure photos with the community!'
+          sharePhotos: 'Share your adventure photos with the community!',
+          caption: 'Photo Caption',
+          upload: 'Upload Photo',
+          cancel: 'Cancel'
         },
         achievements: {
           title: 'Achievements',
@@ -228,13 +236,15 @@ const resources = {
         },
         quiz: {
           title: 'Knowledge Quiz',
-          question: 'Question {{current}} of {{total}}',
-          correct: 'Correct! Well done! 🎉',
-          correctSubtext: 'You selected the right answer.',
-          incorrect: 'Incorrect. The correct answer is highlighted in green.',
-          incorrectSubtext: 'Learn from this and try again next time!',
-          completed: 'Quiz completed! Score: {{score}}/{{total}} ({{percentage}}%)',
-          cancel: 'Cancel'
+          question: 'Question',
+          selectAnswer: 'Select the best answer:',
+          correct: 'Correct! Well done!',
+          correctMessage: 'You selected the right answer.',
+          incorrect: 'Incorrect',
+          incorrectMessage: 'The correct answer is highlighted in green.',
+          submit: 'Submit Answer',
+          finish: 'Finish Quiz',
+          completed: 'Quiz completed! Score: {{score}}/{{total}} ({{percentage}}%)'
         },
         empty: 'Please log in to access educational content and track your learning progress.'
       },
@@ -293,31 +303,42 @@ const resources = {
       // Notifications
       notifications: {
         title: 'Notifications',
+        unread: 'unread',
         empty: 'No notifications yet',
+        emptyFiltered: 'No notifications match your filter',
+        emptyDescription: 'When you get notifications, they\'ll show up here',
+        loading: 'Loading notifications...',
         markAllRead: 'Mark all as read',
         markRead: 'Mark as read',
-        delete: 'Delete',
-        like: {
-          title: 'New Like',
-          message: '{{user}} liked your adventure post'
+        delete: 'Delete notification',
+        viewAll: 'View all notifications',
+        newFollower: 'New Follower',
+        newFollowerMessage: '{{name}} started following you',
+        photoLiked: 'Photo Liked',
+        photoLikedMessage: '{{name}} liked your photo from {{trail}}',
+        achievementUnlocked: 'Achievement Unlocked',
+        achievementMessage: 'You earned the "{{achievement}}" badge!',
+        newComment: 'New Comment',
+        commentMessage: '{{name}} commented on your {{trail}} post',
+        welcomeBack: 'Welcome Back',
+        welcomeMessage: 'Continue your adventure journey!',
+        filters: {
+          all: 'All',
+          unread: 'Unread',
+          mentions: 'Mentions',
+          follows: 'Follows'
         },
-        comment: {
-          title: 'New Comment',
-          message: '{{user}} commented on your post'
-        },
-        achievement: {
-          title: 'Achievement Unlocked',
-          message: 'You earned the "{{achievement}}" badge!'
-        },
+        settings: 'Notification Settings',
+        settingsDescription: 'Choose what notifications you want to receive',
         settings: {
-          title: 'Notification Settings',
-          likes: 'Likes',
-          comments: 'Comments',
-          follows: 'Follows',
-          achievements: 'Achievements',
-          system: 'System',
-          email: 'Email',
-          push: 'Push'
+          email: 'Email notifications',
+          push: 'Push notifications',
+          mentions: 'Mentions and replies',
+          follows: 'New followers',
+          likes: 'Likes on your posts',
+          comments: 'Comments on your posts',
+          achievements: 'Achievement unlocks',
+          trails: 'Trail updates'
         }
       },
       
