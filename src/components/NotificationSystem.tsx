@@ -308,7 +308,7 @@ const NotificationSystem: React.FC = () => {
 
         {/* Notifications Dropdown */}
         {showNotifications && (
-          <div className="absolute right-0 mt-2 w-96 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-hidden">
+          <div className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-[80vh] overflow-hidden">
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -333,7 +333,7 @@ const NotificationSystem: React.FC = () => {
               </div>
             </div>
 
-            <div className="max-h-80 overflow-y-auto">
+            <div className="max-h-60 overflow-y-auto">
               {notifications.length === 0 ? (
                 <div className="p-8 text-center">
                   <Bell className="h-12 w-12 text-gray-400 mx-auto mb-3" />

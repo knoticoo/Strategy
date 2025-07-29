@@ -131,10 +131,13 @@ const EnhancedProfileTab: React.FC = () => {
         email: currentUser.email,
         bio: editedBio
       });
+      // Update local user state
+      currentUser.bio = editedBio;
       setIsEditing(false);
-      // Update user context would go here
+      alert('Bio updated successfully!');
     } catch (error) {
       console.error('Error updating bio:', error);
+      alert('Failed to update bio. Please try again.');
     }
   };
 
@@ -164,9 +167,16 @@ const EnhancedProfileTab: React.FC = () => {
   const handleFollowUser = async (userId: string) => {
     try {
       await api.followUser(currentUser!.id, userId);
+      // Update local state immediately for better UX
+      setSocialConnections(prev => prev.map(connection => 
+        connection.id === userId 
+          ? { ...connection, isFollowing: !connection.isFollowing }
+          : connection
+      ));
       await loadProfileData(); // Reload social connections
     } catch (error) {
       console.error('Error following user:', error);
+      alert('Failed to follow/unfollow user. Please try again.');
     }
   };
 

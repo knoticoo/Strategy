@@ -54,8 +54,8 @@ const resources = {
       
       // Trails
       trails: {
-        title: 'Nature Trails',
-        subtitle: 'Explore Latvia\'s beautiful hiking paths',
+        title: 'Adventure Trails',
+        subtitle: 'Discover Latvia\'s most beautiful hiking and adventure trails',
         types: {
           hiking: 'Hiking',
           cycling: 'Cycling',

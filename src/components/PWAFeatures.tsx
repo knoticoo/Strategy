@@ -132,21 +132,33 @@ const PWAFeatures: React.FC = () => {
   const requestPermissions = async () => {
     // Location permission
     if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCurrentLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            accuracy: position.coords.accuracy
+      try {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000
           });
-        },
-        (error) => console.log('Location permission denied:', error)
-      );
+        });
+        
+        setCurrentLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          accuracy: position.coords.accuracy
+        });
+        console.log('Location permission granted');
+      } catch (error) {
+        console.error('Location permission denied:', error);
+        alert('Location permission is required for GPS tracking. Please enable location access in your browser settings.');
+      }
+    } else {
+      alert('Geolocation is not supported by this browser.');
     }
 
     // Microphone permission for voice notes
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log('Microphone permission granted');
     } catch (error) {
       console.log('Microphone permission denied:', error);
     }

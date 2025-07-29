@@ -32,11 +32,31 @@ const TrailsTab: React.FC = () => {
   const [showMap, setShowMap] = useState(false);
   const [selectedTrail, setSelectedTrail] = useState<RealLocation | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [likedTrails, setLikedTrails] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     loadTrails();
     getUserLocation();
+    // Load liked trails from localStorage
+    const savedLikes = localStorage.getItem('likedTrails');
+    if (savedLikes) {
+      setLikedTrails(new Set(JSON.parse(savedLikes)));
+    }
   }, []);
+
+  const handleLikeTrail = (trailId: string) => {
+    setLikedTrails(prev => {
+      const newLiked = new Set(prev);
+      if (newLiked.has(trailId)) {
+        newLiked.delete(trailId);
+      } else {
+        newLiked.add(trailId);
+      }
+      // Save to localStorage
+      localStorage.setItem('likedTrails', JSON.stringify(Array.from(newLiked)));
+      return newLiked;
+    });
+  };
 
   useEffect(() => {
     const filterData = () => {
@@ -185,26 +205,33 @@ const TrailsTab: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">🏔️ Real Latvian Trails</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Discover authentic hiking trails across Latvia with real GPS coordinates, 
-          detailed descriptions, and current information from official sources.
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">🏔️ {t('trails.title')}</h2>
+        <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          {t('trails.subtitle')}
         </p>
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
-          {/* Search */}
+          {/* Enhanced Search */}
           <div className="relative lg:col-span-2">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <input
               type="text"
-              placeholder="Search trails, locations, features..."
+              placeholder={t('common.search') + ' trails, locations, features...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all"
             />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
 
           {/* Difficulty Filter */}
@@ -401,12 +428,24 @@ const TrailsTab: React.FC = () => {
                   </div>
                   <div className="flex gap-2">
                     <button 
+                      onClick={() => handleLikeTrail(trail.id)}
+                      className={`p-2 transition-colors rounded-full ${
+                        likedTrails.has(trail.id) 
+                          ? 'text-red-500 hover:text-red-600 bg-red-50' 
+                          : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
+                      }`}
+                      title={likedTrails.has(trail.id) ? "Unlike trail" : "Like trail"}
+                    >
+                      <Heart className={`h-4 w-4 ${likedTrails.has(trail.id) ? 'fill-current' : ''}`} />
+                    </button>
+                    <button 
                       className="p-2 text-gray-400 hover:text-blue-600 transition-colors rounded-full hover:bg-blue-50"
                       title="Share location"
                     >
                       <Share className="h-4 w-4" />
                     </button>
                     <button 
+                      onClick={() => setSelectedTrail(trail)}
                       className="p-2 text-gray-400 hover:text-green-600 transition-colors rounded-full hover:bg-green-50"
                       title="More info"
                     >
