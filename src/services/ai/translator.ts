@@ -188,7 +188,7 @@ class VeterinaryTranslator {
     ];
 
     for (const dictionary of dictionaries) {
-      for (const [key, translations] of Object.entries(dictionary)) {
+      for (const [_key, translations] of Object.entries(dictionary)) {
         const fromTerm = translations[fromLang];
         const toTerm = translations[toLang];
         
@@ -263,7 +263,7 @@ class VeterinaryTranslator {
     };
 
     let translatedText = text;
-    for (const [key, translations] of Object.entries(medicalPhrases)) {
+    for (const [_key, translations] of Object.entries(medicalPhrases)) {
       const fromTerm = translations[fromLang];
       const toTerm = translations[toLang];
       
@@ -288,7 +288,7 @@ class VeterinaryTranslator {
     };
 
     let translatedText = text;
-    for (const [key, translations] of Object.entries(intensityModifiers)) {
+    for (const [_key, translations] of Object.entries(intensityModifiers)) {
       const fromTerm = translations[fromLang];
       const toTerm = translations[toLang];
       
@@ -313,7 +313,7 @@ class VeterinaryTranslator {
     };
 
     let translatedText = text;
-    for (const [key, translations] of Object.entries(treatmentPhrases)) {
+    for (const [_key, translations] of Object.entries(treatmentPhrases)) {
       const fromTerm = translations[fromLang];
       const toTerm = translations[toLang];
       
@@ -326,7 +326,7 @@ class VeterinaryTranslator {
     return translatedText;
   }
 
-  private calculateTranslationConfidence(originalText: string, translatedText: string, context?: string): number {
+  private calculateTranslationConfidence(originalText: string, _translatedText: string, context?: string): number {
     let confidence = 0.7; // Base confidence
 
     // Increase confidence if medical terms were successfully translated

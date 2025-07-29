@@ -5,6 +5,7 @@ import { detectLanguage, SupportedLanguage } from '../languageDetector';
 import { veterinaryWebScraper, ScrapedData } from './webScraper';
 import { vetDatabase } from '../database/vetDatabase';
 import { veterinaryTranslator } from './translator';
+import { medicationDiscoveryEngine } from './medicationDiscovery';
 
 export interface AIResponse {
   answer: string;
@@ -94,6 +95,9 @@ class IntelligentVeterinaryAI {
     
     // Generate intelligent response
     const response = this.synthesizeResponse(analysis, language);
+    
+    // Discover new medications from the query context
+    await this.discoverMedicationsFromQuery(query, analysis);
     
     // Learn from this interaction
     this.learnFromInteraction(query, response, context);
@@ -470,9 +474,9 @@ class IntelligentVeterinaryAI {
     }
   }
 
-  private updateKnowledgeFromFeedback(query: string, response: AIResponse, feedback: 'helpful' | 'not_helpful') {
+  private updateKnowledgeFromFeedback(query: string, _response: AIResponse, feedback: 'helpful' | 'not_helpful') {
     // Adjust confidence based on feedback
-    const adjustment = feedback === 'helpful' ? 0.1 : -0.1;
+    // const _adjustment = feedback === 'helpful' ? 0.1 : -0.1;
     
     // This would update the knowledge base confidence scores
     // In a real implementation, this would persist to a database
@@ -490,8 +494,38 @@ class IntelligentVeterinaryAI {
     }
   }
 
+  // Discover new medications from query context
+  private async discoverMedicationsFromQuery(query: string, analysis: any): Promise<void> {
+    try {
+      // Check if query mentions medications or treatments
+      const medicationKeywords = [
+        'medicine', 'medication', 'drug', 'treatment', 'pill', 'tablet',
+        'лекарство', 'медикамент', 'препарат', 'таблетка',
+        'medikaments', 'zāles', 'tabletes'
+      ];
+      
+      const queryLower = query.toLowerCase();
+      const hasMedicationContext = medicationKeywords.some(keyword => 
+        queryLower.includes(keyword)
+      ) || analysis.conditions.length > 0;
+      
+      if (hasMedicationContext) {
+        console.log('🔍 Discovering medications for query:', query);
+        const discoveredMedications = await medicationDiscoveryEngine.discoverMedicationsForQuery(query);
+        
+        if (discoveredMedications.length > 0) {
+          console.log(`✅ Discovered ${discoveredMedications.length} new medications from query context`);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to discover medications from query:', error);
+    }
+  }
+
   // Get learning statistics
   getLearningStats() {
+    const medicationStats = medicationDiscoveryEngine.getDiscoveryStats();
+    
     return {
       totalInteractions: this.learningHistory.size,
       knowledgeGraphSize: this.knowledgeGraph.size,
@@ -499,7 +533,12 @@ class IntelligentVeterinaryAI {
       averageConfidence: Array.from(this.learningHistory.values())
         .flat()
         .reduce((sum, response) => sum + response.confidence, 0) / 
-        Math.max(1, Array.from(this.learningHistory.values()).flat().length)
+        Math.max(1, Array.from(this.learningHistory.values()).flat().length),
+      medicationDiscovery: {
+        totalDiscovered: medicationStats.totalDiscovered,
+        lastDiscovery: medicationStats.lastDiscovery,
+        discoveryInterval: medicationStats.discoveryInterval
+      }
     };
   }
 }
