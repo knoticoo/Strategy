@@ -27,7 +27,8 @@ import {
   Star,
   Activity,
   TrendingUp,
-  UserCheck
+  UserCheck,
+  BookOpen
 } from 'lucide-react';
 
 
@@ -38,7 +39,7 @@ const AuthTab: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [activeSection, setActiveSection] = useState<'profile' | 'favorites' | 'progress' | 'admin'>('profile');
-  const [adminTab, setAdminTab] = useState<'trails' | 'users' | 'stats'>('trails');
+  const [adminTab, setAdminTab] = useState<'trails' | 'users' | 'stats' | 'education'>('trails');
   const [editingTrail, setEditingTrail] = useState<any>(null);
   const [showAddTrail, setShowAddTrail] = useState(false);
   const [trails, setTrails] = useState<api.ApiTrail[]>([]);
@@ -905,6 +906,17 @@ const AuthTab: React.FC = () => {
           <BarChart3 className="h-4 w-4 inline-block mr-2" />
           Statistics
         </button>
+        <button
+          onClick={() => setAdminTab('education')}
+          className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+            adminTab === 'education'
+              ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+          }`}
+        >
+          <BookOpen className="h-4 w-4 inline-block mr-2" />
+          Education
+        </button>
       </div>
 
       {/* Admin Content */}
@@ -912,6 +924,7 @@ const AuthTab: React.FC = () => {
         {adminTab === 'trails' && renderTrailsAdmin()}
         {adminTab === 'users' && renderUsersAdmin()}
         {adminTab === 'stats' && renderStatsAdmin()}
+        {adminTab === 'education' && renderEducationAdmin()}
       </div>
     </div>
   );
@@ -1978,6 +1991,130 @@ const AuthTab: React.FC = () => {
               Connect with other adventurers
             </span>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Render Education Admin
+  const renderEducationAdmin = () => (
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          Educational Content Management
+        </h3>
+        <button
+          onClick={() => {
+            // TODO: Add new educational content
+            alert('Add new educational content - Feature coming soon!');
+          }}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          Add Content
+        </button>
+      </div>
+
+      {/* Education Categories */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        {[
+          { id: 'nature', name: 'Nature Education', count: 12, color: 'bg-green-100 text-green-800' },
+          { id: 'history', name: 'Historical Sites', count: 8, color: 'bg-amber-100 text-amber-800' },
+          { id: 'culture', name: 'Cultural Heritage', count: 6, color: 'bg-purple-100 text-purple-800' },
+          { id: 'photography', name: 'Photography', count: 15, color: 'bg-blue-100 text-blue-800' },
+          { id: 'survival', name: 'Survival Skills', count: 10, color: 'bg-red-100 text-red-800' }
+        ].map(category => (
+          <div key={category.id} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="font-medium text-gray-900 dark:text-white">
+                {category.name}
+              </h4>
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${category.color}`}>
+                {category.count} items
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <button className="text-xs px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                Manage
+              </button>
+              <button className="text-xs px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
+                Add New
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Recent Content */}
+      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+        <h4 className="font-medium text-gray-900 dark:text-white mb-4">
+          Recent Educational Content
+        </h4>
+        <div className="space-y-3">
+          {[
+            { title: 'Identifying Baltic Flora: Common Trees and Plants', category: 'Nature', status: 'Published', views: 1247 },
+            { title: 'Medieval Castles and Their Stories', category: 'History', status: 'Draft', views: 0 },
+            { title: 'Golden Hour Photography in Baltic Forests', category: 'Photography', status: 'Published', views: 2341 },
+            { title: 'Essential Wilderness Survival Skills', category: 'Survival', status: 'Review', views: 567 }
+          ].map((item, index) => (
+            <div key={index} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg">
+              <div className="flex-1">
+                <h5 className="font-medium text-gray-900 dark:text-white text-sm">
+                  {item.title}
+                </h5>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  {item.category} • {item.views} views
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  item.status === 'Published' ? 'bg-green-100 text-green-800' :
+                  item.status === 'Draft' ? 'bg-gray-100 text-gray-800' :
+                  'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {item.status}
+                </span>
+                <button className="text-gray-400 hover:text-blue-600 p-1">
+                  <Edit className="h-4 w-4" />
+                </button>
+                <button className="text-gray-400 hover:text-red-600 p-1">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Content Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-blue-600" />
+            <span className="text-sm font-medium text-blue-800 dark:text-blue-200">Total Content</span>
+          </div>
+          <p className="text-2xl font-bold text-blue-900 dark:text-blue-100 mt-1">51</p>
+        </div>
+        <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+          <div className="flex items-center gap-2">
+            <Eye className="h-5 w-5 text-green-600" />
+            <span className="text-sm font-medium text-green-800 dark:text-green-200">Total Views</span>
+          </div>
+          <p className="text-2xl font-bold text-green-900 dark:text-green-100 mt-1">12.4K</p>
+        </div>
+        <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
+          <div className="flex items-center gap-2">
+            <Trophy className="h-5 w-5 text-purple-600" />
+            <span className="text-sm font-medium text-purple-800 dark:text-purple-200">Completions</span>
+          </div>
+          <p className="text-2xl font-bold text-purple-900 dark:text-purple-100 mt-1">3.2K</p>
+        </div>
+        <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4">
+          <div className="flex items-center gap-2">
+            <Star className="h-5 w-5 text-orange-600" />
+            <span className="text-sm font-medium text-orange-800 dark:text-orange-200">Avg Rating</span>
+          </div>
+          <p className="text-2xl font-bold text-orange-900 dark:text-orange-100 mt-1">4.7</p>
         </div>
       </div>
     </div>
