@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserContext';
+import { useTranslation } from 'react-i18next';
 import {
   Brain,
   MapPin,
@@ -138,6 +139,7 @@ interface AdventurePlan {
 }
 
 const AIAdventurePlanner: React.FC = () => {
+  const { t } = useTranslation();
   const { currentUser, isLoggedIn } = useUser();
   const [step, setStep] = useState<'preferences' | 'planning' | 'results'>('preferences');
   const [preferences, setPreferences] = useState<UserPreferences>({
@@ -431,19 +433,19 @@ const AIAdventurePlanner: React.FC = () => {
       {/* Header */}
       <div className="text-center">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          🤖 AI Adventure Planner
+          🤖 {t('aiPlanner.title')}
         </h2>
         <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Let artificial intelligence create the perfect adventure plan tailored to your preferences, budget, and experience level
+          {t('aiPlanner.subtitle')}
         </p>
       </div>
 
       {/* Progress Steps */}
       <div className="flex items-center justify-center space-x-4 mb-8">
         {[
-          { id: 'preferences', name: 'Preferences', icon: Heart },
-          { id: 'planning', name: 'AI Planning', icon: Brain },
-          { id: 'results', name: 'Your Plans', icon: Target }
+          { id: 'preferences', name: t('aiPlanner.steps.preferences'), icon: Heart },
+          { id: 'planning', name: t('aiPlanner.steps.planning'), icon: Brain },
+          { id: 'results', name: t('aiPlanner.steps.results'), icon: Target }
         ].map((stepItem, index) => {
           const Icon = stepItem.icon;
           const isActive = step === stepItem.id;
@@ -483,14 +485,14 @@ const AIAdventurePlanner: React.FC = () => {
       {step === 'preferences' && (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
-            Tell us about your adventure preferences
+            {t('aiPlanner.preferences.title')}
           </h3>
 
           <div className="space-y-6">
             {/* Fitness Level */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Fitness Level
+                {t('aiPlanner.preferences.fitnessLevel')}
               </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {['beginner', 'intermediate', 'advanced', 'expert'].map(level => (
