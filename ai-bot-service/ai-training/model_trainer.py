@@ -47,17 +47,17 @@ class ModelConfig:
     lora_dropout: float = 0.1
     lora_target_modules: List[str] = field(default_factory=lambda: ["c_attn", "c_proj"])
     
-    # Quantization
-    use_4bit: bool = True  # For memory efficiency
+    # Quantization - Disabled for CPU-only training
+    use_4bit: bool = False  # Disabled for CPU-only training
     bnb_4bit_compute_dtype: str = "float16"
     bnb_4bit_quant_type: str = "nf4"
     
-    # Training parameters
+    # Training parameters - Adjusted for CPU
     output_dir: str = "models/veterinary-ai-model"
     num_train_epochs: int = 3
-    per_device_train_batch_size: int = 4
-    per_device_eval_batch_size: int = 4
-    gradient_accumulation_steps: int = 4
+    per_device_train_batch_size: int = 1  # Reduced for CPU
+    per_device_eval_batch_size: int = 1   # Reduced for CPU
+    gradient_accumulation_steps: int = 8   # Increased to compensate for smaller batch size
     learning_rate: float = 2e-4
     weight_decay: float = 0.01
     warmup_steps: int = 100
@@ -75,7 +75,7 @@ class ModelConfig:
     max_samples: Optional[int] = None  # None for all data
     
     # Monitoring
-    use_wandb: bool = True
+    use_wandb: bool = False  # Disabled to avoid dependency issues
     wandb_project: str = "veterinary-ai-training"
     wandb_run_name: Optional[str] = None
 
