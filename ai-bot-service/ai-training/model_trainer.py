@@ -171,11 +171,41 @@ class VeterinaryModelTrainer:
         """Load and prepare training data"""
         logger.info(f"📚 Loading training data from {self.config.train_data_path}")
         
-        # Load JSONL data
-        data = []
-        with open(self.config.train_data_path, 'r', encoding='utf-8') as f:
-            for line in f:
-                data.append(json.loads(line))
+        # Check if training data file exists
+        if not os.path.exists(self.config.train_data_path):
+            logger.warning(f"⚠️ Training data file not found: {self.config.train_data_path}")
+            logger.info("📝 Creating sample training data...")
+            
+            # Create sample data if file doesn't exist
+            sample_data = [
+                {
+                    "instruction": "My dog is vomiting. What should I do?",
+                    "response": "Vomiting in dogs can indicate various health issues. Monitor closely and contact a veterinarian if symptoms persist.",
+                    "metadata": {"species": ["dog"], "category": "emergency", "urgency": "medium"}
+                },
+                {
+                    "instruction": "How often should I feed my cat?",
+                    "response": "Adult cats typically need 2 meals per day. Consult your veterinarian for specific recommendations.",
+                    "metadata": {"species": ["cat"], "category": "nutrition", "urgency": "low"}
+                }
+            ]
+            
+            # Create directory if it doesn't exist
+            os.makedirs(os.path.dirname(self.config.train_data_path), exist_ok=True)
+            
+            # Write sample data
+            with open(self.config.train_data_path, 'w', encoding='utf-8') as f:
+                for item in sample_data:
+                    f.write(json.dumps(item) + '\n')
+            
+            logger.info(f"✅ Created sample training data with {len(sample_data)} examples")
+            data = sample_data
+        else:
+            # Load existing JSONL data
+            data = []
+            with open(self.config.train_data_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    data.append(json.loads(line))
         
         # Limit samples if specified
         if self.config.max_samples:
