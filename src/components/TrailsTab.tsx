@@ -205,9 +205,9 @@ const TrailsTab: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">🏔️ Adventure Trails</h2>
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">🏔️ {t('trails.title')}</h2>
         <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Discover Latvia's most beautiful hiking and adventure trails
+          {t('trails.subtitle')}
         </p>
       </div>
 
@@ -219,7 +219,7 @@ const TrailsTab: React.FC = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <input
               type="text"
-              placeholder="Search trails, locations, features..."
+              placeholder={t('trails.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all"
@@ -240,10 +240,10 @@ const TrailsTab: React.FC = () => {
             onChange={(e) => setSelectedDifficulty(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
           >
-            <option value="all">All Difficulties</option>
-            <option value="easy">Easy</option>
-            <option value="moderate">Moderate</option>
-            <option value="hard">Hard</option>
+            <option value="all">{t('trails.filters.allDifficulties')}</option>
+            <option value="easy">{t('trails.filters.easy')}</option>
+            <option value="moderate">{t('trails.filters.moderate')}</option>
+            <option value="hard">{t('trails.filters.hard')}</option>
           </select>
 
           {/* Region Filter */}
@@ -254,7 +254,7 @@ const TrailsTab: React.FC = () => {
           >
             {regions.map(region => (
               <option key={region} value={region}>
-                {region === 'all' ? 'All Regions' : region}
+                {region === 'all' ? t('trails.filters.allRegions') : region}
               </option>
             ))}
           </select>
@@ -267,7 +267,7 @@ const TrailsTab: React.FC = () => {
           >
             {seasons.map(season => (
               <option key={season} value={season}>
-                {season === 'all' ? 'All Seasons' : season.charAt(0).toUpperCase() + season.slice(1)}
+                {season === 'all' ? t('trails.filters.allSeasons') : season.charAt(0).toUpperCase() + season.slice(1)}
               </option>
             ))}
           </select>
@@ -276,7 +276,7 @@ const TrailsTab: React.FC = () => {
         {/* View Toggle */}
         <div className="flex justify-between items-center">
           <p className="text-sm text-gray-600">
-            Found {filteredTrails.length} trails
+            {t('trails.found', { count: filteredTrails.length })}
           </p>
           <div className="flex gap-2">
             <button
@@ -286,7 +286,7 @@ const TrailsTab: React.FC = () => {
               }`}
             >
               <List className="h-4 w-4" />
-              List View
+              {t('trails.viewModes.list')}
             </button>
             <button
               onClick={() => setShowMap(true)}
@@ -295,7 +295,7 @@ const TrailsTab: React.FC = () => {
               }`}
             >
               <Map className="h-4 w-4" />
-              Map View
+              {t('trails.viewModes.map')}
             </button>
           </div>
         </div>
@@ -507,25 +507,25 @@ const TrailsTab: React.FC = () => {
               {/* Trail Details Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-gray-900 mb-3">Trail Info</h4>
+                  <h4 className="font-semibold text-gray-900 mb-3">{t('trails.info.trailInfo')}</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span>Distance:</span>
-                      <span className="font-medium">{selectedTrail.distance || 'N/A'}</span>
+                      <span>{t('trails.info.distance')}:</span>
+                      <span className="font-medium">{selectedTrail.distance || t('trails.info.notAvailable')}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Duration:</span>
+                      <span>{t('trails.info.duration')}:</span>
                       <span className="font-medium">{selectedTrail.duration}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Elevation:</span>
-                      <span className="font-medium">{selectedTrail.elevation || 'N/A'}</span>
+                      <span>{t('trails.info.elevation')}:</span>
+                      <span className="font-medium">{selectedTrail.elevation || t('trails.info.notAvailable')}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Features</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">{t('trails.info.features')}</h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedTrail.features.map((feature, index) => (
                       <span
@@ -539,7 +539,7 @@ const TrailsTab: React.FC = () => {
                 </div>
 
                 <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Contact</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">{t('trails.info.contact')}</h4>
                   <div className="space-y-2 text-sm">
                     {selectedTrail.contact?.phone && (
                       <div>
@@ -565,7 +565,7 @@ const TrailsTab: React.FC = () => {
 
               {/* Map */}
               <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Location</h4>
+                <h4 className="font-semibold text-gray-900 mb-3">{t('trails.info.location')}</h4>
                 <InteractiveMap
                   locations={[selectedTrail]}
                   height="300px"
@@ -583,11 +583,11 @@ const TrailsTab: React.FC = () => {
                   className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors text-center font-medium"
                 >
                   <Navigation className="h-5 w-5 inline mr-2" />
-                  Get Directions
+                  {t('trails.info.getDirections')}
                 </a>
                 <button className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium">
                   <Heart className="h-5 w-5 inline mr-2" />
-                  Add to Favorites
+                  {t('trails.info.addToFavorites')}
                 </button>
                 <button 
                   onClick={() => {
@@ -599,7 +599,7 @@ const TrailsTab: React.FC = () => {
                   title="Share location"
                 >
                   <Share className="h-5 w-5 inline mr-2" />
-                  Share
+                  {t('common.share')}
                 </button>
               </div>
             </div>
@@ -611,8 +611,8 @@ const TrailsTab: React.FC = () => {
       {filteredTrails.length === 0 && !loading && (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">🔍</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No trails found</h3>
-          <p className="text-gray-600 mb-4">Try adjusting your search criteria</p>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('trails.noResults.title')}</h3>
+          <p className="text-gray-600 mb-4">{t('trails.noResults.message')}</p>
           <button
             onClick={() => {
               setSearchTerm('');

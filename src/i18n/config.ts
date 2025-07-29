@@ -66,6 +66,39 @@ const resources = {
       trails: {
         title: 'Adventure Trails',
         subtitle: 'Discover Latvia\'s most beautiful hiking and adventure trails',
+        searchPlaceholder: 'Search trails, locations, features...',
+        filters: {
+          allDifficulties: 'All Difficulties',
+          easy: 'Easy',
+          moderate: 'Moderate',
+          hard: 'Hard',
+          allRegions: 'All Regions',
+          allSeasons: 'All Seasons',
+          allTypes: 'All Types'
+        },
+        found: 'Found {{count}} trails',
+        info: {
+          distance: 'Distance',
+          duration: 'Duration',
+          elevation: 'Elevation',
+          features: 'Features',
+          contact: 'Contact',
+          location: 'Location',
+          getDirections: 'Get directions',
+          addToFavorites: 'Add to favourites',
+          trailInfo: 'Trail Info',
+          parking: 'Parking',
+          available: 'Available',
+          notAvailable: 'N/A'
+        },
+        viewModes: {
+          map: 'Map',
+          list: 'List'
+        },
+        noResults: {
+          title: 'No trails found',
+          message: 'Try adjusting your search criteria'
+        },
         types: {
           hiking: 'Hiking',
           cycling: 'Cycling',
@@ -683,6 +716,39 @@ const resources = {
       trails: {
         title: 'Природные Тропы',
         subtitle: 'Исследуйте красивые пешеходные тропы Латвии',
+        searchPlaceholder: 'Поиск троп, мест, особенностей...',
+        filters: {
+          allDifficulties: 'Все Сложности',
+          easy: 'Легко',
+          moderate: 'Средне',
+          hard: 'Трудно',
+          allRegions: 'Все Регионы',
+          allSeasons: 'Все Сезоны',
+          allTypes: 'Все Типы'
+        },
+        found: 'Найдено {{count}} троп',
+        info: {
+          distance: 'Расстояние',
+          duration: 'Продолжительность',
+          elevation: 'Высота',
+          features: 'Особенности',
+          contact: 'Контакт',
+          location: 'Местоположение',
+          getDirections: 'Получить маршрут',
+          addToFavorites: 'Добавить в избранное',
+          trailInfo: 'Информация о тропе',
+          parking: 'Парковка',
+          available: 'Доступно',
+          notAvailable: 'Н/Д'
+        },
+        viewModes: {
+          map: 'Карта',
+          list: 'Список'
+        },
+        noResults: {
+          title: 'Тропы не найдены',
+          message: 'Попробуйте изменить критерии поиска'
+        },
         types: {
           hiking: 'Пешие Походы',
           cycling: 'Велоспорт',
