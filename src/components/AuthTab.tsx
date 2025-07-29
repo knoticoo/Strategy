@@ -1720,6 +1720,294 @@ const AuthTab: React.FC = () => {
     </div>
   );
 
+  // Education Admin State
+  const [educationContent, setEducationContent] = useState([
+    {
+      id: 'nature-1',
+      title: 'Wildlife Watching: Birds and Mammals of Latvia',
+      category: 'nature',
+      type: 'quiz',
+      difficulty: 'beginner',
+      duration: 25,
+      description: 'Learn to identify common birds and mammals in Latvian forests and parks.',
+      questions: [
+        {
+          question: "Which tree is most common in Latvian forests?",
+          options: ["Oak", "Pine", "Birch", "Maple"],
+          correct: 1
+        },
+        {
+          question: "What is the best time for wildlife observation?",
+          options: ["Midday", "Early morning", "Late afternoon", "Both B and C"],
+          correct: 3
+        }
+      ],
+      rating: 4.7,
+      completedBy: 1247,
+      status: 'published'
+    },
+    {
+      id: 'photography-1',
+      title: 'Golden Hour Photography in Baltic Forests',
+      category: 'photography',
+      type: 'quiz',
+      difficulty: 'intermediate',
+      duration: 35,
+      description: 'Master the art of capturing stunning forest photography during golden hour.',
+      questions: [
+        {
+          question: "What is the 'golden hour' in photography?",
+          options: ["Noon time", "Hour after sunrise/before sunset", "Midnight", "Any sunny hour"],
+          correct: 1
+        },
+        {
+          question: "Which camera setting is most important for forest photography?",
+          options: ["ISO", "Aperture", "Shutter Speed", "All of the above"],
+          correct: 3
+        }
+      ],
+      rating: 4.9,
+      completedBy: 2341,
+      status: 'published'
+    }
+  ]);
+
+  const [editingContent, setEditingContent] = useState(null);
+  const [showContentEditor, setShowContentEditor] = useState(false);
+  const [contentForm, setContentForm] = useState({
+    title: '',
+    category: 'nature',
+    type: 'quiz',
+    difficulty: 'beginner',
+    duration: 15,
+    description: '',
+    questions: [
+      { question: '', options: ['', '', '', ''], correct: 0 }
+    ]
+  });
+
+  // Initialize form when editing
+  React.useEffect(() => {
+    if (editingContent) {
+      setContentForm({
+        title: editingContent.title || '',
+        category: editingContent.category || 'nature',
+        type: editingContent.type || 'quiz',
+        difficulty: editingContent.difficulty || 'beginner',
+        duration: editingContent.duration || 15,
+        description: editingContent.description || '',
+        questions: editingContent.questions || [
+          { question: '', options: ['', '', '', ''], correct: 0 }
+        ]
+      });
+    } else {
+      setContentForm({
+        title: '',
+        category: 'nature',
+        type: 'quiz',
+        difficulty: 'beginner',
+        duration: 15,
+        description: '',
+        questions: [
+          { question: '', options: ['', '', '', ''], correct: 0 }
+        ]
+      });
+    }
+  }, [editingContent]);
+
+  // Content Editor Component
+  const renderContentEditor = () => (
+    <div className="space-y-6">
+      {/* Basic Info */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Title
+          </label>
+          <input
+            type="text"
+            value={contentForm.title}
+            onChange={(e) => setContentForm(prev => ({ ...prev, title: e.target.value }))}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            placeholder="Enter content title..."
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Category
+          </label>
+          <select
+            value={contentForm.category}
+            onChange={(e) => setContentForm(prev => ({ ...prev, category: e.target.value }))}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          >
+            <option value="nature">Nature</option>
+            <option value="history">History</option>
+            <option value="culture">Culture</option>
+            <option value="photography">Photography</option>
+            <option value="survival">Survival</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Difficulty
+          </label>
+          <select
+            value={contentForm.difficulty}
+            onChange={(e) => setContentForm(prev => ({ ...prev, difficulty: e.target.value }))}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          >
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Duration (minutes)
+          </label>
+          <input
+            type="number"
+            value={contentForm.duration}
+            onChange={(e) => setContentForm(prev => ({ ...prev, duration: parseInt(e.target.value) || 15 }))}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            min="5"
+            max="120"
+          />
+        </div>
+      </div>
+
+      {/* Description */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Description
+        </label>
+        <textarea
+          value={contentForm.description}
+          onChange={(e) => setContentForm(prev => ({ ...prev, description: e.target.value }))}
+          rows={3}
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          placeholder="Enter content description..."
+        />
+      </div>
+
+      {/* Quiz Questions */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Quiz Questions ({contentForm.questions.length})
+          </label>
+          <button
+            onClick={() => setContentForm(prev => ({
+              ...prev,
+              questions: [...prev.questions, { question: '', options: ['', '', '', ''], correct: 0 }]
+            }))}
+            className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+          >
+            Add Question
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          {contentForm.questions.map((q, qIndex) => (
+            <div key={qIndex} className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h5 className="font-medium text-gray-900 dark:text-white">
+                  Question {qIndex + 1}
+                </h5>
+                {contentForm.questions.length > 1 && (
+                  <button
+                    onClick={() => setContentForm(prev => ({
+                      ...prev,
+                      questions: prev.questions.filter((_, i) => i !== qIndex)
+                    }))}
+                    className="text-red-600 hover:text-red-700 p-1"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  value={q.question}
+                  onChange={(e) => {
+                    const newQuestions = [...contentForm.questions];
+                    newQuestions[qIndex].question = e.target.value;
+                    setContentForm(prev => ({ ...prev, questions: newQuestions }));
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  placeholder="Enter question..."
+                />
+
+                {q.options.map((option, oIndex) => (
+                  <div key={oIndex} className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      name={`correct-${qIndex}`}
+                      checked={q.correct === oIndex}
+                      onChange={() => {
+                        const newQuestions = [...contentForm.questions];
+                        newQuestions[qIndex].correct = oIndex;
+                        setContentForm(prev => ({ ...prev, questions: newQuestions }));
+                      }}
+                      className="text-green-600"
+                    />
+                    <input
+                      type="text"
+                      value={option}
+                      onChange={(e) => {
+                        const newQuestions = [...contentForm.questions];
+                        newQuestions[qIndex].options[oIndex] = e.target.value;
+                        setContentForm(prev => ({ ...prev, questions: newQuestions }));
+                      }}
+                      className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      placeholder={`Option ${oIndex + 1}...`}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-600">
+        <button
+          onClick={() => setShowContentEditor(false)}
+          className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={() => {
+            const newContent = {
+              id: editingContent?.id || `content-${Date.now()}`,
+              ...contentForm,
+              rating: editingContent?.rating || 0,
+              completedBy: editingContent?.completedBy || 0,
+              status: editingContent?.status || 'draft'
+            };
+
+            if (editingContent) {
+              setEducationContent(prev => prev.map(c => c.id === editingContent.id ? newContent : c));
+            } else {
+              setEducationContent(prev => [...prev, newContent]);
+            }
+
+            setShowContentEditor(false);
+            setEditingContent(null);
+          }}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          {editingContent ? 'Update Content' : 'Create Content'}
+        </button>
+      </div>
+    </div>
+  );
+
   // Render Education Admin
   const renderEducationAdmin = () => (
     <div className="p-6">
@@ -1729,7 +2017,8 @@ const AuthTab: React.FC = () => {
         </h3>
         <button
           onClick={() => {
-            alert('Add new educational content - Feature coming soon!');
+            setEditingContent(null);
+            setShowContentEditor(true);
           }}
           className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
         >
@@ -1737,6 +2026,29 @@ const AuthTab: React.FC = () => {
           Add Content
         </button>
       </div>
+
+      {/* Content Editor Modal */}
+      {showContentEditor && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h4 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  {editingContent ? 'Edit Content' : 'Add New Content'}
+                </h4>
+                <button
+                  onClick={() => setShowContentEditor(false)}
+                  className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+              
+              {renderContentEditor()}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Education Categories */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
@@ -1768,39 +2080,52 @@ const AuthTab: React.FC = () => {
         ))}
       </div>
 
-      {/* Recent Content */}
+      {/* Educational Content List */}
       <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
         <h4 className="font-medium text-gray-900 dark:text-white mb-4">
-          Recent Educational Content
+          Educational Content ({educationContent.length} items)
         </h4>
         <div className="space-y-3">
-          {[
-            { title: 'Identifying Baltic Flora: Common Trees and Plants', category: 'Nature', status: 'Published', views: 1247 },
-            { title: 'Medieval Castles and Their Stories', category: 'History', status: 'Draft', views: 0 },
-            { title: 'Golden Hour Photography in Baltic Forests', category: 'Photography', status: 'Published', views: 2341 },
-            { title: 'Essential Wilderness Survival Skills', category: 'Survival', status: 'Review', views: 567 }
-          ].map((item, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg">
+          {educationContent.map((content) => (
+            <div key={content.id} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg">
               <div className="flex-1">
                 <h5 className="font-medium text-gray-900 dark:text-white text-sm">
-                  {item.title}
+                  {content.title}
                 </h5>
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                  {item.category} • {item.views} views
+                  {content.category.charAt(0).toUpperCase() + content.category.slice(1)} • {content.type.toUpperCase()} • {content.completedBy} completed
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                  {content.questions?.length || 0} questions • {content.duration} min • {content.difficulty}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  item.status === 'Published' ? 'bg-green-100 text-green-800' :
-                  item.status === 'Draft' ? 'bg-gray-100 text-gray-800' :
+                  content.status === 'published' ? 'bg-green-100 text-green-800' :
+                  content.status === 'draft' ? 'bg-gray-100 text-gray-800' :
                   'bg-yellow-100 text-yellow-800'
                 }`}>
-                  {item.status}
+                  {content.status.charAt(0).toUpperCase() + content.status.slice(1)}
                 </span>
-                <button className="text-gray-400 hover:text-blue-600 p-1">
+                <button 
+                  onClick={() => {
+                    setEditingContent(content);
+                    setShowContentEditor(true);
+                  }}
+                  className="text-gray-400 hover:text-blue-600 p-1"
+                  title="Edit Content"
+                >
                   <Edit className="h-4 w-4" />
                 </button>
-                <button className="text-gray-400 hover:text-red-600 p-1">
+                <button 
+                  onClick={() => {
+                    if (confirm('Are you sure you want to delete this content?')) {
+                      setEducationContent(prev => prev.filter(c => c.id !== content.id));
+                    }
+                  }}
+                  className="text-gray-400 hover:text-red-600 p-1"
+                  title="Delete Content"
+                >
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
