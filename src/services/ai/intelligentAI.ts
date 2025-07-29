@@ -4,6 +4,7 @@ import { PetSpecies } from '../../types';
 import { detectLanguage, SupportedLanguage } from '../languageDetector';
 import { veterinaryWebScraper, ScrapedData } from './webScraper';
 import { vetDatabase } from '../database/vetDatabase';
+import { veterinaryTranslator } from './translator';
 
 export interface AIResponse {
   answer: string;
@@ -173,15 +174,61 @@ class IntelligentVeterinaryAI {
     language: SupportedLanguage, 
     species: PetSpecies
   ): Promise<ScrapedData[]> {
-    // Search scraped data
-    const scrapedResults = veterinaryWebScraper.searchScrapedData(query, language);
+    // Search scraped data in all languages
+    const allResults: ScrapedData[] = [];
+    
+    // Search in user's language first
+    const primaryResults = veterinaryWebScraper.searchScrapedData(query, language);
+    allResults.push(...primaryResults);
+    
+    // Search in other languages and auto-translate
+    const otherLanguages = (['en', 'lv', 'ru'] as SupportedLanguage[]).filter(lang => lang !== language);
+    
+    for (const otherLang of otherLanguages) {
+      const otherResults = veterinaryWebScraper.searchScrapedData(query, otherLang);
+      
+      // Translate the content to user's language
+      for (const result of otherResults) {
+        try {
+          const translatedTitle = await veterinaryTranslator.autoTranslate(
+            result.title, 
+            language, 
+            'medical'
+          );
+          
+          const translatedContent = await veterinaryTranslator.autoTranslate(
+            result.content, 
+            language, 
+            'medical'
+          );
+          
+          // Create translated version
+          const translatedResult: ScrapedData = {
+            ...result,
+            title: translatedTitle.translatedText,
+            content: translatedContent.translatedText,
+            language: language,
+            reliability: result.reliability * Math.min(translatedTitle.confidence, translatedContent.confidence)
+          };
+          
+          allResults.push(translatedResult);
+        } catch (error) {
+          console.error(`Failed to translate content from ${otherLang} to ${language}:`, error);
+          // Include original if translation fails
+          allResults.push(result);
+        }
+      }
+    }
     
     // Filter by species if relevant
-    const speciesRelevant = scrapedResults.filter(data => 
+    const speciesRelevant = allResults.filter(data => 
       data.species.includes(species) || data.species.length === 0
     );
     
-    return speciesRelevant.slice(0, 5); // Top 5 most relevant results
+    // Sort by reliability and return top results
+    return speciesRelevant
+      .sort((a, b) => b.reliability - a.reliability)
+      .slice(0, 8); // More results now that we have translations
   }
 
   private analyzeAllSources(
@@ -226,7 +273,7 @@ class IntelligentVeterinaryAI {
     return sourceCount > 0 ? totalReliability / sourceCount : 0.5;
   }
 
-  private assessUrgency(symptoms: string[], conditions: string[]): 'low' | 'medium' | 'high' | 'emergency' {
+  private assessUrgency(symptoms: string[], _conditions: string[]): 'low' | 'medium' | 'high' | 'emergency' {
     const emergencySymptoms = ['difficulty_breathing', 'collapse', 'severe_bleeding', 'unconscious'];
     const highUrgencySymptoms = ['vomiting', 'diarrhea', 'difficulty_breathing', 'severe_pain'];
     const mediumUrgencySymptoms = ['loss_of_appetite', 'lethargy', 'coughing'];
@@ -384,7 +431,7 @@ class IntelligentVeterinaryAI {
     return actions;
   }
 
-  private generateRelatedTopics(analysis: any, language: SupportedLanguage): string[] {
+  private generateRelatedTopics(analysis: any, _language: SupportedLanguage): string[] {
     const topics: string[] = [];
     
     // Generate related topics based on conditions and symptoms

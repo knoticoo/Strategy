@@ -3,6 +3,7 @@ import { vetDatabase } from './database/vetDatabase';
 import { detectLanguage, getResponseTemplate, SupportedLanguage } from './languageDetector';
 import { analyzeSymptoms } from './vetAdvice/symptomAnalyzer';
 import { generateTreatmentRecommendations } from './vetAdvice/treatmentRecommendations';
+import { intelligentVeterinaryAI } from './ai/intelligentAI';
 
 // Multilingual pet species information
 const getPetSpeciesInfo = (species: PetSpecies, _language: SupportedLanguage) => {
@@ -93,6 +94,52 @@ const getPetSpeciesInfo = (species: PetSpecies, _language: SupportedLanguage) =>
 };
 
 export const generateVetAdvice = async (query: string, species: PetSpecies): Promise<string> => {
+  try {
+    // Use the new intelligent AI system that learns from external sources
+    const aiResponse = await intelligentVeterinaryAI.generateIntelligentResponse(query, species);
+    
+    // Log the query for learning
+    vetDatabase.learnFromQuery({
+      id: `query-${Date.now()}`,
+      query,
+      language: aiResponse.language,
+      species,
+      timestamp: new Date(),
+      response: aiResponse.answer
+    });
+    
+    // Add source information if available
+    let finalResponse = aiResponse.answer;
+    
+    if (aiResponse.sources.length > 0) {
+      finalResponse += `\n\n📖 **${aiResponse.language === 'ru' ? 'Источники' : aiResponse.language === 'lv' ? 'Avoti' : 'Sources'}:**\n`;
+      aiResponse.sources.slice(0, 3).forEach((source, index) => {
+        finalResponse += `${index + 1}. ${source}\n`;
+      });
+    }
+    
+    // Add confidence indicator
+    const confidenceEmoji = aiResponse.confidence > 0.8 ? '✅' : aiResponse.confidence > 0.6 ? '⚠️' : '❓';
+    const confidenceText = aiResponse.language === 'ru' ? 
+      `\n\n${confidenceEmoji} **Уверенность в ответе:** ${Math.round(aiResponse.confidence * 100)}%` :
+      aiResponse.language === 'lv' ?
+      `\n\n${confidenceEmoji} **Atbildes pārliecība:** ${Math.round(aiResponse.confidence * 100)}%` :
+      `\n\n${confidenceEmoji} **Response Confidence:** ${Math.round(aiResponse.confidence * 100)}%`;
+    
+    finalResponse += confidenceText;
+    
+    return finalResponse;
+    
+  } catch (error) {
+    console.error('Intelligent AI failed, falling back to traditional system:', error);
+    
+    // Fallback to the original system if intelligent AI fails
+    return generateTraditionalVetAdvice(query, species);
+  }
+};
+
+// Fallback function with the original logic
+const generateTraditionalVetAdvice = async (query: string, species: PetSpecies): Promise<string> => {
   // Simulate AI processing delay
   await new Promise(resolve => setTimeout(resolve, 1500));
   
