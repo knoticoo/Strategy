@@ -540,19 +540,33 @@ if __name__ == "__main__":
         logger.info(f"✅ Inference files exported to {inference_dir}")
 
 def main():
-    """Main training function"""
-    # Configuration
+    """Main training function optimized for 4GB RAM VPS"""
+    # Configuration optimized for low-memory VPS
     config = ModelConfig(
-        base_model_name="microsoft/DialoGPT-medium",  # Good starting point
+        base_model_name="microsoft/DialoGPT-small",  # Smaller model for 4GB RAM
+        model_max_length=512,  # Reduced context length
         num_train_epochs=3,
-        per_device_train_batch_size=2,  # Adjust based on GPU memory
-        gradient_accumulation_steps=8,
-        learning_rate=2e-4,
-        use_lora=True,
-        use_4bit=True,  # For memory efficiency
-        max_samples=None,  # Use all available data
-        use_wandb=False,  # Set to True if you have wandb account
+        per_device_train_batch_size=1,  # Very small batch size for 4GB RAM
+        per_device_eval_batch_size=1,
+        gradient_accumulation_steps=16,  # Compensate with more accumulation
+        learning_rate=3e-4,  # Slightly higher learning rate
+        use_lora=True,  # Essential for memory efficiency
+        use_4bit=True,  # Essential for 4GB RAM
+        lora_r=8,  # Smaller LoRA rank for memory
+        lora_alpha=16,
+        max_samples=5000,  # Limit training samples for faster training
+        use_wandb=False,  # Disable wandb to save memory
+        eval_steps=1000,  # Less frequent evaluation
+        save_steps=1000,
+        logging_steps=200,
     )
+    
+    print("🔧 VPS Configuration (2vCPU, 4GB RAM):")
+    print(f"   - Model: {config.base_model_name} (small)")
+    print(f"   - Batch size: {config.per_device_train_batch_size} (memory optimized)")
+    print(f"   - Max samples: {config.max_samples} (for faster training)")
+    print(f"   - Expected training time: 3-6 hours")
+    print()
     
     # Initialize trainer
     trainer = VeterinaryModelTrainer(config)
