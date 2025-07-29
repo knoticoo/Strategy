@@ -1097,7 +1097,6 @@ const resources = {
         features: 'Зачем Присоединяться?'
       }
     }
-  }
 };
 
 i18n
