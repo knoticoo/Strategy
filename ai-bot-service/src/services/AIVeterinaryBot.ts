@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 import { RealWebScraper } from './RealWebScraper';
 import { RealTranslator } from './RealTranslator';
 import { RealAIProvider } from './RealAIProvider';
@@ -150,8 +150,7 @@ export class AIVeterinaryBot {
       ]);
 
       return [...wikipediaResults, ...veterinaryResults]
-        .sort((a, b) => b.reliability - a.reliability)
-        .slice(0, 8); // Top 8 most reliable sources
+        .slice(0, 8); // Top 8 sources
 
     } catch (error) {
       logger.error('⚠️ Knowledge gathering failed:', error);
@@ -220,7 +219,7 @@ export class AIVeterinaryBot {
   }
 
   private async generateRecommendations(
-    species: string, 
+    _species: string, 
     language: 'en' | 'lv' | 'ru', 
     urgency: string
   ): Promise<string[]> {
@@ -246,15 +245,15 @@ export class AIVeterinaryBot {
           this.translator.translateText(rec, 'en', language, 'medical')
         )
       );
-      return translatedRecs.map(t => t.translatedText);
+      return translatedRecs.map((t: any) => t.translatedText);
     }
 
     return baseRecommendations;
   }
 
   private async generateFollowUpQuestions(
-    query: string, 
-    species: string, 
+    _query: string, 
+    _species: string, 
     language: 'en' | 'lv' | 'ru'
   ): Promise<string[]> {
     const baseQuestions = [
@@ -272,7 +271,7 @@ export class AIVeterinaryBot {
           this.translator.translateText(q, 'en', language, 'general')
         )
       );
-      return translatedQuestions.map(t => t.translatedText);
+      return translatedQuestions.map((t: any) => t.translatedText);
     }
 
     return baseQuestions;
@@ -340,7 +339,7 @@ export class AIVeterinaryBot {
           this.translator.translateText(q, 'en', language, 'general')
         )
       );
-      return translated.map(t => t.translatedText);
+      return translated.map((t: any) => t.translatedText);
     }
 
     return speciesSuggestions;

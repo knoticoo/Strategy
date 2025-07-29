@@ -4,7 +4,7 @@ import { logger } from '../utils/logger';
 const router = Router();
 
 // GET /api/v1/health - Health check endpoint
-router.get('/', (req: Request, res: Response) => {
+router.get('/', (_req: Request, res: Response) => {
   try {
     const healthStatus = {
       status: 'healthy',
@@ -28,7 +28,7 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 // GET /api/v1/health/detailed - Detailed health check
-router.get('/detailed', (req: Request, res: Response) => {
+router.get('/detailed', (_req: Request, res: Response) => {
   try {
     const detailedHealth = {
       status: 'healthy',

@@ -86,7 +86,7 @@ class AIBotServer {
     this.app.use('/api/v1/admin', adminRoutes);
 
     // Root endpoint
-    this.app.get('/', (req, res) => {
+    this.app.get('/', (_req, res) => {
       res.json({
         name: 'AI Veterinary Bot Service',
         version: '1.0.0',

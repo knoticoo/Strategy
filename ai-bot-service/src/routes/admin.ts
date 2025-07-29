@@ -115,7 +115,7 @@ const calculateTrainingTime = () => {
 };
 
 // GET /api/v1/admin/training-status - Get current training status
-router.get('/training-status', async (req: Request, res: Response) => {
+router.get('/training-status', async (_req: Request, res: Response) => {
   try {
     // Update training time if training is active
     if (trainingStatus.isTraining) {
@@ -141,7 +141,7 @@ router.get('/training-status', async (req: Request, res: Response) => {
 });
 
 // GET /api/v1/admin/system-stats - Get system resource usage
-router.get('/system-stats', async (req: Request, res: Response) => {
+router.get('/system-stats', async (_req: Request, res: Response) => {
   try {
     const stats = await getSystemStats();
     res.json(stats);
@@ -152,7 +152,7 @@ router.get('/system-stats', async (req: Request, res: Response) => {
 });
 
 // GET /api/v1/admin/model-info - Get model information
-router.get('/model-info', async (req: Request, res: Response) => {
+router.get('/model-info', async (_req: Request, res: Response) => {
   try {
     const modelPath = path.join(__dirname, '../../ai-training/models');
     const configPath = path.join(modelPath, 'config.json');
@@ -202,7 +202,7 @@ router.get('/model-info', async (req: Request, res: Response) => {
 });
 
 // GET /api/v1/admin/stats - Get admin statistics
-router.get('/stats', async (req: Request, res: Response) => {
+router.get('/stats', async (_req: Request, res: Response) => {
   try {
     adminStats.uptime = calculateUptime();
     res.json(adminStats);
@@ -213,7 +213,7 @@ router.get('/stats', async (req: Request, res: Response) => {
 });
 
 // POST /api/v1/admin/start-training - Start AI model training
-router.post('/start-training', async (req: Request, res: Response) => {
+router.post('/start-training', async (_req: Request, res: Response) => {
   try {
     if (trainingStatus.isTraining) {
       return res.status(400).json({ error: 'Training is already in progress' });
@@ -320,17 +320,17 @@ router.post('/start-training', async (req: Request, res: Response) => {
       }
     });
 
-    res.json({ message: 'Training started successfully', status: trainingStatus });
+    return res.json({ message: 'Training started successfully', status: trainingStatus });
   } catch (error) {
     logger.error('Failed to start training:', error);
     trainingStatus.isTraining = false;
     trainingStatus.status = 'error';
-    res.status(500).json({ error: 'Failed to start training' });
+    return res.status(500).json({ error: 'Failed to start training' });
   }
 });
 
 // POST /api/v1/admin/stop-training - Stop AI model training
-router.post('/stop-training', async (req: Request, res: Response) => {
+router.post('/stop-training', async (_req: Request, res: Response) => {
   try {
     if (!trainingStatus.isTraining) {
       return res.status(400).json({ error: 'No training in progress' });
@@ -347,15 +347,15 @@ router.post('/stop-training', async (req: Request, res: Response) => {
     trainingStatus.status = 'idle';
     trainingStatus.lastUpdated = new Date().toISOString();
 
-    res.json({ message: 'Training stopped successfully', status: trainingStatus });
+    return res.json({ message: 'Training stopped successfully', status: trainingStatus });
   } catch (error) {
     logger.error('Failed to stop training:', error);
-    res.status(500).json({ error: 'Failed to stop training' });
+    return res.status(500).json({ error: 'Failed to stop training' });
   }
 });
 
 // POST /api/v1/admin/restart-services - Restart all services
-router.post('/restart-services', async (req: Request, res: Response) => {
+router.post('/restart-services', async (_req: Request, res: Response) => {
   try {
     logger.info('Restarting services...');
     
@@ -374,7 +374,7 @@ router.post('/restart-services', async (req: Request, res: Response) => {
 });
 
 // Middleware to track API usage for admin stats
-router.use((req: Request, res: Response, next) => {
+router.use((_req: Request, res: Response, next) => {
   adminStats.totalQueries++;
   
   const startTime = Date.now();

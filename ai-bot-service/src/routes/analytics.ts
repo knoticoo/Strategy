@@ -4,7 +4,7 @@ import { logger } from '../utils/logger';
 const router = Router();
 
 // GET /api/v1/analytics/usage - Get usage analytics
-router.get('/usage', (req: Request, res: Response) => {
+router.get('/usage', (_req: Request, res: Response) => {
   try {
     const analytics = {
       totalQueries: 0,
@@ -25,7 +25,7 @@ router.get('/usage', (req: Request, res: Response) => {
 });
 
 // GET /api/v1/analytics/performance - Get performance metrics
-router.get('/performance', (req: Request, res: Response) => {
+router.get('/performance', (_req: Request, res: Response) => {
   try {
     const performance = {
       uptime: process.uptime(),

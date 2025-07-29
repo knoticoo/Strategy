@@ -2,34 +2,34 @@ import { Request, Response, NextFunction } from 'express';
 import { logger } from '../utils/logger';
 
 export const errorHandler = (
-  error: Error,
-  req: Request,
+  _error: Error,
+  _req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): void => {
-  logger.error('Error occurred:', error);
+  logger.error('Error occurred:', _error);
   
   // Default error response
   const errorResponse = {
     error: 'Internal Server Error',
-    message: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong',
+    message: process.env.NODE_ENV === 'development' ? _error.message : 'Something went wrong',
     timestamp: new Date().toISOString()
   };
 
   // Handle specific error types
-  if (error.name === 'ValidationError') {
+  if (_error.name === 'ValidationError') {
     res.status(400).json({
       ...errorResponse,
       error: 'Validation Error',
-      message: error.message
+      message: _error.message
     });
-  } else if (error.name === 'UnauthorizedError') {
+  } else if (_error.name === 'UnauthorizedError') {
     res.status(401).json({
       ...errorResponse,
       error: 'Unauthorized',
       message: 'Invalid API key or authentication required'
     });
-  } else if (error.name === 'RateLimitError') {
+  } else if (_error.name === 'RateLimitError') {
     res.status(429).json({
       ...errorResponse,
       error: 'Too Many Requests',
