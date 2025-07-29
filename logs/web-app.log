@@ -1,0 +1,18 @@
+
+> ai-pet-doctor@0.0.0 dev
+> vite
+
+
+  VITE v5.4.19  ready in 209 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://172.30.0.2:3000/
+  ➜  Network: http://172.17.0.1:3000/
+3:16:55 PM [vite] page reload venv/lib/python3.13/site-packages/matplotlib/backends/web_backend/all_figures.html
+3:16:55 PM [vite] page reload venv/lib/python3.13/site-packages/matplotlib/backends/web_backend/ipython_inline_figure.html
+3:16:55 PM [vite] page reload venv/lib/python3.13/site-packages/matplotlib/backends/web_backend/single_figure.html
+3:16:55 PM [vite] page reload venv/lib64/python3.13/site-packages/matplotlib/backends/web_backend/ipython_inline_figure.html
+3:16:55 PM [vite] page reload venv/lib64/python3.13/site-packages/matplotlib/backends/web_backend/single_figure.html
+3:16:55 PM [vite] page reload venv/lib64/python3.13/site-packages/matplotlib/backends/web_backend/all_figures.html
+3:17:09 PM [vite] page reload venv/lib/python3.13/site-packages/torch/utils/model_dump/skeleton.html
+3:17:09 PM [vite] page reload venv/lib64/python3.13/site-packages/torch/utils/model_dump/skeleton.html

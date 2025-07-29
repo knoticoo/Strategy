@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/workspace/ai-bot-service/ai-training/data_collector.py", line 9, in <module>
+    import aiohttp
+ModuleNotFoundError: No module named 'aiohttp'
