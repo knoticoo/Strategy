@@ -111,15 +111,6 @@ const resources = {
           noConnections: 'No social connections yet',
           startFollowing: 'Start following other adventurers to see their activities!'
         },
-        gallery: {
-          title: 'Photo Gallery',
-          addPhoto: 'Add Photo',
-          noPhotos: 'No photos yet',
-          sharePhotos: 'Share your adventure photos with the community!',
-          caption: 'Photo Caption',
-          upload: 'Upload Photo',
-          cancel: 'Cancel'
-        },
         settings: {
           title: 'Profile Settings',
           theme: 'Profile Theme',
@@ -781,19 +772,7 @@ const resources = {
         share: 'Поделиться',
         favorite: 'Избранное',
         remove: 'Удалить'
-      },
-      
-      // Profile
-      profile: {
-        loginRequired: 'Пожалуйста, войдите в систему, чтобы просмотреть свой профиль',
-        tabs: {
-          overview: 'Обзор',
-          gallery: 'Галерея',
-          achievements: 'Достижения',
-          social: 'Социальные',
-          activity: 'Активность',
-          settings: 'Настройки'
-        },
+            },
         bio: {
           aboutMe: 'Обо мне',
           edit: 'Редактировать биографию',
@@ -1046,17 +1025,9 @@ const resources = {
         buyNow: 'Купить Сейчас',
         rentNear: 'Арендовать Рядом'
       },
-
+      
       // Profile
       profile: {
-        tabs: {
-          overview: 'Обзор',
-          gallery: 'Галерея',
-          achievements: 'Достижения',
-          social: 'Социальные',
-          activity: 'Активность',
-          settings: 'Настройки'
-        },
         bio: {
           aboutMe: 'Обо мне',
           edit: 'Редактировать биографию',

@@ -284,61 +284,6 @@ const NotificationSystem: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const markAsRead = async (notificationId: string) => {
-    try {
-      // Find the notification before updating
-      const notification = notifications.find(n => n.id === notificationId);
-      
-      // Update UI immediately for better UX
-      setNotifications(prev => 
-        prev.map(n => 
-          n.id === notificationId ? { ...n, read: true } : n
-        )
-      );
-      if (notification && !notification.read) {
-        setUnreadCount(prev => Math.max(0, prev - 1));
-      }
-      
-      // Try to update via API
-      await api.markNotificationAsRead(notificationId);
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-    }
-  };
-
-  const markAllAsRead = async () => {
-    try {
-      // Update UI immediately
-      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-      setUnreadCount(0);
-      
-      // Try to update via API
-      if (currentUser) {
-        await api.markAllNotificationsAsRead(currentUser.id);
-      }
-    } catch (error) {
-      console.error('Error marking all notifications as read:', error);
-    }
-  };
-
-  const deleteNotification = async (notificationId: string) => {
-    try {
-      // Find the notification before deleting
-      const notification = notifications.find(n => n.id === notificationId);
-      
-      // Update UI immediately
-      setNotifications(prev => prev.filter(n => n.id !== notificationId));
-      if (notification && !notification.read) {
-        setUnreadCount(prev => Math.max(0, prev - 1));
-      }
-      
-      // Try to delete via API
-      await api.deleteNotification(notificationId);
-    } catch (error) {
-      console.error('Error deleting notification:', error);
-    }
-  };
-
   const updateSettings = async (newSettings: NotificationSettings) => {
     try {
       setSettings(newSettings);

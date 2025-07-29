@@ -1772,7 +1772,7 @@ const AuthTab: React.FC = () => {
     }
   ]);
 
-  const [editingContent, setEditingContent] = useState(null);
+  const [editingContent, setEditingContent] = useState<any>(null);
   const [showContentEditor, setShowContentEditor] = useState(false);
   const [contentForm, setContentForm] = useState({
     title: '',
@@ -2119,7 +2119,7 @@ const AuthTab: React.FC = () => {
                 </button>
                 <button 
                   onClick={() => {
-                    if (confirm('Are you sure you want to delete this content?')) {
+                    if (window.confirm('Are you sure you want to delete this content?')) {
                       setEducationContent(prev => prev.filter(c => c.id !== content.id));
                     }
                   }}
