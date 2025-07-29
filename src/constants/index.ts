@@ -252,7 +252,7 @@ export const SUCCESS_MESSAGES = {
 export const REGEX_PATTERNS = {
   email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/,
-  phone: /^\+?[\d\s\-\(\)]{10,}$/,
+  phone: /^\+?[\d\s\-()]{10,}$/,
   url: /^https?:\/\/.+/
 };
 
