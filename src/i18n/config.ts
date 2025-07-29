@@ -49,7 +49,17 @@ const resources = {
         save: 'Save',
         share: 'Share',
         favorite: 'Favorite',
-        remove: 'Remove'
+        remove: 'Remove',
+        cancel: 'Cancel',
+        delete: 'Delete',
+        edit: 'Edit',
+        success: 'Success',
+        time: {
+          now: 'now',
+          minutes: '{{count}}m ago',
+          hours: '{{count}}h ago',
+          days: '{{count}}d ago'
+        }
       },
       
       // Trails
@@ -78,6 +88,141 @@ const resources = {
           forest: 'Forest',
           coastal: 'Coastal',
           educational: 'Educational Trail'
+        }
+      },
+
+      // Education
+      education: {
+        title: 'Educational Hub',
+        subtitle: 'Expand your knowledge of nature, history, culture, and outdoor skills through interactive learning experiences',
+        categories: {
+          nature: 'Nature Education',
+          history: 'Historical Sites',
+          culture: 'Cultural Heritage',
+          photography: 'Photography',
+          survival: 'Survival Skills'
+        },
+        descriptions: {
+          nature: 'Flora, fauna, and ecosystems',
+          history: 'Medieval castles and ancient stories',
+          culture: 'Traditions and folk wisdom',
+          photography: 'Capture stunning nature shots',
+          survival: 'Wilderness safety and skills'
+        },
+        searchPlaceholder: 'Search educational content...',
+        filters: {
+          allLevels: 'All Levels',
+          beginner: 'Beginner',
+          intermediate: 'Intermediate',
+          advanced: 'Advanced'
+        },
+        content: {
+          duration: '{{count}} min',
+          completedBy: '{{count}} completed',
+          progress: 'Progress',
+          completed: 'Completed',
+          markComplete: 'Mark Complete',
+          takeQuiz: 'Take Quiz',
+          watchVideo: 'Watch Video',
+          markAsWatched: 'Mark as Watched',
+          playingVideo: 'Playing Educational Video...',
+          videoContent: 'Educational video content',
+          relatedLocation: 'Related Location',
+          proTips: '💡 Pro Tips',
+          alternativeOptions: '🔄 Alternative Options'
+        },
+        quiz: {
+          title: 'Knowledge Quiz',
+          question: 'Question {{current}} of {{total}}',
+          correct: 'Correct! Well done! 🎉',
+          correctSubtext: 'You selected the right answer.',
+          incorrect: 'Incorrect. The correct answer is highlighted in green.',
+          incorrectSubtext: 'Learn from this and try again next time!',
+          completed: 'Quiz completed! Score: {{score}}/{{total}} ({{percentage}}%)',
+          cancel: 'Cancel'
+        },
+        empty: 'Please log in to access educational content and track your learning progress.'
+      },
+
+      // AI Planner
+      aiPlanner: {
+        title: 'AI Adventure Planner',
+        subtitle: 'Let artificial intelligence create the perfect adventure plan tailored to your preferences, budget, and experience level',
+        steps: {
+          preferences: 'Preferences',
+          planning: 'AI Planning',
+          results: 'Your Plans'
+        },
+        preferences: {
+          title: 'Tell us about your adventure preferences',
+          fitnessLevel: 'Fitness Level',
+          interests: 'Interests (Select multiple)',
+          groupSize: 'Group Size',
+          duration: 'Duration (days)',
+          budgetRange: 'Budget Range (EUR)',
+          transportation: 'Transportation',
+          accommodation: 'Accommodation',
+          generatePlans: 'Generate AI Plans'
+        },
+        planning: {
+          title: 'AI is crafting your perfect adventure...',
+          analyzing: 'Analyzing your preferences...',
+          weather: 'Checking weather conditions...',
+          optimizing: 'Optimizing routes and activities...',
+          calculating: 'Calculating budget estimates...'
+        },
+        results: {
+          match: '{{score}}% match',
+          totalEstimated: 'total estimated',
+          transport: 'Transport',
+          accommodation: 'Accommodation',
+          riskLevel: 'Risk Level',
+          viewDetails: 'View Details',
+          budgetBreakdown: 'Budget Breakdown',
+          equipmentList: 'Equipment List',
+          exportPlan: 'Export Plan',
+          share: 'Share',
+          createAnother: 'Create Another Plan',
+          recommendedEquipment: 'Recommended Equipment',
+          essential: 'Essential',
+          detailedItinerary: 'Detailed Itinerary',
+          day: 'Day {{number}}',
+          meals: 'Meals',
+          breakfast: 'Breakfast',
+          lunch: 'Lunch',
+          dinner: 'Dinner'
+        },
+        empty: 'Please log in to access personalized adventure planning with AI recommendations.'
+      },
+
+      // Notifications
+      notifications: {
+        title: 'Notifications',
+        empty: 'No notifications yet',
+        markAllRead: 'Mark all as read',
+        markRead: 'Mark as read',
+        delete: 'Delete',
+        like: {
+          title: 'New Like',
+          message: '{{user}} liked your adventure post'
+        },
+        comment: {
+          title: 'New Comment',
+          message: '{{user}} commented on your post'
+        },
+        achievement: {
+          title: 'Achievement Unlocked',
+          message: 'You earned the "{{achievement}}" badge!'
+        },
+        settings: {
+          title: 'Notification Settings',
+          likes: 'Likes',
+          comments: 'Comments',
+          follows: 'Follows',
+          achievements: 'Achievements',
+          system: 'System',
+          email: 'Email',
+          push: 'Push'
         }
       },
       

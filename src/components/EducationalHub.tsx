@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserContext';
+import { useTranslation } from 'react-i18next';
 import {
   BookOpen,
   Leaf,
@@ -73,6 +74,7 @@ interface UserProgress {
 }
 
 const EducationalHub: React.FC = () => {
+  const { t } = useTranslation();
   const { currentUser, isLoggedIn } = useUser();
   const [activeCategory, setActiveCategory] = useState<'nature' | 'history' | 'culture' | 'photography' | 'survival'>('nature');
   const [selectedContent, setSelectedContent] = useState<EducationalContent | null>(null);
@@ -82,6 +84,8 @@ const EducationalHub: React.FC = () => {
   const [showQuiz, setShowQuiz] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [quizAnswers, setQuizAnswers] = useState<number[]>([]);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [showQuizResult, setShowQuizResult] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [videoMuted, setVideoMuted] = useState(false);
 
@@ -265,11 +269,11 @@ const EducationalHub: React.FC = () => {
   ];
 
   const categories = [
-    { id: 'nature', name: 'Nature Education', icon: Leaf, color: 'bg-green-500', description: 'Flora, fauna, and ecosystems' },
-    { id: 'history', name: 'Historical Sites', icon: Clock, color: 'bg-amber-500', description: 'Medieval castles and ancient stories' },
-    { id: 'culture', name: 'Cultural Heritage', icon: Users, color: 'bg-purple-500', description: 'Traditions and folk wisdom' },
-    { id: 'photography', name: 'Photography', icon: Camera, color: 'bg-blue-500', description: 'Capture stunning nature shots' },
-    { id: 'survival', name: 'Survival Skills', icon: Shield, color: 'bg-red-500', description: 'Wilderness safety and skills' }
+    { id: 'nature', name: t('education.categories.nature'), icon: Leaf, color: 'bg-green-500', description: t('education.descriptions.nature') },
+    { id: 'history', name: t('education.categories.history'), icon: Clock, color: 'bg-amber-500', description: t('education.descriptions.history') },
+    { id: 'culture', name: t('education.categories.culture'), icon: Users, color: 'bg-purple-500', description: t('education.descriptions.culture') },
+    { id: 'photography', name: t('education.categories.photography'), icon: Camera, color: 'bg-blue-500', description: t('education.descriptions.photography') },
+    { id: 'survival', name: t('education.categories.survival'), icon: Shield, color: 'bg-red-500', description: t('education.descriptions.survival') }
   ];
 
   const filteredContent = educationalContent.filter(content => {
@@ -310,25 +314,37 @@ const EducationalHub: React.FC = () => {
     setShowQuiz(true);
     setCurrentQuestionIndex(0);
     setQuizAnswers([]);
+    setSelectedAnswer(null);
+    setShowQuizResult(false);
   };
 
   const handleQuizAnswer = (answerIndex: number) => {
-    const newAnswers = [...quizAnswers, answerIndex];
-    setQuizAnswers(newAnswers);
+    setSelectedAnswer(answerIndex);
+    setShowQuizResult(true);
 
-    if (currentQuestionIndex < quizQuestions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-      // Quiz completed
-      const score = newAnswers.reduce((acc, answer, index) => {
-        return acc + (answer === quizQuestions[index].correct ? 1 : 0);
-      }, 0);
-      
-      const percentage = (score / quizQuestions.length) * 100;
-      updateProgress(selectedContent!.id, 100, true);
-      setShowQuiz(false);
-      alert(`Quiz completed! Score: ${score}/${quizQuestions.length} (${percentage}%)`);
-    }
+    // Wait 2 seconds to show result, then proceed
+    setTimeout(() => {
+      const newAnswers = [...quizAnswers, answerIndex];
+      setQuizAnswers(newAnswers);
+
+      if (currentQuestionIndex < quizQuestions.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setSelectedAnswer(null);
+        setShowQuizResult(false);
+      } else {
+        // Quiz completed
+        const score = newAnswers.reduce((acc, answer, index) => {
+          return acc + (answer === quizQuestions[index].correct ? 1 : 0);
+        }, 0);
+        
+        const percentage = (score / quizQuestions.length) * 100;
+        updateProgress(selectedContent!.id, 100, true);
+        setShowQuiz(false);
+        setSelectedAnswer(null);
+        setShowQuizResult(false);
+        alert(`Quiz completed! Score: ${score}/${quizQuestions.length} (${percentage}%)`);
+      }
+    }, 2000);
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -356,10 +372,10 @@ const EducationalHub: React.FC = () => {
         <div className="text-center">
           <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-            Educational Hub
+            {t('education.title')}
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Please log in to access educational content and track your learning progress.
+            {t('education.empty')}
           </p>
         </div>
       </div>
@@ -371,10 +387,10 @@ const EducationalHub: React.FC = () => {
       {/* Header */}
       <div className="text-center">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          🎓 Educational Hub
+          🎓 {t('education.title')}
         </h2>
         <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Expand your knowledge of nature, history, culture, and outdoor skills through interactive learning experiences
+          {t('education.subtitle')}
         </p>
       </div>
 
@@ -414,7 +430,7 @@ const EducationalHub: React.FC = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <input
               type="text"
-              placeholder="Search educational content..."
+              placeholder={t('education.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white"
@@ -427,10 +443,10 @@ const EducationalHub: React.FC = () => {
             onChange={(e) => setDifficultyFilter(e.target.value)}
             className="px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white"
           >
-            <option value="all">All Levels</option>
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
+            <option value="all">{t('education.filters.allLevels')}</option>
+            <option value="beginner">{t('education.filters.beginner')}</option>
+            <option value="intermediate">{t('education.filters.intermediate')}</option>
+            <option value="advanced">{t('education.filters.advanced')}</option>
           </select>
         </div>
       </div>
@@ -594,15 +610,67 @@ const EducationalHub: React.FC = () => {
 
               {selectedContent.videoUrl && (
                 <div className="mb-6">
-                  <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-8 text-center">
-                    <Play className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">Video content available</p>
-                    <button
-                      onClick={() => updateProgress(selectedContent.id, 50)}
-                      className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      Watch Video
-                    </button>
+                  <div className="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
+                    {!isVideoPlaying ? (
+                      <div className="p-8 text-center">
+                        <Play className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600 dark:text-gray-400 mb-4">Educational video content</p>
+                        <button
+                          onClick={() => {
+                            setIsVideoPlaying(true);
+                            updateProgress(selectedContent.id, 50);
+                          }}
+                          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 mx-auto"
+                        >
+                          <Play className="h-4 w-4" />
+                          Watch Video
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        {/* Simulated video player */}
+                        <div className="aspect-video bg-black flex items-center justify-center relative">
+                          <img
+                            src={selectedContent.images[0]}
+                            alt="Video thumbnail"
+                            className="w-full h-full object-cover opacity-80"
+                          />
+                          <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                            <div className="text-white text-center">
+                              <div className="w-16 h-16 border-4 border-white rounded-full border-t-transparent animate-spin mx-auto mb-4"></div>
+                              <p className="text-lg font-medium">Playing Educational Video...</p>
+                              <p className="text-sm opacity-80 mt-2">{selectedContent.title}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-4 bg-gray-800 text-white flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <button
+                              onClick={() => setIsVideoPlaying(false)}
+                              className="p-2 hover:bg-gray-700 rounded"
+                            >
+                              <Pause className="h-5 w-5" />
+                            </button>
+                            <button
+                              onClick={() => setVideoMuted(!videoMuted)}
+                              className="p-2 hover:bg-gray-700 rounded"
+                            >
+                              {videoMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                            </button>
+                            <span className="text-sm">Duration: {selectedContent.duration} min</span>
+                          </div>
+                          <button
+                            onClick={() => {
+                              setIsVideoPlaying(false);
+                              updateProgress(selectedContent.id, 100, true);
+                            }}
+                            className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded text-sm"
+                          >
+                            Mark as Watched
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -696,18 +764,82 @@ const EducationalHub: React.FC = () => {
               </h4>
               
               <div className="space-y-3">
-                {quizQuestions[currentQuestionIndex].options.map((option, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleQuizAnswer(index)}
-                    className="w-full p-4 text-left bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors"
-                  >
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {String.fromCharCode(65 + index)}. {option}
-                    </span>
-                  </button>
-                ))}
+                {quizQuestions[currentQuestionIndex].options.map((option, index) => {
+                  let buttonClass = "w-full p-4 text-left rounded-lg transition-colors border-2 ";
+                  
+                  if (showQuizResult) {
+                    if (index === quizQuestions[currentQuestionIndex].correct) {
+                      // Correct answer
+                      buttonClass += "bg-green-100 dark:bg-green-900/30 border-green-500 text-green-800 dark:text-green-200";
+                    } else if (index === selectedAnswer) {
+                      // Wrong answer that user selected
+                      buttonClass += "bg-red-100 dark:bg-red-900/30 border-red-500 text-red-800 dark:text-red-200";
+                    } else {
+                      // Other options
+                      buttonClass += "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400";
+                    }
+                  } else {
+                    // Normal state
+                    buttonClass += "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-white";
+                  }
+
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => !showQuizResult && handleQuizAnswer(index)}
+                      disabled={showQuizResult}
+                      className={buttonClass}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="font-bold text-lg">
+                          {String.fromCharCode(65 + index)}.
+                        </span>
+                        <span className="font-medium">
+                          {option}
+                        </span>
+                        {showQuizResult && index === quizQuestions[currentQuestionIndex].correct && (
+                          <CheckCircle className="h-5 w-5 text-green-600 ml-auto" />
+                        )}
+                        {showQuizResult && index === selectedAnswer && index !== quizQuestions[currentQuestionIndex].correct && (
+                          <X className="h-5 w-5 text-red-600 ml-auto" />
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
+
+              {showQuizResult && (
+                <div className="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-start gap-3">
+                    {selectedAnswer === quizQuestions[currentQuestionIndex].correct ? (
+                      <>
+                        <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-medium text-green-800 dark:text-green-200">
+                            Correct! Well done! 🎉
+                          </p>
+                          <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                            You selected the right answer.
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <X className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-medium text-red-800 dark:text-red-200">
+                            Incorrect. The correct answer is highlighted in green.
+                          </p>
+                          <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                            Learn from this and try again next time!
+                          </p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-between">

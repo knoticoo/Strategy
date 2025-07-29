@@ -25,6 +25,7 @@ import EnhancedProfileTab from './components/EnhancedProfileTab';
 
 import EducationalHub from './components/EducationalHub';
 import AIAdventurePlanner from './components/AIAdventurePlanner';
+import NotificationSystem from './components/NotificationSystem';
 
 type TabType = 'trails' | 'community' | 'profile' | 'auth' | 'education' | 'ai-planner';
 
@@ -174,10 +175,12 @@ function App() {
               })}
             </nav>
 
-            {/* Controls */}
-            <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
-              
-              {/* Language Switcher */}
+                          {/* Controls */}
+              <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
+                {/* Notification System */}
+                <NotificationSystem />
+                
+                {/* Language Switcher */}
               <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
                 {['en', 'lv', 'ru'].map((lang) => (
                   <button
