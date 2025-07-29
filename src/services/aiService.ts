@@ -104,7 +104,7 @@ export const generateVetAdvice = async (query: string, species: PetSpecies): Pro
   
   // Use traditional analysis as fallback
   const symptomAnalysis = analyzeSymptoms(query);
-  const treatmentRecommendation = generateTreatmentRecommendations(query, species, symptomAnalysis);
+  const treatmentRecommendation = generateTreatmentRecommendations(query, species, symptomAnalysis, detectedLanguage);
   
   // Get species information in the detected language
   const speciesInfo = getPetSpeciesInfo(species, detectedLanguage);

@@ -34,39 +34,31 @@ export interface Medicine {
   ingredients: string[];
   forSpecies: PetSpecies[];
   prescriptionRequired: boolean;
-  imageUrl?: string;
 }
 
 export type MedicineCategory = 'antibiotics' | 'painkillers' | 'vitamins' | 'food' | 'supplements' | 'antiparasitic' | 'digestive' | 'skin_care';
 
 export interface VetAdvice {
-  symptoms: string[];
-  possibleCauses: string[];
-  recommendedActions: string[];
-  urgencyLevel: 'low' | 'medium' | 'high' | 'emergency';
-  recommendedMedicines?: string[];
-  dietaryRecommendations?: string[];
-  whenToSeeVet: string;
+  assessment: string;
+  recommendations: string[];
+  urgency: 'low' | 'medium' | 'high' | 'emergency';
+  followUp?: string;
 }
 
 export interface EmergencySymptom {
-  id: string;
-  name: string;
-  description: string;
-  species: PetSpecies[];
-  urgency: 'high' | 'emergency';
+  keyword: string;
+  severity: 'high' | 'critical';
+  advice: string;
 }
 
 export interface SearchFilters {
   category?: MedicineCategory;
   species?: PetSpecies;
-  prescriptionRequired?: boolean;
-  query?: string;
+  prescriptionOnly?: boolean;
 }
 
 export interface AppState {
-  currentLanguage: 'lv' | 'ru';
-  pets: Pet[];
+  selectedLanguage: 'lv' | 'ru' | 'en';
+  currentPet?: PetSpecies;
   chatHistory: ChatMessage[];
-  favorites: string[];
 }
