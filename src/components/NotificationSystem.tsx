@@ -21,7 +21,7 @@ import { Button, Modal } from './shared';
 
 export const NotificationSystem: React.FC = () => {
   const { t } = useTranslation();
-  const { user: currentUser } = useUser();
+  const { currentUser } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -38,7 +38,8 @@ export const NotificationSystem: React.FC = () => {
     likes: true,
     comments: true,
     achievements: true,
-    trails: false
+    trails: false,
+    system: true
   });
 
   // Load notifications
@@ -65,6 +66,8 @@ export const NotificationSystem: React.FC = () => {
           title: t('notifications.newFollower'),
           message: t('notifications.newFollowerMessage', { name: 'Anna Bērziņa' }),
           timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+          createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+          userId: currentUser?.id || 'current-user',
           read: false,
           avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
           actionUrl: '/profile/anna-berzina'
@@ -75,6 +78,8 @@ export const NotificationSystem: React.FC = () => {
           title: t('notifications.photoLiked'),
           message: t('notifications.photoLikedMessage', { name: 'Mārtiņš Kalniņš', trail: 'Gauja National Park' }),
           timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+          createdAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+          userId: currentUser?.id || 'current-user',
           read: false,
           avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
           actionUrl: '/trails/gauja-national-park'
@@ -85,6 +90,8 @@ export const NotificationSystem: React.FC = () => {
           title: t('notifications.achievementUnlocked'),
           message: t('notifications.achievementMessage', { achievement: 'Nature Explorer' }),
           timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          userId: currentUser?.id || 'current-user',
           read: true,
           avatar: null,
           actionUrl: '/profile/achievements'
@@ -95,6 +102,8 @@ export const NotificationSystem: React.FC = () => {
           title: t('notifications.newComment'),
           message: t('notifications.commentMessage', { name: 'Līga Sproģe', trail: 'Kemeri Bog Trail' }),
           timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+          createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+          userId: currentUser?.id || 'current-user',
           read: true,
           avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100',
           actionUrl: '/trails/kemeri-bog-trail'
@@ -105,6 +114,8 @@ export const NotificationSystem: React.FC = () => {
           title: t('notifications.welcomeBack'),
           message: t('notifications.welcomeMessage'),
           timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+          createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+          userId: currentUser?.id || 'current-user',
           read: true,
           avatar: null,
           actionUrl: null
@@ -177,7 +188,7 @@ export const NotificationSystem: React.FC = () => {
       case 'unread':
         return !notification.read;
       case 'mentions':
-        return notification.type === 'mention' || notification.type === 'comment';
+        return notification.type === 'comment';
       case 'follows':
         return notification.type === 'follow';
       default:
@@ -378,7 +389,7 @@ export const NotificationSystem: React.FC = () => {
                               {notification.message}
                             </p>
                             <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
-                              {formatTime(notification.timestamp)}
+                              {formatTime(notification.timestamp || notification.createdAt)}
                             </p>
                           </div>
 
