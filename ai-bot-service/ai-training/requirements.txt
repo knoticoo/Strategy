@@ -23,7 +23,7 @@ requests>=2.31.0
 lxml>=4.9.0
 
 # Data Storage
-sqlite3
+# sqlite3 is built into Python
 pymongo>=4.4.0
 redis>=4.6.0
 
