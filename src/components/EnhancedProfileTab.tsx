@@ -322,23 +322,23 @@ const EnhancedProfileTab: React.FC = () => {
             <div className="flex flex-wrap gap-6 justify-center md:justify-start">
               <div className="text-center">
                 <div className="text-2xl font-bold">{stats.trailsCompleted}</div>
-                <div className="text-white/80 text-sm">Trails</div>
+                <div className="text-white/80 text-sm">{t('profile.stats.trailsCompleted')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold">{stats.photosShared}</div>
-                <div className="text-white/80 text-sm">Photos</div>
+                <div className="text-white/80 text-sm">{t('profile.stats.photosShared')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold">{stats.followers}</div>
-                <div className="text-white/80 text-sm">Followers</div>
+                <div className="text-white/80 text-sm">{t('profile.social.followers')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold">{stats.following}</div>
-                <div className="text-white/80 text-sm">Following</div>
+                <div className="text-white/80 text-sm">{t('profile.social.following')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold">{stats.achievements}</div>
-                <div className="text-white/80 text-sm">Achievements</div>
+                <div className="text-white/80 text-sm">{t('profile.achievements.title')}</div>
               </div>
             </div>
           </div>
@@ -380,14 +380,14 @@ const EnhancedProfileTab: React.FC = () => {
             {/* Bio Section */}
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">About Me</h3>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{t('profile.bio.aboutMe')}</h3>
                 {!isEditing && (
                   <button
                     onClick={() => setIsEditing(true)}
                     className="flex items-center gap-2 px-3 py-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
                   >
-                    <Edit3 className="h-4 w-4" />
-                    Edit
+                                          <Edit3 className="h-4 w-4" />
+                      {t('profile.bio.edit')}
                   </button>
                 )}
               </div>

@@ -74,10 +74,12 @@ const resources = {
           settings: 'Settings'
         },
         bio: {
+          aboutMe: 'About Me',
           edit: 'Edit Bio',
           save: 'Save Bio',
           cancel: 'Cancel',
-          placeholder: 'Tell us about yourself and your adventures...'
+          placeholder: 'Tell us about yourself and your adventures...',
+          noBio: 'No bio added yet. Click edit to add your story!'
         },
         stats: {
           trailsCompleted: 'Trails Completed',
@@ -784,10 +786,12 @@ const resources = {
           settings: 'Настройки'
         },
         bio: {
+          aboutMe: 'Обо мне',
           edit: 'Редактировать биографию',
           save: 'Сохранить биографию',
           cancel: 'Отменить',
-          placeholder: 'Расскажите нам о себе и своих приключениях...'
+          placeholder: 'Расскажите нам о себе и своих приключениях...',
+          noBio: 'Биография еще не добавлена. Нажмите редактировать, чтобы добавить свою историю!'
         },
         stats: {
           trailsCompleted: 'Пройдено троп',
