@@ -17,16 +17,24 @@ const resources = {
       welcome: {
         title: 'AI Veterinārais Asistents',
         subtitle: 'Profesionāla palīdzība jūsu mājdzīvniekiem 24/7',
-        description: 'Saņemiet ekspertu padomus par mājdzīvnieku veselību, medikamentiem un uztura jautājumiem'
+        description: 'Saņemiet ekspertu padomus par mājdzīvnieku veselību, medikamentiem un uztura jautājumiem',
+        aiConsultation: 'AI Veterinārā Konsultācija'
       },
       
       // Chat Interface
       chat: {
         title: 'AI Veterinārā Konsultācija',
         placeholder: 'Aprakstiet sava mājdzīvnieka problēmu...',
+        inputPlaceholder: 'Aprakstiet sava mājdzīvnieka problēmu...',
         send: 'Sūtīt',
+        sendButton: 'Sūtīt',
         thinking: 'Analizē...',
         selectPet: 'Izvēlieties mājdzīvnieka veidu',
+        selectPetType: 'Izvēlieties mājdzīvnieka veidu',
+        welcomeMessage: 'Sveiki! Es esmu jūsu AI veterinārais asistents',
+        welcomeDescription: 'Aprakstiet sava mājdzīvnieka simptomus vai problēmu, un es sniegs profesionālus padomus',
+        disclaimer: 'Šī informācija neaizstāj veterinārārsta konsultāciju',
+        errorMessage: 'Radās kļūda. Lūdzu, mēģiniet vēlreiz.',
         petTypes: {
           dog: 'Suns',
           cat: 'Kaķis',
@@ -56,14 +64,21 @@ const resources = {
           painkillers: 'Pretsāpju',
           vitamins: 'Vitamīni',
           food: 'Barība',
-          supplements: 'Piedevas'
+          supplements: 'Piedevas',
+          antiparasitic: 'Pretparazītu līdzekļi',
+          digestive: 'Gremošanas sistēmai',
+          skin_care: 'Ādas kopšanai'
         },
+        prescriptionRequired: 'Nepieciešama recepte',
         details: {
           usage: 'Lietošana',
           dosage: 'Deva',
           sideEffects: 'Blakusparādības',
           contraindications: 'Kontrindikācijas',
-          ingredients: 'Sastāvs'
+          ingredients: 'Sastāvs',
+          suitableFor: 'Piemērots dzīvniekiem',
+          important: 'Svarīgi!',
+          warning: 'Pirms jebkura medikamenta lietošanas konsultējieties ar veterinārārstu. Nepareiza deva var būt bīstama jūsu mājdzīvnieka veselībai.'
         }
       },
       
@@ -128,16 +143,24 @@ const resources = {
       welcome: {
         title: 'ИИ Ветеринарный Ассистент',
         subtitle: 'Профессиональная помощь вашим питомцам 24/7',
-        description: 'Получите экспертные советы по здоровью питомцев, медикаментам и вопросам питания'
+        description: 'Получите экспертные советы по здоровью питомцев, медикаментам и вопросам питания',
+        aiConsultation: 'ИИ Ветеринарная Консультация'
       },
       
       // Chat Interface
       chat: {
         title: 'ИИ Ветеринарная Консультация',
         placeholder: 'Опишите проблему вашего питомца...',
+        inputPlaceholder: 'Опишите проблему вашего питомца...',
         send: 'Отправить',
+        sendButton: 'Отправить',
         thinking: 'Анализирую...',
         selectPet: 'Выберите тип питомца',
+        selectPetType: 'Выберите тип питомца',
+        welcomeMessage: 'Привет! Я ваш ИИ ветеринарный ассистент',
+        welcomeDescription: 'Опишите симптомы или проблему вашего питомца, и я дам профессиональные советы',
+        disclaimer: 'Эта информация не заменяет консультацию ветеринара',
+        errorMessage: 'Произошла ошибка. Пожалуйста, попробуйте снова.',
         petTypes: {
           dog: 'Собака',
           cat: 'Кошка',
@@ -167,14 +190,21 @@ const resources = {
           painkillers: 'Обезболивающие',
           vitamins: 'Витамины',
           food: 'Корм',
-          supplements: 'Добавки'
+          supplements: 'Добавки',
+          antiparasitic: 'Противопаразитарные',
+          digestive: 'Для пищеварения',
+          skin_care: 'Уход за кожей'
         },
+        prescriptionRequired: 'Требуется рецепт',
         details: {
           usage: 'Применение',
           dosage: 'Дозировка',
           sideEffects: 'Побочные эффекты',
           contraindications: 'Противопоказания',
-          ingredients: 'Состав'
+          ingredients: 'Состав',
+          suitableFor: 'Подходит для животных',
+          important: 'Важно!',
+          warning: 'Перед применением любого медикамента проконсультируйтесь с ветеринаром. Неправильная дозировка может быть опасна для здоровья вашего питомца.'
         }
       },
       

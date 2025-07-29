@@ -205,15 +205,51 @@ export const ChatInterface: React.FC = () => {
               >
                 <div className="prose prose-sm max-w-none">
                   {message.content.split('\n').map((line, index) => {
+                    // Handle headers with **text**
                     if (line.startsWith('**') && line.endsWith('**')) {
                       return (
-                        <h4 key={index} className={`font-bold mb-2 ${
+                        <h4 key={index} className={`font-bold mb-2 mt-3 ${
                           message.sender === 'user' ? 'text-white' : 'text-gray-900'
                         }`}>
                           {line.replace(/\*\*/g, '')}
                         </h4>
                       );
                     }
+                    // Handle emoji headers like 🔍 **TEXT**
+                    if (line.includes('**') && (line.includes('🔍') || line.includes('🎯') || line.includes('💡') || line.includes('💊') || line.includes('🍽️') || line.includes('🟢') || line.includes('🟡') || line.includes('🟠') || line.includes('🔴') || line.includes('📋'))) {
+                      return (
+                        <h4 key={index} className={`font-bold mb-2 mt-4 text-lg ${
+                          message.sender === 'user' ? 'text-white' : 'text-gray-900'
+                        }`}>
+                          {line.replace(/\*\*/g, '')}
+                        </h4>
+                      );
+                    }
+                    // Handle bullet points
+                    if (line.startsWith('• ') || line.startsWith('- ')) {
+                      return (
+                        <p key={index} className={`mb-1 ml-4 ${
+                          message.sender === 'user' ? 'text-white/90' : 'text-gray-700'
+                        }`}>
+                          {line}
+                        </p>
+                      );
+                    }
+                    // Handle numbered lists
+                    if (/^\d+\./.test(line.trim())) {
+                      return (
+                        <p key={index} className={`mb-1 ml-4 ${
+                          message.sender === 'user' ? 'text-white/90' : 'text-gray-700'
+                        }`}>
+                          {line}
+                        </p>
+                      );
+                    }
+                    // Handle empty lines
+                    if (line.trim() === '') {
+                      return <div key={index} className="h-2"></div>;
+                    }
+                    // Regular text
                     return (
                       <p key={index} className={`mb-1 ${
                         message.sender === 'user' ? 'text-white/90' : 'text-gray-700'

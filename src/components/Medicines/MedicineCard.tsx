@@ -45,7 +45,7 @@ export const MedicineCard: React.FC<MedicineCardProps> = ({ medicine }) => {
           </span>
           {medicine.prescriptionRequired && (
             <span className="px-3 py-1 bg-red-100 text-red-800 border border-red-200 rounded-full text-sm font-medium">
-              Nepieciešama recepte
+              {t('medicines.prescriptionRequired')}
             </span>
           )}
         </div>
@@ -132,7 +132,7 @@ export const MedicineCard: React.FC<MedicineCardProps> = ({ medicine }) => {
       {/* Suitable for Species */}
       <div className="mb-6">
         <h4 className="text-lg font-semibold text-gray-900 mb-2">
-          Piemērots dzīvniekiem
+          {t('medicines.details.suitableFor')}
         </h4>
         <div className="flex flex-wrap gap-2">
           {medicine.forSpecies.map((species) => (
@@ -151,11 +151,8 @@ export const MedicineCard: React.FC<MedicineCardProps> = ({ medicine }) => {
         <div className="flex items-start space-x-2">
           <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5" />
           <div className="text-sm text-amber-800">
-            <p className="font-medium mb-1">Svarīgi!</p>
-            <p>
-              Pirms jebkura medikamenta lietošanas konsultējieties ar veterinārārstu. 
-              Nepareiza deva var būt bīstama jūsu mājdzīvnieka veselībai.
-            </p>
+            <p className="font-medium mb-1">{t('medicines.details.important')}</p>
+            <p>{t('medicines.details.warning')}</p>
           </div>
         </div>
       </div>
