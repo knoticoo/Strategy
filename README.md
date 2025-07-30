@@ -2,45 +2,25 @@
 
 A comprehensive AI-powered veterinary assistant that provides intelligent pet health advice, medication recommendations, and multi-language support.
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Unified Script)
 
-### Prerequisites
-- Node.js v20.19.4+
-- Python 3.8+
-- CPU-only environment (GPU not required)
-
-### Installation
-
-1. **Clone the repository**
 ```bash
-git clone <repository-url>
-cd ai-pet-doctor
+bash start-ai-pet-doctor.sh
 ```
+- Starts web app (port 3000), bot service (port 3001), model training, and TensorBoard (port 6006)
+- Logs are in the `logs/` directory
 
-2. **Install dependencies**
+## 📊 Monitoring Training with TensorBoard
+
+- After starting, open: `http://<your-vps-ip>:6006`
+- You’ll see training loss, evaluation metrics, and logs
+
+## 🛑 Stopping All Services
+
 ```bash
-# Install web app dependencies
-npm install
-
-# Install bot service dependencies
-cd ai-bot-service
-npm install
-
-# Install Python training dependencies
-cd ai-training
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+kill <web_pid> <bot_pid> <train_pid> <tensorboard_pid>
 ```
-
-3. **Start the services**
-```bash
-# Start web app (from root directory)
-npm run dev
-
-# Start bot service (from ai-bot-service directory)
-npm run dev
-```
+(PIDs are printed by the script)
 
 ## 🏗️ Architecture
 
@@ -172,3 +152,7 @@ MIT License - see LICENSE file for details
 ---
 
 **Status**: All critical issues resolved. System operational and ready for development! 🎉
+
+## 📝 Notes
+- Wandb is no longer required. All experiment tracking is now local with TensorBoard.
+- For custom training, see `ai-bot-service/ai-training/model_trainer.py`.
