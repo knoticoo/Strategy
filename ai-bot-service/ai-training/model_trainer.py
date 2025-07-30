@@ -267,8 +267,8 @@ class VeterinaryModelTrainer:
             conversation = (
                 f"<|vet|>{examples['instruction'][i]} "
                 f"{species_info}\n"
-                f"Human: {examples['input'][i]}\n"
-                f"Veterinarian: {examples['output'][i]}<|endoftext|>"
+                f"Human: {examples['instruction'][i]}\n"
+                f"Veterinarian: {examples['response'][i]}<|endoftext|>"
             )
             
             # Tokenize
