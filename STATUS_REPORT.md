@@ -23,7 +23,8 @@
   - Modified `model_trainer.py` to disable 4-bit quantization for CPU-only training
   - Updated `requirements.txt` to remove GPU-specific dependencies
   - Adjusted batch sizes and training parameters for CPU compatibility
-  - Disabled wandb monitoring to avoid dependency issues
+  - Switched from Wandb to TensorBoard for local experiment tracking
+  - Added unified start script (start-ai-pet-doctor.sh) to launch all services and monitoring
 - **Status**: ✅ RESOLVED - Training now compatible with CPU-only systems
 
 ## Current Status

@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
 from datetime import datetime
+from torch.utils.tensorboard import SummaryWriter
 
 # Transformers and training
 from transformers import (
@@ -74,10 +75,10 @@ class ModelConfig:
     validation_split: float = 0.1
     max_samples: Optional[int] = None  # None for all data
     
-    # Monitoring
-    use_wandb: bool = False  # Disabled to avoid dependency issues
-    wandb_project: str = "veterinary-ai-training"
-    wandb_run_name: Optional[str] = None
+    # Monitoring (Wandb removed)
+    # use_wandb: bool = False
+    # wandb_project: str = "veterinary-ai-training"
+    # wandb_run_name: Optional[str] = None
 
 class VeterinaryModelTrainer:
     """Trains a custom veterinary AI model"""
@@ -93,13 +94,8 @@ class VeterinaryModelTrainer:
         # Setup directories
         Path(config.output_dir).mkdir(parents=True, exist_ok=True)
         
-        # Initialize wandb if enabled
-        if config.use_wandb and self.accelerator.is_main_process:
-            wandb.init(
-                project=config.wandb_project,
-                name=config.wandb_run_name or f"vet-ai-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
-                config=config.__dict__
-            )
+        # TensorBoard writer
+        self.writer = SummaryWriter(log_dir=os.path.join(config.output_dir, "tensorboard"))
     
     def load_and_prepare_model(self):
         """Load base model and prepare for training"""
@@ -330,8 +326,8 @@ class VeterinaryModelTrainer:
             load_best_model_at_end=True,
             metric_for_best_model="eval_loss",
             greater_is_better=False,
-            report_to="wandb" if self.config.use_wandb else None,
-            run_name=self.config.wandb_run_name,
+            # report_to="wandb" if self.config.use_wandb else None,  # Wandb removed
+            # run_name=self.config.wandb_run_name,  # Wandb removed
             fp16=torch.cuda.is_available(),
             dataloader_pin_memory=False,
             remove_unused_columns=False,
@@ -353,6 +349,7 @@ class VeterinaryModelTrainer:
             tokenizer=self.tokenizer,
             data_collator=data_collator,
             compute_metrics=self.compute_metrics,
+            callbacks=[TensorBoardCallback(self.writer)]
         )
         
         # Start training
@@ -434,6 +431,10 @@ class VeterinaryModelTrainer:
             logger.info(f"Q: {question}")
             logger.info(f"A: {response}")
             logger.info("-" * 80)
+            # Log to TensorBoard
+            self.writer.add_text("Evaluation/Question", question)
+            self.writer.add_text("Evaluation/Response", response)
+        self.writer.flush()
     
     def export_for_inference(self):
         """Export model for production inference"""
@@ -562,6 +563,23 @@ if __name__ == "__main__":
         
         logger.info(f"✅ Inference files exported to {inference_dir}")
 
+class TensorBoardCallback:
+    def __init__(self, writer):
+        self.writer = writer
+        self.global_step = 0
+
+    def on_log(self, args, state, control, logs=None, **kwargs):
+        if logs is not None:
+            for k, v in logs.items():
+                self.writer.add_scalar(k, v, state.global_step)
+            self.writer.flush()
+
+    def on_evaluate(self, args, state, control, metrics=None, **kwargs):
+        if metrics is not None:
+            for k, v in metrics.items():
+                self.writer.add_scalar(f"eval/{k}", v, state.global_step)
+            self.writer.flush()
+
 def main():
     """Main training function optimized for 4GB RAM VPS"""
     # Configuration optimized for low-memory VPS
@@ -578,7 +596,7 @@ def main():
         lora_r=8,  # Smaller LoRA rank for memory
         lora_alpha=16,
         max_samples=5000,  # Limit training samples for faster training
-        use_wandb=False,  # Disable wandb to save memory
+        # use_wandb=False,  # Disable wandb to save memory
         eval_steps=1000,  # Less frequent evaluation
         save_steps=1000,
         logging_steps=200,
@@ -618,8 +636,9 @@ def main():
     
     finally:
         # Cleanup
-        if config.use_wandb:
-            wandb.finish()
+        # if config.use_wandb: # Wandb removed
+        #     wandb.finish()
+        trainer.__del__()
 
 if __name__ == "__main__":
     main()
